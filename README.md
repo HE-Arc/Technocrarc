@@ -4,6 +4,14 @@ Web app, to edit music, namely use spleeter to get multiple channels from a sing
 
 ## Usage
 
+Activate your python virtual environment.
+
+Install all the required python packages.
+
+```
+pip install -r requirements.txt
+```
+
 Create a database name technocrarc for the project.
 Change username and password by your desired information.
 
