@@ -3,8 +3,10 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import status
 from django.conf import settings
+from django.http import HttpResponse
 
 import os
+from .utils import zip_files
 from spleeter.separator import Separator
 
 from .serializers import AudioFileSerializer
@@ -25,6 +27,17 @@ class AudioFileUploadView(APIView):
 class AudioFileSplitView(APIView):
 
     def get(self, request, *args, **kwargs):
+
+        FILE_NAME = 'file_example_MP3_700KB.mp3'
+
+        # TODO get number of stems as parameter
         separator = Separator('spleeter:2stems')
 
-        separator.separate_to_file(os.path.join(settings.MEDIA_ROOT, 'file_example_MP3_700KB.mp3'), settings.MEDIA_ROOT)
+        separator.separate_to_file(os.path.join(settings.MEDIA_ROOT, FILE_NAME), settings.MEDIA_ROOT)
+
+        # TODO manage errors
+        zipped_file = zip_files(os.path.join(settings.MEDIA_ROOT, os.path.splitext(FILE_NAME)[0]))
+        response = HttpResponse(zipped_file, content_type='application/octet-stream')
+        response['Content-Disposition'] = 'attachment; filename=splitted_files.zip'
+
+        return response
