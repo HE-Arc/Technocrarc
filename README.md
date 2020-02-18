@@ -4,7 +4,16 @@ Web app, to edit music, namely use spleeter to get multiple channels from a sing
 
 ## Usage
 
+Install ffmpeg
+```
+sudo apt install ffmpeg
+```
+
 Activate your python virtual environment.
+
+```
+source ~/venv/bin/activate 
+```
 
 Install all the required python packages.
 
