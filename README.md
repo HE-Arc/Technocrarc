@@ -4,7 +4,20 @@ Web app, to edit music, namely use spleeter to get multiple channels from a sing
 
 ## Usage
 
-Install ffmpeg
+Install Redis broker for long running proccess
+
+```
+sudo apt-get install redis-server
+```
+
+To test redis. The last command should return PONG.
+
+```
+redis-server &
+redis-cli ping
+```
+
+Install ffmpeg for spleeter
 ```
 sudo apt install ffmpeg
 ```
