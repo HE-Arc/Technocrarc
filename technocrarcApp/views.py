@@ -17,3 +17,8 @@ class AudioFileUploadView(APIView):
           return Response(audio_file_serializer.data, status=status.HTTP_201_CREATED)
       else:
           return Response(audio_file_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class AudioFileSplitView(APIView):
+
+    def post(self, request, *args, **kwargs):
+        pass
