@@ -1,26 +1,50 @@
 {% extends '_base.html' %}
 
-{% block content %}{% endblock content %}
+{% block content %}
+    <div id="song">
+    </div>
+{% endblock content %}
 
 {% block script %}
     <script>
-    var socket = new WebSocket('ws://' + window.location.host + '/ws/background-tasks/')
+    window.addEventListener('DOMContentLoaded', (event) => {
+        var socket = new WebSocket('ws://' + window.location.host + '/ws/background-tasks/')
 
-    socket.onopen = function open(e) {
-        console.log('WebSockets connection created.')
-        socket.send(JSON.stringify({'message': 'message'}))
-    }
+        function createAudioTag(url) {
+            var sound = document.createElement('audio')
+            sound.id = 'audio-player'
+            sound.controls = 'controls'
+            sound.src = url
+            sound.type = 'audio/wav'
 
-    socket.onmessage = function onMessage(e) {
-        console.log(e)
-    }
+            document.getElementById('song').appendChild(sound)
+        }
 
-    socket.onclose = function onClose(e) {
-        console.log(e)
-    }
+        socket.onopen = function open(e) {
+            console.log('WebSockets connection created.')
+            socket.send(
+                JSON.stringify({
+                    'song_name': 'file_example_MP3_700KB.mp3',
+                    'stems': '4_stems',
+                })
+            )
+        }
 
-    if (socket.readyState == WebSocket.OPEN) {
-        socket.onopen()
-    }
+        socket.onmessage = function onMessage(e) {
+            console.log('Message')
+            console.log(e)
+            console.log(e.data)
+            const url = e.data
+            createAudioTag(url)
+        }
+
+        socket.onclose = function onClose(e) {
+            console.log(e)
+        }
+
+        if (socket.readyState == WebSocket.OPEN) {
+            socket.onopen()
+        }
+    })
     </script>
 {% endblock script %}
