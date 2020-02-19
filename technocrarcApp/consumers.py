@@ -1,17 +1,18 @@
-from channels.generic.websocket import WebsocketConsumer
+from channels.generic.websocket import AsyncWebsocketConsumer
 from .tasks import split_sound
+from channels.layers import get_channel_layer
+from asgiref.sync import async_to_sync
 
-class BackgroundTaskConsumer(WebsocketConsumer):
+class BackgroundTaskConsumer(AsyncWebsocketConsumer):
 
-    def connect(self):
-        self.accept()
+    async def connect(self):
+        await self.accept()
 
-    def disconnect(self, close_code):
+    async def disconnect(self, close_code):
         pass
 
-    def receive(self, text_data):
-        self.send("Starting split")
-
+    async def receive(self, text_data):
         split_sound.delay(self.channel_name)
 
-        self.send("Finished split")
+    async def file_processed(self, event):
+        await self.send(event['file_url'])
