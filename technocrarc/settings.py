@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'channels',
     'technocrarcApp',
 ]
 
@@ -70,6 +71,8 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'technocrarc.wsgi.application'
+
+ASGI_APPLICATION = 'technocrarc.routing.application'
 
 
 # Database
@@ -123,5 +126,21 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-MEDIA_URL =  '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, "media")
+MEDIA_URL =  'media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, MEDIA_URL)
+
+# Channels settings
+CHANNEL_LAYERS = {
+   'default': {
+       'BACKEND': 'channels_redis.core.RedisChannelLayer',
+       'CONFIG': {
+           "hosts": [('localhost', 6379)],
+       }
+   },
+}
+
+BROKER_URL = 'redis://localhost:6379/0'
+
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'

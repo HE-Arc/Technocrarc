@@ -64,7 +64,19 @@ Run the migrations
 python3 manage.py migrate
 ```
 
-Start the server
+Start the redis server 
+
+```
+redis-server &
+```
+
+Run the celery worker
+
+```
+celery worker -A technocrarc -l info
+```
+
+Start the web server
 
 ```
 python3 manage.py runserver

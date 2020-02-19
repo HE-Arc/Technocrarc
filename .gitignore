@@ -6,6 +6,7 @@
 *.log
 *.pot
 *.pyc
+*.zip
 __pycache__/
 local_settings.py
 db.sqlite3
@@ -120,3 +121,5 @@ dmypy.json
 .pyre/
 
 # End of https://www.gitignore.io/api/django
+
+pretrained_models

@@ -2,7 +2,8 @@ from rest_framework.parsers import FileUploadParser
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import status
-
+from django.shortcuts import render
+from django.http import HttpResponse
 from .serializers import AudioFileSerializer
 
 class AudioFileUploadView(APIView):
@@ -20,5 +21,5 @@ class AudioFileUploadView(APIView):
 
 class AudioFileSplitView(APIView):
 
-    def post(self, request, *args, **kwargs):
-        pass
+    def get(self, request, *args, **kwargs):
+        return render(request, 'editor.html')
