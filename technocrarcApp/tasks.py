@@ -13,7 +13,7 @@ import json
 channel_layer = get_channel_layer()
 
 @task(name='split_sound')
-def split_sound(channel_name, file_name='file_example_MP3_700KB.mp3'):
+def split_sound(channel_name, file_name):
     mp.current_process()._config['daemon'] = False
     # TODO get number of stems as parameter
     separator = Separator('spleeter:2stems')

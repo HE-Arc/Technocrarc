@@ -22,7 +22,7 @@
 
         socket.onopen = function open(e) {
             console.log('WebSockets connection created.')
-            socket.send(JSON.stringify({'message': 'message'}))
+            socket.send(JSON.stringify({'song_name': 'file_example_MP3_700KB.mp3'}))
         }
 
         socket.onmessage = function onMessage(e) {
