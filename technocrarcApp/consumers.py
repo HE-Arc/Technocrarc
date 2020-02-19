@@ -15,8 +15,9 @@ class BackgroundTaskConsumer(AsyncWebsocketConsumer):
     async def receive(self, text_data):
         json_data = json.loads(text_data)
         song_name = json_data['song_name']
+        stems = json_data['stems']
 
-        split_sound.delay(self.channel_name, song_name)
+        split_sound.delay(self.channel_name, song_name, stems)
 
     async def file_processed(self, event):
         await self.send(event['file_url'])

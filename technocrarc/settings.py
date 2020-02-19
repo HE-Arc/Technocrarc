@@ -145,3 +145,10 @@ RESULT_BACKEND_URL = 'redis://localhost:6379/0'
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
+
+# Spleeter stems
+STEMS_OPTION = {
+    '2_stems' : 'spleeter:2stems',
+    '4_stems' : 'spleeter:4stems',
+    '5_stems' : 'spleeter:5stems',
+}

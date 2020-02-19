@@ -10,13 +10,15 @@ import multiprocessing as mp
 from celery.decorators import task
 import json
 
+
+
 channel_layer = get_channel_layer()
 
 @task(name='split_sound')
-def split_sound(channel_name, file_name):
+def split_sound(channel_name, file_name, stems):
     mp.current_process()._config['daemon'] = False
-    # TODO get number of stems as parameter
-    separator = Separator('spleeter:2stems')
+
+    separator = Separator(settings.STEMS_OPTION[stems])
 
     separator.separate_to_file(os.path.join(settings.MEDIA_ROOT, file_name), settings.MEDIA_ROOT)
 
