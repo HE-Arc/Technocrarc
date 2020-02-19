@@ -1,7 +1,6 @@
 from __future__ import absolute_import, unicode_literals
 
 from spleeter.separator import Separator
-from .utils import zip_files, persist_zip
 from django.conf import settings
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer

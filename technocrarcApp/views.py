@@ -23,13 +23,6 @@ class AudioFileUploadView(APIView):
 
 class SplitAudioFileViewDownload(APIView):
 
-    """def get(self, request, zip_file):
-        path_to_file = os.path.join(settings.MEDIA_ROOT, zip_file)
-        zip_file = open(path_to_file, 'rb')
-        response = HttpResponse(zip_file, content_type='application/zip')
-        response['Content-Disposition'] = f'attachment; filename="split_sound.zip"'
-        return response"""
-
     def get(self, request, dir, audio_file):
         path_to_file = os.path.join(settings.MEDIA_ROOT, dir, audio_file)
         wav_file = open(path_to_file, 'rb')
