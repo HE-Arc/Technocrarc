@@ -13,6 +13,8 @@ class AudioFileUploadView(APIView):
 
     def post(self, request, *args, **kwargs):
 
+      # TODO : associate file with user
+
       audio_file_serializer = AudioFileSerializer(data=request.data)
 
       if audio_file_serializer.is_valid():
@@ -23,8 +25,8 @@ class AudioFileUploadView(APIView):
 
 class SplitAudioFileViewDownload(APIView):
 
-    def get(self, request, dir, audio_file):
-        path_to_file = os.path.join(settings.MEDIA_ROOT, dir, audio_file)
+    def get(self, request, date, dir, audio_file):
+        path_to_file = os.path.join(settings.MEDIA_ROOT, date, dir, audio_file)
         wav_file = open(path_to_file, 'rb')
         response = HttpResponse(wav_file, content_type='audio/wav')
         return response
