@@ -29,6 +29,7 @@ def split_sound(channel_name, file_name, stems):
     path = os.path.join(settings.MEDIA_ROOT, rel_path)
 
     for file in os.listdir(path):
+        # TODO : fk user on audio file
         audio_file = AudioFile()
         audio_file.file = os.path.join(rel_path, file)
         audio_file.save()

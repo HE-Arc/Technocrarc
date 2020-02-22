@@ -13,7 +13,7 @@ class AudioFileUploadView(APIView):
 
     def post(self, request, *args, **kwargs):
 
-      # TODO : associate file with user
+      # TODO : fk user on audio file
 
       audio_file_serializer = AudioFileSerializer(data=request.data)
 
