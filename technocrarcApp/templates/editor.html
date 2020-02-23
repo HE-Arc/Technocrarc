@@ -3,6 +3,25 @@
 
 {% block content %}
 <div class="container">
+    <div class="center">
+        <h1 class="main-title">Technocrarc</h1>
 
+        <form id="form-upload-sound" action="upload" method="POST">
+
+            <div class="file-field input-field">
+                <div class="btn">
+                    <span>File</span>
+                    <input id="sound-file-input" class="input-file-dragdrop" type="file" accept="audio/x-waw" required>
+                </div>
+                <div class="file-path-wrapper">
+                    <input class="file-path validate" type="text" placeholder="Upload a sound...">
+                </div>
+            </div>
+
+            <button class="btn btn-large waves-effect waves-light" type="submit">UPLOAD</button>
+
+        </form>
+
+    </div>
 </div>
 {% endblock content %}
