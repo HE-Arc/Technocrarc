@@ -11,15 +11,24 @@
   <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
 
   <!-- STYLES -->
+  <link rel="stylesheet" href="{% get_static_prefix %}css/materialize.css" type="text/css">
   <link rel="stylesheet" href="{% static 'css/app.css' %}">
 
 </head>
 <body>
-    <div class="container">
-        <br>
+
+    <header class="header"></header>
+
+    <main class="main">
         {% block content %}{% endblock content %}
-    </div>
+    </main>
+
+    <footer class="footer"></footer>
+
+    <!-- SCRIPTS -->
     <script src="//code.jquery.com/jquery-3.1.1.min.js"></script>
-    {% block script %}{% endblock script %}
+    <script src="{% static 'js/materialize.js' %}"></script>
+    <script src="{% static 'js/app.js' %}"></script>
+
 </body>
 </html>
