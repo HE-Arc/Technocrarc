@@ -4,7 +4,9 @@ from rest_framework.views import APIView
 from rest_framework import status
 from django.shortcuts import render
 from django.http import HttpResponse
+from django.conf import settings
 from .serializers import AudioFileSerializer
+import os
 
 from .forms import *
 from django.http import HttpResponseRedirect
@@ -12,8 +14,13 @@ from django.contrib.auth.models import User
 from django.contrib.auth import *
 from django.contrib.auth.mixins import LoginRequiredMixin
 
+<<<<<<< HEAD
 
 class Upload(LoginRequiredMixin, APIView):
+=======
+class Upload(APIView):
+  
+>>>>>>> 6021d7e78c4b8e9571e27f68a3c178f6ce70fe20
     parser_class = (FileUploadParser,)
     login_url = '/log-in'
     redirect_field_name = 'redirect_to'
@@ -22,6 +29,8 @@ class Upload(LoginRequiredMixin, APIView):
         return render(request, 'upload.html')
 
     def post(self, request, *args, **kwargs):
+      # TODO : fk user on audio file
+
       audio_file_serializer = AudioFileSerializer(data=request.data)
 
       if audio_file_serializer.is_valid():
@@ -29,19 +38,35 @@ class Upload(LoginRequiredMixin, APIView):
           return Response(audio_file_serializer.data, status=status.HTTP_201_CREATED)
       else:
           return Response(audio_file_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+<<<<<<< HEAD
 
 class Editor(LoginRequiredMixin, APIView):
     login_url = '/log-in'
     redirect_field_name = 'redirect_to'
 
+=======
+        
+class SplitAudioFileViewDownload(APIView):
+
+    def get(self, request, date, dir, audio_file):
+        path_to_file = os.path.join(settings.MEDIA_ROOT, date, dir, audio_file)
+        wav_file = open(path_to_file, 'rb')
+        response = HttpResponse(wav_file, content_type='audio/wav')
+        return response
+      
+class Editor(APIView):
+  
+>>>>>>> 6021d7e78c4b8e9571e27f68a3c178f6ce70fe20
     def get(self, request, *args, **kwargs):
         return render(request, 'editor.html')
 
 class Home(APIView):
+  
     def get(self, request, *args, **kwargs):
         return render(request, 'home.html')
 
 class LogIn(APIView):
+  
     def get(self, request, *args, **kwargs):
         form = LogInForm()
         return render(request, 'log-in.html', {'form': form})
@@ -70,6 +95,7 @@ class LogIn(APIView):
             return render(request, 'log-in.html', {'form': form})
 
 class SignUp(APIView):
+  
     def get(self, request, *args, **kwargs):
         form = SignUpForm()
         return render(request, 'sign-up.html', {'form': form})
