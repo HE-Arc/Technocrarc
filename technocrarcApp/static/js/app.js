@@ -1,9 +1,24 @@
 
 var socket = new WebSocket('ws://' + window.location.host + '/ws/background-tasks/')
 
+function createAudioTag(url) {
+    var sound = document.createElement('audio')
+    sound.id = 'audio-player'
+    sound.controls = 'controls'
+    sound.src = url
+    sound.type = 'audio/wav'
+
+    document.getElementById('song').appendChild(sound)
+}
+
 socket.onopen = function open(e) {
     console.log('WebSockets connection created.')
-    socket.send(JSON.stringify({'message': 'message'}))
+    socket.send(
+        JSON.stringify({
+            'song_name': 'file_example_MP3_700KB.mp3',
+            'stems': '5_stems',
+        })
+    )
 }
 
 socket.onmessage = function onMessage(e) {
