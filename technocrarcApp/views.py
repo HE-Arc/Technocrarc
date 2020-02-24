@@ -10,11 +10,13 @@ from .forms import SignUpForm
 from django.http import HttpResponseRedirect
 from django.contrib.auth.models import User
 
-class AudioFileUploadView(APIView):
+class Upload(APIView):
     parser_class = (FileUploadParser,)
 
-    def post(self, request, *args, **kwargs):
+    def get(self, request, *args, **kwargs):
+        return render(request, 'upload.html')
 
+    def post(self, request, *args, **kwargs):
       audio_file_serializer = AudioFileSerializer(data=request.data)
 
       if audio_file_serializer.is_valid():
@@ -23,7 +25,7 @@ class AudioFileUploadView(APIView):
       else:
           return Response(audio_file_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-class AudioFileSplitView(APIView):
+class Editor(APIView):
     def get(self, request, *args, **kwargs):
         return render(request, 'editor.html')
 
