@@ -21,23 +21,36 @@ if (socket.readyState == WebSocket.OPEN) {
 // DOM
 const $$ = {
     soundFileInput: document.querySelector('#sound-file-input'),
+    fileField: document.querySelector('.file-field'),
 };
 
-// Drag & Drop
-// Drag enter -> can modify style in order
-document.querySelector('.input-file-dragdrop').addEventListener('dragenter', evt =>
+/**
+ * Audio file upload
+ */
+// Drag enter -> modify style
+$$.fileField.addEventListener('dragenter', evt =>
 {
     evt.preventDefault();
+    $$.fileField.classList.add('dragenter');
 });
 
-// Drop on file input
-document.querySelector('.input-file-dragdrop').addEventListener('drop', evt =>
+// Drag leave -> modify style
+$$.fileField.addEventListener('dragleave', evt =>
+{
+    evt.preventDefault();
+    $$.fileField.classList.remove('dragenter');
+});
+
+// Drop on « file input »
+$$.fileField.addEventListener('drop', evt =>
 {
     evt.preventDefault();
     let files = evt.dataTransfer.files;
 
     parseAudioFiles(files);
 });
+
+
 
 function parseAudioFiles(files)
 {
