@@ -132,3 +132,6 @@ pretrained_models
 
 #Virtual env
 env
+
+#rdb files
+*.rdb
