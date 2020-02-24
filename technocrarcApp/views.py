@@ -10,9 +10,13 @@ from .forms import *
 from django.http import HttpResponseRedirect
 from django.contrib.auth.models import User
 from django.contrib.auth import *
+from django.contrib.auth.mixins import LoginRequiredMixin
 
-class Upload(APIView):
+
+class Upload(LoginRequiredMixin, APIView):
     parser_class = (FileUploadParser,)
+    login_url = '/log-in'
+    redirect_field_name = 'redirect_to'
 
     def get(self, request, *args, **kwargs):
         return render(request, 'upload.html')
@@ -26,7 +30,10 @@ class Upload(APIView):
       else:
           return Response(audio_file_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-class Editor(APIView):
+class Editor(LoginRequiredMixin, APIView):
+    login_url = '/log-in'
+    redirect_field_name = 'redirect_to'
+
     def get(self, request, *args, **kwargs):
         return render(request, 'editor.html')
 
@@ -104,7 +111,9 @@ class SignUp(APIView):
         else:
             return render(request, 'sign-up.html', {'form': form})
 
-class Logout(APIView):
+class Logout(LoginRequiredMixin, APIView):
+    login_url = '/log-in'
+    redirect_field_name = 'redirect_to'
     def get(self, request, *args, **kwargs):
         logout(request)
         return HttpResponseRedirect('/')
