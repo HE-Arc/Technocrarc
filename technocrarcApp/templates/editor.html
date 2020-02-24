@@ -11,9 +11,17 @@
             <div class="file-field input-field">
                 <input id="sound-file-input" type="file" accept="audio/x-waw" required>
                 <div class="file-path-wrapper">
-                    <i class="material-icons">cloud_upload</i>
-                    <p>Drop your sound here !</p>
-                    <p class="italic">Max 50 MB</p>
+                    <div class="dragdrop-figure">
+                        <i class="material-icons">cloud_upload</i>
+                        <p>Drop your sound here !</p>
+                        <p class="italic">Max 50 MB</p>
+                        <input class="file-path validate" type="text" hidden>
+                    </div>
+                    <div class="dragdrop-uploaded" hidden>
+                        <i class="material-icons">check_circle</i>
+                        <p class="uploaded-file-name italic"></p>
+                        <p class="uploaded-file-size italic"></p>
+                    </div>
                 </div>
             </div>
 

@@ -26,3 +26,7 @@
     font-size: 0.9rem;
     font-style: italic;
 }
+
+form .btn-large {
+    width: 100%;
+}
