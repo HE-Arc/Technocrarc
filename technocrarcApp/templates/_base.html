@@ -17,18 +17,27 @@
 </head>
 <body>
 
-    <header class="header"></header>
+  <header class="header"></header>
 
-    <main class="main">
-        {% block content %}{% endblock content %}
-    </main>
+  <nav>
+    <div class="nav-wrapper">
+      <a href="/" class="brand-logo">Technocrarc</a>
+      <ul id="nav-mobile" class="right">
+        <li><a href="log-in">Log in</a></li>
+        <li><a href="sign-up">Sign up</a></li>
+      </ul>
+    </div>
+  </nav>
+  <main class="main">
+    {% block content %}{% endblock content %}
+  </main>
 
-    <footer class="footer"></footer>
+  <footer class="footer"></footer>
 
-    <!-- SCRIPTS -->
-    <script src="//code.jquery.com/jquery-3.1.1.min.js"></script>
-    <script src="{% static 'js/materialize.js' %}"></script>
-    <script src="{% static 'js/app.js' %}"></script>
+  <!-- SCRIPTS -->
+  <script src="//code.jquery.com/jquery-3.1.1.min.js"></script>
+  <script src="{% static 'js/materialize.js' %}"></script>
+  <script src="{% static 'js/app.js' %}"></script>
 
 </body>
 </html>
