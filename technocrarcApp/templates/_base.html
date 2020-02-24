@@ -27,8 +27,8 @@
         {% if user.is_authenticated %}
         <li><a href="editor">Editor</a></li>
         <li><a href="upload">Upload</a></li>
-        {% endif %}
-        {% if user.is_authenticated == false %}
+        <li><a href="logout">Logout</a></li>
+        {% else %}
           <li><a href="log-in">Log in</a></li>
           <li><a href="sign-up">Sign up</a></li>
         {% endif %}

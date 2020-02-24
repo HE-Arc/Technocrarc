@@ -9,7 +9,7 @@ from .serializers import AudioFileSerializer
 from .forms import *
 from django.http import HttpResponseRedirect
 from django.contrib.auth.models import User
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import *
 
 class Upload(APIView):
     parser_class = (FileUploadParser,)
@@ -104,7 +104,7 @@ class SignUp(APIView):
         else:
             return render(request, 'sign-up.html', {'form': form})
 
-
-
-        # if form.is_valid():
-        #     return HttpResponseRedirect('/thanks/')
+class Logout(APIView):
+    def get(self, request, *args, **kwargs):
+        logout(request)
+        return HttpResponseRedirect('/')

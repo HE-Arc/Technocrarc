@@ -6,5 +6,6 @@ urlpatterns = [
     path('editor', Editor.as_view()),
     path('', Home.as_view()),
     path('log-in', LogIn.as_view()),
-    path('sign-up', SignUp.as_view())
+    path('sign-up', SignUp.as_view()),
+    path('logout', Logout.as_view())
 ]
