@@ -2,19 +2,18 @@ from rest_framework.parsers import FileUploadParser
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import status
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.conf import settings
 from .serializers import AudioFileSerializer
-import os
-
 from .forms import *
 from django.http import HttpResponseRedirect
 from django.contrib.auth.models import User
 from django.contrib.auth import *
+import os
 
 class Upload(APIView):
-  
+
     parser_class = (FileUploadParser,)
 
     def get(self, request, *args, **kwargs):
@@ -27,10 +26,10 @@ class Upload(APIView):
 
       if audio_file_serializer.is_valid():
           audio_file_serializer.save()
-          return Response(audio_file_serializer.data, status=status.HTTP_201_CREATED)
+          return redirect('/editor')
       else:
           return Response(audio_file_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        
+
 class SplitAudioFileViewDownload(APIView):
 
     def get(self, request, date, dir, audio_file):
@@ -38,19 +37,19 @@ class SplitAudioFileViewDownload(APIView):
         wav_file = open(path_to_file, 'rb')
         response = HttpResponse(wav_file, content_type='audio/wav')
         return response
-      
+
 class Editor(APIView):
-  
+
     def get(self, request, *args, **kwargs):
         return render(request, 'editor.html')
 
 class Home(APIView):
-  
+
     def get(self, request, *args, **kwargs):
         return render(request, 'home.html')
 
 class LogIn(APIView):
-  
+
     def get(self, request, *args, **kwargs):
         form = LogInForm()
         return render(request, 'log-in.html', {'form': form})
@@ -79,7 +78,7 @@ class LogIn(APIView):
             return render(request, 'log-in.html', {'form': form})
 
 class SignUp(APIView):
-  
+
     def get(self, request, *args, **kwargs):
         form = SignUpForm()
         return render(request, 'sign-up.html', {'form': form})

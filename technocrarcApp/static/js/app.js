@@ -11,14 +11,17 @@ function createAudioTag(url) {
     document.getElementById('song').appendChild(sound)
 }
 
-socket.onopen = function open(e) {
-    console.log('WebSockets connection created.')
+function splitSound(fileName='file_example_MP3_700KB.mp3', stems='5_stems') {
     socket.send(
         JSON.stringify({
-            'song_name': 'file_example_MP3_700KB.mp3',
-            'stems': '5_stems',
+            'song_name': fileName,
+            'stems': stems,
         })
     )
+}
+
+socket.onopen = function open(e) {
+    console.log('WebSockets connection created.')
 }
 
 socket.onmessage = function onMessage(e) {
