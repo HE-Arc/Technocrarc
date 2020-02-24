@@ -6,9 +6,10 @@ from django.shortcuts import render
 from django.http import HttpResponse
 from .serializers import AudioFileSerializer
 
-from .forms import SignUpForm
+from .forms import *
 from django.http import HttpResponseRedirect
 from django.contrib.auth.models import User
+from django.contrib.auth import authenticate, login
 
 class Upload(APIView):
     parser_class = (FileUploadParser,)
@@ -35,7 +36,31 @@ class Home(APIView):
 
 class LogIn(APIView):
     def get(self, request, *args, **kwargs):
-        return render(request, 'log-in.html')
+        form = LogInForm()
+        return render(request, 'log-in.html', {'form': form})
+
+    def post(self, request, *args, **kwargs):
+        form = LogInForm(request.POST)
+
+        if form.is_valid():
+            username = form.cleaned_data['username']
+            password = form.cleaned_data['password']
+
+            username = str(username)
+            username = username.lower()
+
+            user = authenticate(request, username=username, password=password)
+
+            if user is not None:
+                login(request, user)
+                return HttpResponseRedirect('/upload')
+            else:
+                form.add_error('password', 'Your credentials have not been found in our records.')
+
+        if form.is_valid():
+            return HttpResponseRedirect('/upload')
+        else:
+            return render(request, 'log-in.html', {'form': form})
 
 class SignUp(APIView):
     def get(self, request, *args, **kwargs):
@@ -72,7 +97,10 @@ class SignUp(APIView):
             newUser.last_name = last_name
             newUser.save()
 
-            return render(request, 'home.html')
+            #Authenticate the user
+            login(request, newUser)
+
+            return HttpResponseRedirect('/upload')
         else:
             return render(request, 'sign-up.html', {'form': form})
 

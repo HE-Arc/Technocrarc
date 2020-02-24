@@ -24,8 +24,14 @@
     <div class="nav-wrapper">
       <a href="/" class="brand-logo">Technocrarc</a>
       <ul id="nav-mobile" class="right">
-        <li><a href="log-in">Log in</a></li>
-        <li><a href="sign-up">Sign up</a></li>
+        {% if user.is_authenticated %}
+        <li><a href="editor">Editor</a></li>
+        <li><a href="upload">Upload</a></li>
+        {% endif %}
+        {% if user.is_authenticated == false %}
+          <li><a href="log-in">Log in</a></li>
+          <li><a href="sign-up">Sign up</a></li>
+        {% endif %}
       </ul>
     </div>
   </nav>
