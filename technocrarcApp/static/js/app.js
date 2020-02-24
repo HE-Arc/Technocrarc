@@ -21,21 +21,44 @@ if (socket.readyState == WebSocket.OPEN) {
 // DOM
 const $$ = {
     soundFileInput: document.querySelector('#sound-file-input'),
+    fileField: document.querySelector('.file-field'),
+    dragDropFigure: document.querySelector('.dragdrop-figure'),
+    dragDropUploaded: document.querySelector('.dragdrop-uploaded'),
 };
 
-// Drag & Drop
-// Drag enter -> can modify style in order
-document.querySelector('.input-file-dragdrop').addEventListener('dragenter', evt =>
+/**
+ * Audio file upload
+ */
+
+// Drag enter -> modify style
+$$.fileField.addEventListener('dragenter', evt =>
 {
     evt.preventDefault();
+    $$.fileField.classList.add('dragenter');
 });
 
-// Drop on file input
-document.querySelector('.input-file-dragdrop').addEventListener('drop', evt =>
+// Drag leave -> modify style
+$$.fileField.addEventListener('dragleave', evt =>
 {
     evt.preventDefault();
-    let files = evt.dataTransfer.files;
+    $$.fileField.classList.remove('dragenter');
+});
 
+// Drop on « file input »
+$$.fileField.addEventListener('drop', evt =>
+{
+    evt.preventDefault();
+
+    let files = evt.dataTransfer.files;
+    parseAudioFiles(files);
+});
+
+// File uploaded by file dialog
+$$.soundFileInput.addEventListener('change', (evt) =>
+{
+    evt.preventDefault();
+
+    let files = evt.target.files;
     parseAudioFiles(files);
 });
 
@@ -60,7 +83,25 @@ function parseAudioFiles(files)
         else
         {
             $$.soundFileInput.files = files;
-            console.log('It worked !');
+            showUploadedFile();
         }
     }
+}
+
+function showUploadedFile()
+{
+    let file = $$.soundFileInput.files[0];
+    $$.dragDropUploaded.querySelector('.uploaded-file-name').innerHTML = file.name;
+    $$.dragDropUploaded.querySelector('.uploaded-file-size').innerHTML = file.size;
+
+    $$.dragDropFigure.setAttribute('hidden', true);
+    $$.dragDropUploaded.removeAttribute('hidden');
+}
+
+function showDragDropFigure()
+{
+    $$.soundFileInput.files = [];
+
+    $$.dragDropUploaded.setAttribute('hidden', true);
+    $$.dragDropFigure.removeAttribute('hidden');
 }

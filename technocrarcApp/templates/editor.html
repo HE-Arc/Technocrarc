@@ -9,12 +9,19 @@
         <form id="form-upload-sound" action="upload" method="POST">
 
             <div class="file-field input-field">
-                <div class="btn">
-                    <span>File</span>
-                    <input id="sound-file-input" class="input-file-dragdrop" type="file" accept="audio/x-waw" required>
-                </div>
+                <input id="sound-file-input" type="file" accept="audio/x-waw" required>
                 <div class="file-path-wrapper">
-                    <input class="file-path validate" type="text" placeholder="Upload a sound...">
+                    <div class="dragdrop-figure">
+                        <i class="material-icons">cloud_upload</i>
+                        <p>Drop your sound here !</p>
+                        <p class="italic">Max 50 MB</p>
+                        <input class="file-path validate" type="text" hidden>
+                    </div>
+                    <div class="dragdrop-uploaded" hidden>
+                        <i class="material-icons">check_circle</i>
+                        <p class="uploaded-file-name italic"></p>
+                        <p class="uploaded-file-size italic"></p>
+                    </div>
                 </div>
             </div>
 
