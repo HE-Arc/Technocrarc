@@ -82,8 +82,10 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'technocrarc',
-		'USER': 'dev', # TODO change for your mysql user
-		'PASSWORD': 'password',
+		'USER': 'technocrarc', # TODO change for your mysql user
+		'PASSWORD': 'technocrarc',
+        'HOST': '127.0.0.1',
+        'PORT': '3306',
     }
 }
 
