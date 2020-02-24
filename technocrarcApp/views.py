@@ -2,7 +2,7 @@ from rest_framework.parsers import FileUploadParser
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import status
-from django.shortcuts import render, redirect
+from django.shortcuts import render
 from django.http import HttpResponse
 from django.conf import settings
 from .serializers import AudioFileSerializer
@@ -26,7 +26,7 @@ class Upload(APIView):
 
       if audio_file_serializer.is_valid():
           audio_file_serializer.save()
-          return redirect('/editor')
+          return Response(audio_file_serializer.data, status=status.HTTP_201_CREATED)
       else:
           return Response(audio_file_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
