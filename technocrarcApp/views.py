@@ -8,6 +8,7 @@ from .serializers import AudioFileSerializer
 
 from .forms import SignUpForm
 from django.http import HttpResponseRedirect
+from django.contrib.auth.models import User
 
 class AudioFileUploadView(APIView):
     parser_class = (FileUploadParser,)
@@ -43,6 +44,7 @@ class SignUp(APIView):
         form = SignUpForm(request.POST)
 
         if form.is_valid():
+            username = form.cleaned_data['username']
             first_name = form.cleaned_data['first_name']
             last_name = form.cleaned_data['last_name']
             password = form.cleaned_data['password']
@@ -50,11 +52,29 @@ class SignUp(APIView):
             email = form.cleaned_data['email']
 
             if password != password_conf:
-                form.add_error('password_conf', "Password confirmation does not match.")
+                form.add_error('password_conf', 'Password confirmation does not match.')
                 return render(request, 'sign-up.html', {'form': form })
 
+            # Check if user already exists
+            username = str(username)
+            username = username.lower()
+
+            if User.objects.filter(username=username).exists():
+                form.add_error('username', 'This username is already taken')
+            if User.objects.filter(email=email).exists():
+                form.add_error('email', 'This email address is already taken')
+
+        if form.is_valid():
+            newUser = User.objects.create_user(username, email, password)
+            newUser.first_name = first_name
+            newUser.last_name = last_name
+            newUser.save()
+
+            return render(request, 'home.html')
+        else:
+            return render(request, 'sign-up.html', {'form': form})
 
 
-        return render(request, 'sign-up.html', {'form': form})
+
         # if form.is_valid():
         #     return HttpResponseRedirect('/thanks/')
