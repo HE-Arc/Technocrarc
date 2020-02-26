@@ -26,10 +26,14 @@ class BackgroundTaskConsumer(AsyncWebsocketConsumer):
 
             split_sound.delay(self.channel_name, song_id, stems, self.user.id)
         else:
-            self.send(splitter_serializer.errors)
+            await self.send(json.dumps({
+                'type': 'file.processed',
+                'error': splitter_serializer.errors
+                }
+            ))
 
     async def file_processed(self, event):
-        if 'file_url' in event:
-            await self.send(event['file_url'])
-        else:
-            await self.send(event['error'])
+        await self.send(json.dumps(event))
+
+    async def file_error(self, event):
+        await self.send(json.dumps(event))
