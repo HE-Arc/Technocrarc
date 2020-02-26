@@ -3,6 +3,7 @@ from .tasks import split_sound
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
 from .models import AudioFile
+from .serializers import SpliterSerializer
 import json
 
 class BackgroundTaskConsumer(AsyncWebsocketConsumer):
@@ -15,13 +16,17 @@ class BackgroundTaskConsumer(AsyncWebsocketConsumer):
         pass
 
     async def receive(self, text_data):
-        # TODO : validate data, check user is owner
         json_data = json.loads(text_data)
 
-        song_id = json_data['song_id']
-        stems = json_data['stems']
+        splitter_serializer = SpliterSerializer(data=json_data)
 
-        split_sound.delay(self.channel_name, song_id, stems, self.user.id)
+        if splitter_serializer.is_valid():
+            song_id = splitter_serializer.data['song_id']
+            stems = splitter_serializer.data['stems']
+
+            split_sound.delay(self.channel_name, song_id, stems, self.user.id)
+        else:
+            self.send(splitter_serializer.errors)
 
     async def file_processed(self, event):
         if 'file_url' in event:
