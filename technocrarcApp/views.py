@@ -20,9 +20,8 @@ class Upload(APIView):
         return render(request, 'upload.html')
 
     def post(self, request, *args, **kwargs):
-      # TODO : fk user on audio file
-
       audio_file_serializer = AudioFileSerializer(data=request.data)
+      request.data['user'] = request.user.id
 
       if audio_file_serializer.is_valid():
           audio_file_serializer.save()
