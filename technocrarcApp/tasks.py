@@ -22,7 +22,7 @@ def split_sound(channel_name, song_id, stems, user_id):
 
     querySet = AudioFile.objects.filter(id=song_id).values('file')
 
-    if len(querySet) > 0:
+    if querySet.exists():
         file_name = querySet[0]['file']
 
         separator.separate_to_file(
@@ -39,10 +39,9 @@ def split_sound(channel_name, song_id, stems, user_id):
             audio_file.user_id = user_id
             audio_file.save()
 
-            date, dir = os.path.split(rel_path)
             file_url = reverse(
                 'technocrarcApp:download',
-                kwargs={'date': date, 'dir': dir, 'audio_file': file}
+                kwargs={'audio_id': audio_file.id}
             )
 
             async_to_sync(channel_layer.send)(channel_name, {'type': 'file.processed', 'file_url': file_url})

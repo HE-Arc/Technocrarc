@@ -7,6 +7,7 @@ from django.http import HttpResponse
 from django.conf import settings
 from .serializers import AudioFileSerializer
 from .forms import *
+from .models import AudioFile
 from django.http import HttpResponseRedirect
 from django.contrib.auth.models import User
 from django.contrib.auth import *
@@ -31,12 +32,16 @@ class Upload(APIView):
 
 class SplitAudioFileViewDownload(APIView):
 
-    def get(self, request, date, dir, audio_file):
-        # TODO use id instead of file name
-        path_to_file = os.path.join(settings.MEDIA_ROOT, date, dir, audio_file)
-        wav_file = open(path_to_file, 'rb')
-        response = HttpResponse(wav_file, content_type='audio/wav')
-        return response
+    def get(self, request, song_id):
+        file = AudioFile.objects.filter(id=song_id).values('file')
+
+        if file.exists():
+            path_to_file = os.path.join(settings.MEDIA_ROOT, file[0]['file'])
+            wav_file = open(path_to_file, 'rb')
+            response = HttpResponse(wav_file, content_type='audio/wav')
+            return response
+        else:
+            return HttpResponseNotFound('No matching file found')
 
 class Editor(APIView):
 
