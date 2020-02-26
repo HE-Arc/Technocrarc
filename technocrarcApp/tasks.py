@@ -20,7 +20,7 @@ def split_sound(channel_name, song_id, stems, user_id):
 
     separator = Separator(settings.STEMS_OPTION[stems])
 
-    querySet = AudioFile.objects.filter(id=song_id).values('file')
+    querySet = AudioFile.objects.filter(id=song_id, user_id=user_id).values('file')
 
     if querySet.exists():
         file_name = querySet[0]['file']
