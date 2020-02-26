@@ -4,7 +4,6 @@ window.addEventListener("DOMContentLoaded", () => {
 
     socket.onopen = function open(e) {
         console.log('WebSockets connection created.')
-        splitSound()
     }
 
     socket.onmessage = function onMessage(e) {
