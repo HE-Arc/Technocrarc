@@ -1,40 +1,34 @@
+// TODO : delete or move in another file after test
+window.addEventListener("DOMContentLoaded", () => {
+    var socket = new WebSocket('ws://' + window.location.host + '/ws/background-tasks/')
 
-var socket = new WebSocket('ws://' + window.location.host + '/ws/background-tasks/')
+    socket.onopen = function open(e) {
+        console.log('WebSockets connection created.')
+    }
 
-function createAudioTag(url) {
-    var sound = document.createElement('audio')
-    sound.id = 'audio-player'
-    sound.controls = 'controls'
-    sound.src = url
-    sound.type = 'audio/wav'
+    socket.onmessage = function onMessage(e) {
+        console.log(e)
+    }
 
-    document.getElementById('song').appendChild(sound)
-}
+    socket.onclose = function onClose(e) {
+        console.log(e)
+    }
 
-function splitSound(fileName='file_example_MP3_700KB.mp3', stems='5_stems') {
-    socket.send(
-        JSON.stringify({
-            'song_name': fileName,
-            'stems': stems,
-        })
-    )
-}
+    if (socket.readyState == WebSocket.OPEN) {
+        socket.onopen()
+    }
 
-socket.onopen = function open(e) {
-    console.log('WebSockets connection created.')
-}
+    function splitSound(songId = '16', stems = '2_stems') {
+        socket.send(
+            JSON.stringify({
+                'song_id': '16',
+                'stems': stems,
+            })
+        )
+    }
+});
 
-socket.onmessage = function onMessage(e) {
-    console.log(e)
-}
 
-socket.onclose = function onClose(e) {
-    console.log(e)
-}
-
-if (socket.readyState == WebSocket.OPEN) {
-    socket.onopen()
-}
 
 // DOM
 const $$ = {

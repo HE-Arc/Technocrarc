@@ -15,29 +15,39 @@ import json
 channel_layer = get_channel_layer()
 
 @task(name='split_sound')
-def split_sound(channel_name, file_name, stems):
+def split_sound(channel_name, song_id, stems, user_id):
     mp.current_process()._config['daemon'] = False
 
     separator = Separator(settings.STEMS_OPTION[stems])
 
-    separator.separate_to_file(
-        os.path.join(settings.MEDIA_ROOT, file_name),
-        os.path.join(settings.MEDIA_ROOT, os.path.split(file_name)[0])
-    )
+    querySet = AudioFile.objects.filter(id=song_id, user_id=user_id).values('file')
 
-    rel_path = os.path.splitext(file_name)[0]
-    path = os.path.join(settings.MEDIA_ROOT, rel_path)
+    if querySet.exists():
+        file_name = querySet[0]['file']
 
-    for file in os.listdir(path):
-        # TODO : fk user on audio file
-        audio_file = AudioFile()
-        audio_file.file = os.path.join(rel_path, file)
-        audio_file.save()
-
-        date, dir = os.path.split(rel_path)
-        file_url = reverse(
-            'technocrarcApp:download',
-            kwargs={'date': date, 'dir': dir, 'audio_file': file}
+        separator.separate_to_file(
+            os.path.join(settings.MEDIA_ROOT, file_name),
+            os.path.join(settings.MEDIA_ROOT, os.path.split(file_name)[0])
         )
 
-        async_to_sync(channel_layer.send)(channel_name, {'type': 'file.processed', 'file_url': file_url})
+        rel_path = os.path.splitext(file_name)[0]
+        path = os.path.join(settings.MEDIA_ROOT, rel_path)
+
+        for file in os.listdir(path):
+            audio_file = AudioFile()
+            audio_file.file = os.path.join(rel_path, file)
+            audio_file.user_id = user_id
+            audio_file.save()
+
+            file_url = reverse(
+                'technocrarcApp:download',
+                kwargs={'audio_id': audio_file.id}
+            )
+
+            async_to_sync(channel_layer.send)(channel_name, {'type': 'file.processed', 'file_url': file_url})
+    else:
+        async_to_sync(channel_layer.send)(channel_name,
+            {
+            'type': 'file.processed',
+            'error': 'No matching file found'
+            })
