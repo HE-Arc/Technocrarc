@@ -25,7 +25,7 @@ const $$ = {
     fileField: document.querySelector('.file-field'),
     dragDropFigure: document.querySelector('.dragdrop-figure'),
     dragDropUploaded: document.querySelector('.dragdrop-uploaded'),
-    loadWrapper: document.querySelector('#load-wrapper'),
+    dragDropClose: document.querySelector('.dragdrop-uploaded .close'),
 };
 
 /**
@@ -104,11 +104,17 @@ function showUploadedFile()
 // Displays the Drag & Drop information
 function showDragDropFigure()
 {
-    $$.soundFileInput.files = [];
+    $$.soundFileInput.value = '';
 
     $$.dragDropUploaded.setAttribute('hidden', true);
     $$.dragDropFigure.removeAttribute('hidden');
 }
+
+// Drag & Drop « close » icon
+$$.dragDropClose.addEventListener('click', evt =>
+{
+    showDragDropFigure();
+});
 
 // Upload sound file form on submit
 $$.soundUploadForm.addEventListener('submit', evt =>
