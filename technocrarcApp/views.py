@@ -32,6 +32,7 @@ class Upload(APIView):
 class SplitAudioFileViewDownload(APIView):
 
     def get(self, request, date, dir, audio_file):
+        # TODO use id instead of file name
         path_to_file = os.path.join(settings.MEDIA_ROOT, date, dir, audio_file)
         wav_file = open(path_to_file, 'rb')
         response = HttpResponse(wav_file, content_type='audio/wav')
