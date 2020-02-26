@@ -20,10 +20,12 @@ if (socket.readyState == WebSocket.OPEN) {
 
 // DOM
 const $$ = {
+    soundUploadForm: document.querySelector('#form-upload-sound'),
     soundFileInput: document.querySelector('#sound-file-input'),
     fileField: document.querySelector('.file-field'),
     dragDropFigure: document.querySelector('.dragdrop-figure'),
     dragDropUploaded: document.querySelector('.dragdrop-uploaded'),
+    loadWrapper: document.querySelector('#load-wrapper'),
 };
 
 /**
@@ -88,6 +90,7 @@ function parseAudioFiles(files)
     }
 }
 
+// Displays the uploaded sound file information
 function showUploadedFile()
 {
     let file = $$.soundFileInput.files[0];
@@ -98,10 +101,37 @@ function showUploadedFile()
     $$.dragDropUploaded.removeAttribute('hidden');
 }
 
+// Displays the Drag & Drop information
 function showDragDropFigure()
 {
     $$.soundFileInput.files = [];
 
     $$.dragDropUploaded.setAttribute('hidden', true);
     $$.dragDropFigure.removeAttribute('hidden');
+}
+
+// Upload sound file form on submit
+$$.soundUploadForm.addEventListener('submit', evt =>
+{
+    evt.preventDefault();
+
+    //TODO
+});
+
+// Uploads a sound file to the server in order to split it
+function uploadSound()
+{
+    //TODO
+}
+
+// Displays the preloader(s)
+function activatePreloader()
+{
+    document.querySelector('.preloader-container').style.display = 'block';
+}
+
+// Hides the preloader(s)
+function deactivatePreloader()
+{
+    document.querySelector('.preloader-container').style.display = 'none';
 }
