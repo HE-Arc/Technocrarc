@@ -4,10 +4,13 @@ window.addEventListener("DOMContentLoaded", () => {
 
     socket.onopen = function open(e) {
         console.log('WebSockets connection created.')
+        splitSound()
     }
 
     socket.onmessage = function onMessage(e) {
         console.log(e)
+        let json_data = JSON.parse(e.data)
+        console.log(json_data)
     }
 
     socket.onclose = function onClose(e) {
@@ -18,7 +21,7 @@ window.addEventListener("DOMContentLoaded", () => {
         socket.onopen()
     }
 
-    function splitSound(songId = '16', stems = '2_stems') {
+    function splitSound(songId = '16', stems = '10_stems') {
         socket.send(
             JSON.stringify({
                 'song_id': '16',

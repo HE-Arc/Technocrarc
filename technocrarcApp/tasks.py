@@ -41,13 +41,13 @@ def split_sound(channel_name, song_id, stems, user_id):
 
             file_url = reverse(
                 'technocrarcApp:download',
-                kwargs={'audio_id': audio_file.id}
+                kwargs={'song_id': audio_file.id}
             )
 
             async_to_sync(channel_layer.send)(channel_name, {'type': 'file.processed', 'file_url': file_url})
     else:
         async_to_sync(channel_layer.send)(channel_name,
             {
-            'type': 'file.processed',
+            'type': 'file.error',
             'error': 'No matching file found'
             })
