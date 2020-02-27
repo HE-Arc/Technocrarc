@@ -1,4 +1,6 @@
 from django.test import TestCase
+from django.test import Client
+
 from django.contrib.auth.models import User
 
 # Create your tests here.
@@ -20,3 +22,14 @@ class UserExampleTest(TestCase):
         self.assertEqual(user.last_name, 'Crarc')
         self.assertEqual(user.email, 'test@technocrarc.ch')
         self.assertEqual(user.password, 'foo')
+
+        '''
+        Test the authenticated routes:
+        '''
+
+        # TODO: test with authenticated routes
+
+        # Valid login
+        c = Client()
+        response = c.post('/log-in', { 'username': user.username, 'password': user.password })
+        self.assertEqual(200, response.status_code)
