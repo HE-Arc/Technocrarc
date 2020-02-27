@@ -1,22 +1,37 @@
+// TODO : delete or move in another file after test
+window.addEventListener("DOMContentLoaded", () => {
+    var socket = new WebSocket('ws://' + window.location.host + '/ws/background-tasks/')
 
-var socket = new WebSocket('ws://' + window.location.host + '/ws/background-tasks/')
+    socket.onopen = function open(e) {
+        console.log('WebSockets connection created.')
+        splitSound()
+    }
 
-socket.onopen = function open(e) {
-    console.log('WebSockets connection created.')
-    socket.send(JSON.stringify({'message': 'message'}))
-}
+    socket.onmessage = function onMessage(e) {
+        console.log(e)
+        let json_data = JSON.parse(e.data)
+        console.log(json_data)
+    }
 
-socket.onmessage = function onMessage(e) {
-    console.log(e)
-}
+    socket.onclose = function onClose(e) {
+        console.log(e)
+    }
 
-socket.onclose = function onClose(e) {
-    console.log(e)
-}
+    if (socket.readyState == WebSocket.OPEN) {
+        socket.onopen()
+    }
 
-if (socket.readyState == WebSocket.OPEN) {
-    socket.onopen()
-}
+    function splitSound(songId = '16', stems = '10_stems') {
+        socket.send(
+            JSON.stringify({
+                'song_id': '16',
+                'stems': stems,
+            })
+        )
+    }
+});
+
+
 
 // DOM
 const $$ = {

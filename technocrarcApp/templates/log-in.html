@@ -5,22 +5,28 @@
     <div class="center">
         <h1 class="main-title">Log in</h1>
 
-        <form id="form-log-in" action="upload" method="POST">
+        <div class="row">
+          <form class="col s12" method="POST" action="log-in">
+            {% csrf_token %}
 
-            <div class="container input-field">
+            {% for field in form %}
               <div class="row">
-                <div class="col s6">
-                  <p>test</p>
-                </div>
-                <div class="col s6">
-                  <p>test2</p>
+                <div class="input-field col s12">
+                  {{ field }}
+                  <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                  {% if field.errors %}
+                    <ol>
+                      {% for error in field.errors %}
+                        <strong style="color: red;" class="left">{{ error|escape }}</strong>
+                        {% endfor %}
+                      </ol>
+                  {% endif %}
                 </div>
               </div>
-            </div>
-
-            <button class="btn btn-large waves-effect waves-light" type="submit">UPLOAD</button>
-
-        </form>
+            {% endfor %}
+            <button class="btn btn-large waves-effect waves-light" type="submit">Submit</button>
+          </form>
+        </div>
     </div>
 </div>
 {% endblock content %}

@@ -4,13 +4,17 @@ from rest_framework.views import APIView
 from rest_framework import status
 from django.shortcuts import render
 from django.http import HttpResponse
+from django.conf import settings
 from .serializers import AudioFileSerializer
-
-from .forms import SignUpForm
+from .forms import *
+from .models import AudioFile
 from django.http import HttpResponseRedirect
 from django.contrib.auth.models import User
+from django.contrib.auth import *
+import os
 
 class Upload(APIView):
+
     parser_class = (FileUploadParser,)
 
     def get(self, request, *args, **kwargs):
@@ -18,6 +22,7 @@ class Upload(APIView):
 
     def post(self, request, *args, **kwargs):
       audio_file_serializer = AudioFileSerializer(data=request.data)
+      request.data['user'] = request.user.id
 
       if audio_file_serializer.is_valid():
           audio_file_serializer.save()
@@ -25,19 +30,60 @@ class Upload(APIView):
       else:
           return Response(audio_file_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+class SplitAudioFileViewDownload(APIView):
+
+    def get(self, request, song_id):
+        file = AudioFile.objects.filter(id=song_id).values('file')
+
+        if file.exists():
+            path_to_file = os.path.join(settings.MEDIA_ROOT, file[0]['file'])
+            wav_file = open(path_to_file, 'rb')
+            response = HttpResponse(wav_file, content_type='audio/wav')
+            return response
+        else:
+            return HttpResponseNotFound('No matching file found')
+
 class Editor(APIView):
+
     def get(self, request, *args, **kwargs):
         return render(request, 'editor.html')
 
 class Home(APIView):
+
     def get(self, request, *args, **kwargs):
         return render(request, 'home.html')
 
 class LogIn(APIView):
+
     def get(self, request, *args, **kwargs):
-        return render(request, 'log-in.html')
+        form = LogInForm()
+        return render(request, 'log-in.html', {'form': form})
+
+    def post(self, request, *args, **kwargs):
+        form = LogInForm(request.POST)
+
+        if form.is_valid():
+            username = form.cleaned_data['username']
+            password = form.cleaned_data['password']
+
+            username = str(username)
+            username = username.lower()
+
+            user = authenticate(request, username=username, password=password)
+
+            if user is not None:
+                login(request, user)
+                return HttpResponseRedirect('/upload')
+            else:
+                form.add_error('password', 'Your credentials have not been found in our records.')
+
+        if form.is_valid():
+            return HttpResponseRedirect('/upload')
+        else:
+            return render(request, 'log-in.html', {'form': form})
 
 class SignUp(APIView):
+
     def get(self, request, *args, **kwargs):
         form = SignUpForm()
         return render(request, 'sign-up.html', {'form': form})
@@ -72,11 +118,14 @@ class SignUp(APIView):
             newUser.last_name = last_name
             newUser.save()
 
-            return render(request, 'home.html')
+            #Authenticate the user
+            login(request, newUser)
+
+            return HttpResponseRedirect('/upload')
         else:
             return render(request, 'sign-up.html', {'form': form})
 
-
-
-        # if form.is_valid():
-        #     return HttpResponseRedirect('/thanks/')
+class Logout(APIView):
+    def get(self, request, *args, **kwargs):
+        logout(request)
+        return HttpResponseRedirect('/')
