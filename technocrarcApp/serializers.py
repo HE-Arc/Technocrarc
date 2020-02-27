@@ -1,11 +1,17 @@
 from rest_framework import serializers
-from .models import AudioFile
+from .models import AudioFile, EffectFile
 from django.conf import settings
 
 class AudioFileSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = AudioFile
+        fields = '__all__'
+
+class EffectFileSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = EffectFile
         fields = '__all__'
 
 class SpliterSerializer(serializers.Serializer):
