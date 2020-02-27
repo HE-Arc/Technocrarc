@@ -70,7 +70,7 @@ class AudioFileUpload(TestCase):
 
     @tag('audiofileupload')
     def test_audiofile_upload(self):
-        with open('./test/test.txt') as f:
+        with open('./test/test.wav', 'rb') as f:
             self.client.post('/upload', { 'file': f })
             AudioFile.objects.create(file=f.name, user=self.user)
 
