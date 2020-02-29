@@ -6,12 +6,12 @@
     <div class="center">
         <h1 class="main-title">Technocrarc</h1>
 
-        <form id="form-upload-sound" action="upload" method="POST" enctype="multipart/form-data">
+        <form class="form-upload-sound" action="upload" method="POST" enctype="multipart/form-data">
 
             {% csrf_token %}
 
             <div class="file-field input-field">
-                <input id="sound-file-input" name="file" type="file" accept="audio/x-waw" required>
+                <input class="sound-file-input" name="file" type="file" accept="audio/x-waw" required>
                 <div class="file-path-wrapper">
                     <div class="dragdrop-figure">
                         <i class="material-icons">cloud_upload</i>
