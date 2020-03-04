@@ -4,6 +4,15 @@ form .btn-large {
     width: 100%;
 }
 
+/* HEADER */
+.header #nav-mobile a {
+    transition: all 0.3s;
+}
+.header #nav-mobile a:hover {
+    color: #f4511e;
+    background: #fff;
+}
+
 /* DRAG & DROP FILE INPUT */
 .file-field {
     height: 12em;

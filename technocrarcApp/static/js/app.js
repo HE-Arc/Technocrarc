@@ -45,6 +45,11 @@ const $$ = {
 
 document.addEventListener('DOMContentLoaded', (evt) =>
 {
+    // Inits Tooltips
+    M.Tooltip.init(document.querySelectorAll('.tooltipped'), {
+        enterDelay: 300,
+    });
+
     // Elements with class « file-field »
     $$.fileFields.forEach((item, i) =>
     {
