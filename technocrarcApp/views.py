@@ -6,9 +6,8 @@ from django.shortcuts import render
 from django.http import HttpResponse
 from django.conf import settings
 from .serializers import AudioFileSerializer
-import os
-
 from .forms import *
+from .models import AudioFile
 from django.http import HttpResponseRedirect
 from django.contrib.auth.models import User
 from django.contrib.auth import *
@@ -23,9 +22,8 @@ class Upload(LoginRequiredMixin, APIView):
         return render(request, 'upload.html')
 
     def post(self, request, *args, **kwargs):
-      # TODO : fk user on audio file
-
       audio_file_serializer = AudioFileSerializer(data=request.data)
+      request.data['user'] = request.user.id
 
       if audio_file_serializer.is_valid():
           audio_file_serializer.save()
@@ -34,15 +32,21 @@ class Upload(LoginRequiredMixin, APIView):
           return Response(audio_file_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+
 class SplitAudioFileViewDownload(LoginRequiredMixin, APIView):
     login_url = '/log-in'
     redirect_field_name = 'redirect_to'
-    
-    def get(self, request, date, dir, audio_file):
-        path_to_file = os.path.join(settings.MEDIA_ROOT, date, dir, audio_file)
-        wav_file = open(path_to_file, 'rb')
-        response = HttpResponse(wav_file, content_type='audio/wav')
-        return response
+
+    def get(self, request, song_id):
+        file = AudioFile.objects.filter(id=song_id).values('file')
+
+        if file.exists():
+            path_to_file = os.path.join(settings.MEDIA_ROOT, file[0]['file'])
+            wav_file = open(path_to_file, 'rb')
+            response = HttpResponse(wav_file, content_type='audio/wav')
+            return response
+        else:
+            return HttpResponseNotFound('No matching file found')
 
 class Editor(LoginRequiredMixin, APIView):
     login_url = '/log-in'
@@ -50,6 +54,7 @@ class Editor(LoginRequiredMixin, APIView):
 
     def get(self, request, *args, **kwargs):
         return render(request, 'editor.html')
+
 
 class Home(APIView):
 

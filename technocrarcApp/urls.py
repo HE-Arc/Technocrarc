@@ -10,5 +10,5 @@ urlpatterns = [
     path('log-in', LogIn.as_view()),
     path('sign-up', SignUp.as_view()),
     path('logout', Logout.as_view()),
-    path('download/<str:date>/<str:dir>/<str:audio_file>', SplitAudioFileViewDownload.as_view(), name='download'),
+    path('download/<int:song_id>', SplitAudioFileViewDownload.as_view(), name='download'),
 ]
