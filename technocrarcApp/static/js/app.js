@@ -21,10 +21,10 @@ window.addEventListener("DOMContentLoaded", () => {
         socket.onopen()
     }
 
-    function splitSound(songId = '16', stems = '10_stems') {
+    function splitSound(songId = '36', stems = '10_stems') {
         socket.send(
             JSON.stringify({
-                'song_id': '16',
+                'song_id': songId,
                 'stems': stems,
             })
         )
