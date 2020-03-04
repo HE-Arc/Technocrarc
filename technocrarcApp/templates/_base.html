@@ -8,7 +8,6 @@
   <title>Technocrarc</title>
   <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <!-- <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet"> -->
 
   <!-- STYLES -->
   <link rel="stylesheet" href="{% get_static_prefix %}css/materialize.css">
@@ -24,12 +23,11 @@
       <a href="/" class="brand-logo">Technocrarc</a>
       <ul id="nav-mobile" class="right">
         {% if user.is_authenticated %}
-        <li><a href="editor">Editor</a></li>
-        <li><a href="upload">Upload</a></li>
-        <li><a href="logout">Logout</a></li>
+        <li><a href="editor"><i class="material-icons">edit</i></a></li>
+        <li><a href="upload"><i class="material-icons">cloud_upload</i></a></li>
+        <li><a href="logout"><i class="material-icons">logout</i></a></li>
         {% else %}
-          <li><a href="log-in">Log in</a></li>
-          <li><a href="sign-up">Sign up</a></li>
+          <li><a href="log-in"><i class="material-icons">exit_to_app</i></a></li>
         {% endif %}
       </ul>
     </div>

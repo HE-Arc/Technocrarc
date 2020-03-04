@@ -1,4 +1,9 @@
 
+/* GENERAL */
+form .btn-large {
+    width: 100%;
+}
+
 /* DRAG & DROP FILE INPUT */
 .file-field {
     height: 12em;
@@ -27,6 +32,36 @@
     font-style: italic;
 }
 
-form .btn-large {
-    width: 100%;
+.dragdrop-uploaded {
+    position: relative;
+}
+.dragdrop-uploaded .close {
+    color: #333;
+    font-size: 2.5rem;
+    opacity: 1;
+    margin: 0;
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    transition: all 0.3s;
+}
+.dragdrop-uploaded .close:hover {
+    color: #dd0000;
+    transform: scale(1.4);
+}
+
+/* LOADING */
+.preloader-container {
+    background: rgba(255, 255, 255, 0.5);
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 9999;
+    overflow: hidden;
+    display: none;
+}
+.preloader-container .proloader-wrapper {
+    position: relative;
 }
