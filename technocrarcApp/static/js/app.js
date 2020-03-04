@@ -1,4 +1,11 @@
 
+
+window.addEventListener("DOMContentLoaded", (event) => {
+  M.AutoInit();
+  prepareEditor();
+});
+
+
 var socket = new WebSocket('ws://' + window.location.host + '/ws/background-tasks/')
 
 socket.onopen = function open(e) {
@@ -105,3 +112,94 @@ function showDragDropFigure()
     $$.dragDropUploaded.setAttribute('hidden', true);
     $$.dragDropFigure.removeAttribute('hidden');
 }
+
+function prepareEditor()
+{
+  var url = window.location.href;
+  var lastPart = url.substr(url.lastIndexOf('/') + 1);
+  if (lastPart === "editor") {
+
+    waveArray = []
+    for (var i = 0; i < 10; i++) {
+      var rowElement = document.createElement("div")
+      var colElement = document.createElement("div")
+      var cardPanelElement = document.createElement("div")
+      var waveFormElement = document.createElement("div")
+
+      rowElement.className += "row"
+      colElement.className += "col"
+      colElement.className += "s12"
+      cardPanelElement.className += "card-panel hoverable"
+      waveFormElement.id = "waveForm_" + i
+
+      cardPanelElement.appendChild(waveFormElement)
+      colElement.appendChild(cardPanelElement)
+      rowElement.appendChild(colElement)
+
+      document.getElementById("wave-container").appendChild(rowElement)
+
+
+      var wavesurfer = WaveSurfer.create({
+        container: '#waveForm_' + i,
+        waveColor: 'violet',
+        progressColor: 'purple'
+      });
+
+      wavesurfer.load(STATIC_URL + "/mp3/bensound-summer.mp3")
+      wavesurfer.on('ready', function () {
+        wavesurfer.play();
+      });
+
+      waveArray[i] = wavesurfer
+
+
+
+    }
+
+
+    console.log("Editor loaded")
+  }
+
+  function uploadSongs()
+  {
+    //Input : sound-file-input
+    // url : upload
+    let file = document.getElementById('sound-file-input').files[0]
+    let options = {
+      method: 'POST',
+      headers: {
+        "Content-Type": "audio/x-waw"
+      },
+      body: files
+    }
+
+    fetch('upload', options).then(
+      response => response.json()
+    ).then(
+      success => console.log(success)
+    ).catch(
+      error => console.log(error)
+    )
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//

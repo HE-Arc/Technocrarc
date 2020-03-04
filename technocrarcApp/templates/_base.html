@@ -8,7 +8,7 @@
   <title>Technocrarc</title>
   <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+  <!-- <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet"> -->
 
   <!-- STYLES -->
   <link rel="stylesheet" href="{% get_static_prefix %}css/materialize.css">
@@ -42,8 +42,13 @@
   <footer class="footer"></footer>
 
   <!-- SCRIPTS -->
+  <script type="text/javascript">
+    // GLOBAL VARIABLES
+    const STATIC_URL = {% get_static_prefix %}
+  </script>
   <script src="//code.jquery.com/jquery-3.1.1.min.js"></script>
   <script src="{% static 'js/materialize.js' %}"></script>
+  <script src="{% static 'js/wavesurfer.js' %}"></script>
   <script src="{% static 'js/app.js' %}"></script>
 
 </body>
