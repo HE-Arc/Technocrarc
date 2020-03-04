@@ -1,4 +1,9 @@
 
+/* GENERAL */
+form .btn-large {
+    width: 100%;
+}
+
 /* DRAG & DROP FILE INPUT */
 .file-field {
     height: 12em;
@@ -25,10 +30,6 @@
     color: #777;
     font-size: 0.9rem;
     font-style: italic;
-}
-
-form .btn-large {
-    width: 100%;
 }
 
 .dragdrop-uploaded {
