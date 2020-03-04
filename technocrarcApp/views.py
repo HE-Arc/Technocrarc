@@ -3,8 +3,9 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import status
 from django.shortcuts import render
-from django.http import HttpResponse, HttpResponseNotFound
+from django.http import HttpResponse, JsonResponse, HttpResponseNotFound
 from django.conf import settings
+from django.core import serializers
 from .serializers import AudioFileSerializer, EffectFileSerializer
 from .forms import *
 from .models import AudioFile, EffectFile
@@ -59,6 +60,15 @@ class P5(APIView):
 
     def get(self, request, *args, **kwargs):
         return render(request, 'p5_test.html')
+
+class Audio(APIView):
+
+    def get(self, request, *args, **kwargs):
+        user_id = request.user.id
+        users_file = AudioFile.objects.filter(user_id=user_id).values_list('file', 'id')
+
+        return JsonResponse(dict(audio_files=list(users_file)))
+
 
 class SplitAudioFileViewDownload(APIView):
 
