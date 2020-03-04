@@ -135,3 +135,5 @@ env
 
 #rdb files
 *.rdb
+
+.vscode/

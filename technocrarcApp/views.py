@@ -3,11 +3,11 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import status
 from django.shortcuts import render
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseNotFound
 from django.conf import settings
-from .serializers import AudioFileSerializer
+from .serializers import AudioFileSerializer, EffectFileSerializer
 from .forms import *
-from .models import AudioFile
+from .models import AudioFile, EffectFile
 from django.http import HttpResponseRedirect
 from django.contrib.auth.models import User
 from django.contrib.auth import *
@@ -31,6 +31,35 @@ class Upload(LoginRequiredMixin, APIView):
       else:
           return Response(audio_file_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+class AudioEffectView(APIView):
+
+    def get(self, request, effect_id):
+        user_id = request.user.id
+        file = EffectFile.objects.filter(id=effect_id, user_id=user_id).values('file')
+
+        if file.exists():
+            path_to_file = os.path.join(settings.MEDIA_ROOT, file[0]['file'])
+            with open(path_to_file, 'r') as json_file:
+                response = HttpResponse(json_file, content_type='application/json')
+            return response
+        else:
+            return HttpResponseNotFound('No matching file found')
+
+    def post(self, request, *args, **kwargs):
+        effect_file_serializer = EffectFileSerializer(data=request.data)
+        request.data['user'] = request.user.id
+
+        if effect_file_serializer.is_valid():
+            effect_file_serializer.save()
+            return Response(effect_file_serializer.data, status=status.HTTP_201_CREATED)
+        else:
+            return Response(effect_file_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+# TODO : delete after test
+class P5(APIView):
+
+    def get(self, request, *args, **kwargs):
+        return render(request, 'p5_test.html')
 
 
 class SplitAudioFileViewDownload(LoginRequiredMixin, APIView):
@@ -38,12 +67,13 @@ class SplitAudioFileViewDownload(LoginRequiredMixin, APIView):
     redirect_field_name = 'redirect_to'
 
     def get(self, request, song_id):
-        file = AudioFile.objects.filter(id=song_id).values('file')
+        user_id = request.user.id
+        file = AudioFile.objects.filter(id=song_id, user_id=user_id).values('file')
 
         if file.exists():
             path_to_file = os.path.join(settings.MEDIA_ROOT, file[0]['file'])
-            wav_file = open(path_to_file, 'rb')
-            response = HttpResponse(wav_file, content_type='audio/wav')
+            with open(path_to_file, 'rb') as wav_file:
+                response = HttpResponse(wav_file, content_type='audio/wav')
             return response
         else:
             return HttpResponseNotFound('No matching file found')
