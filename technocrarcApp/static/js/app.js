@@ -216,13 +216,15 @@ function uploadSongs()
   //Input : sound-file-input
   // url : upload
   let file = document.getElementById('sound-file-input').files[0]
+  let formData = new FormData();
+  formData.append('file', file);
+
   let options = {
     method: 'POST',
     headers: {
-      'X-CSRFToken': getCookie('csrftoken'),
-      'Content-Type': 'audio/wav'
+      'X-CSRFToken': getCookie('csrftoken')
     },
-    body: file,
+    body: formData,
     credentials: 'same-origin'
   }
 
