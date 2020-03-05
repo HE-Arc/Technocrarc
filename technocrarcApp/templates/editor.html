@@ -24,40 +24,39 @@
 <div id="uploadFileDialog" class="modal">
   <div class="modal-content">
     <div class="center">
-      <form id="form-upload-sound" action="upload" method="POST">
-        <div class="file-field input-field">
-          <input id="sound-file-input" type="file" accept="audio/x-waw" required>
+      <div class="file-field input-field">
+          <input class="sound-file-input" id="sound-file-input" name="file" type="file" accept="audio/x-waw" required>
           <div class="file-path-wrapper">
-            <div class="dragdrop-figure">
-              <i class="material-icons">cloud_upload</i>
-              <p>Drop your sound here !</p>
-              <p class="italic">Max 50 MB</p>
-              <input class="file-path validate" type="text" hidden>
-            </div>
-            <div class="dragdrop-uploaded" hidden>
-              <i class="material-icons">check_circle</i>
-              <p class="uploaded-file-name italic"></p>
-              <p class="uploaded-file-size italic"></p>
-            </div>
-          </div>
-        </div>
-        <button class="btn btn-large waves-effect waves-light" onclick="uploadSongs();">UPLOAD</button>
-        <br>
-        <br>
-        <div class="preloader-container">
-          <div class="preloader-wrapper active">
-            <div class="spinner-layer spinner-blue-only">
-              <div class="circle-clipper left">
-                <div class="circle"></div>
-              </div><div class="gap-patch">
-                <div class="circle"></div>
-              </div><div class="circle-clipper right">
-                <div class="circle"></div>
+              <div class="dragdrop-figure">
+                  <i class="material-icons">cloud_upload</i>
+                  <p>Drop your sound here !</p>
+                  <p class="italic">Max 50 MB</p>
+                  <input class="file-path validate" type="text" hidden>
               </div>
-            </div>
+              <div class="dragdrop-uploaded" hidden>
+                  <i class="material-icons close">close</i>
+                  <i class="material-icons">audiotrack</i>
+                  <p class="uploaded-file-name italic"></p>
+                  <p class="uploaded-file-size italic"></p>
+              </div>
           </div>
-        </div>
-      </form>
+      </div>
+
+      <button class="btn btn-large waves-effect waves-light" onclick="uploadSongs();">UPLOAD
+          <div class="preloader-container">
+              <div class="preloader-wrapper active">
+                <div class="spinner-layer spinner-blue-only">
+                  <div class="circle-clipper left">
+                    <div class="circle"></div>
+                  </div><div class="gap-patch">
+                    <div class="circle"></div>
+                  </div><div class="circle-clipper right">
+                    <div class="circle"></div>
+                  </div>
+                </div>
+              </div>
+          </div>
+      </button>
     </div>
   </div>
 </div>

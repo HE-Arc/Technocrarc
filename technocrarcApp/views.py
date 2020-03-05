@@ -13,6 +13,9 @@ from django.http import HttpResponseRedirect
 from django.contrib.auth.models import User
 from django.contrib.auth import *
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.views.decorators.csrf import csrf_exempt
+from rest_framework.authentication import SessionAuthentication, BasicAuthentication
+
 
 class Upload(LoginRequiredMixin, APIView):
     parser_class = (FileUploadParser,)
