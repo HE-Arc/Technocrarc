@@ -213,9 +213,10 @@ function prepareEditor()
 // Uploads a sound file to the server in order to split it
 function uploadSongs()
 {
-  //Input : sound-file-input
-  // url : upload
-  let file = document.getElementById('sound-file-input').files[0]
+  enableUploadButton(false)
+  fileInput = document.getElementById('sound-file-input')
+
+  let file = fileInput.files[0]
   let formData = new FormData();
   formData.append('file', file);
 
@@ -229,14 +230,45 @@ function uploadSongs()
   }
 
   fetch('upload', options).then(
-    response => response.json()
-  ).then(
-    success => console.log(success)
+    response => {
+      if(response.ok){
+        M.toast({html: "Successfully uploaded song"})
+        enableUploadButton(true)
+        closeModal("uploadFileDialog")
+        document.getElementById('uploadSongClose').click()
+      }
+      else{
+        M.toast({html: "An error occured while uploading your song"})
+        enableUploadButton(true)
+      }
+    }
   ).catch(
-    error => M.toast({html: error})
+    error => M.toast({html: error.message})
   )
 }
 
+
+function enableUploadButton(enable)
+{
+  let button = document.getElementById('uploadSongButton')
+  let preLoader = document.getElementById('uploadSongPreloader')
+
+  if(enable){
+    button.disabled = false;
+    preLoader.style.display = "none"
+  }
+  else{
+    button.disabled = true;
+    preLoader.style.display = "block"
+  }
+}
+
+function closeModal(id)
+{
+  let modal = document.getElementById(id)
+  let instance = M.Modal.getInstance(modal)
+  instance.close();
+}
 
 function getSongList()
 {

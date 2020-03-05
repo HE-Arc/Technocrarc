@@ -34,16 +34,16 @@
                   <input class="file-path validate" type="text" hidden>
               </div>
               <div class="dragdrop-uploaded" hidden>
-                  <i class="material-icons close">close</i>
+                  <i id="uploadSongClose" class="material-icons close">close</i>
                   <i class="material-icons">audiotrack</i>
                   <p class="uploaded-file-name italic"></p>
                   <p class="uploaded-file-size italic"></p>
               </div>
           </div>
       </div>
+      <button class="btn btn-large waves-effect waves-light" id="uploadSongButton" onclick="uploadSongs();">UPLOAD
 
-      <button class="btn btn-large waves-effect waves-light" onclick="uploadSongs();">UPLOAD
-          <div class="preloader-container">
+          <div id="uploadSongPreloader" class="preloader-container">
               <div class="preloader-wrapper active">
                 <div class="spinner-layer spinner-blue-only">
                   <div class="circle-clipper left">
