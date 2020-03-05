@@ -3,7 +3,6 @@ window.addEventListener("DOMContentLoaded", () => {
   M.AutoInit();
   prepareEditor();
 
-
   var socket = new WebSocket('ws://' + window.location.host + '/ws/background-tasks/')
   socket.onopen = function open(e) {
     console.log('WebSockets connection created.')
@@ -161,14 +160,22 @@ function showDragDropFigure(input)
   $$.dragDropFigure.removeAttribute('hidden');
 }
 
-function prepareEditor()
+async function prepareEditor()
 {
   var url = window.location.href;
   var lastPart = url.substr(url.lastIndexOf('/') + 1);
   if (lastPart === "editor") {
 
+    let songs = await getSongList().then(songs => {
+      return songs
+    })
+
+    songs = songs['audio_files']
+
     waveArray = []
-    for (var i = 0; i < 0; i++) {
+
+    for (var i = 0; i < songs.length; i++) {
+      console.log(songs[i])
       var rowElement = document.createElement("div")
       var colElement = document.createElement("div")
       var cardPanelElement = document.createElement("div")
@@ -178,7 +185,7 @@ function prepareEditor()
       colElement.className += "col"
       colElement.className += "s12"
       cardPanelElement.className += "card-panel hoverable"
-      waveFormElement.id = "waveForm_" + i
+      waveFormElement.id = "waveForm_" + songs[i][1]
 
       cardPanelElement.appendChild(waveFormElement)
       colElement.appendChild(cardPanelElement)
@@ -188,23 +195,18 @@ function prepareEditor()
 
 
       var wavesurfer = WaveSurfer.create({
-        container: '#waveForm_' + i,
+        container: '#waveForm_' + songs[i][1],
         waveColor: 'violet',
         progressColor: 'purple'
       });
 
-      wavesurfer.load(STATIC_URL + "/mp3/bensound-summer.mp3")
+      wavesurfer.load("download/" + songs[i][1])
       wavesurfer.on('ready', function () {
         wavesurfer.play();
       });
 
       waveArray[i] = wavesurfer
-
-
-
     }
-
-
     console.log("Editor loaded")
   }
 }
@@ -270,9 +272,26 @@ function closeModal(id)
   instance.close();
 }
 
-function getSongList()
+async function getSongList()
 {
-  // URL : /audio
+  let options = {
+    method: 'GET',
+    headers: {
+      'X-CSRFToken': getCookie('csrftoken')
+    },
+    credentials: 'same-origin'
+  }
+
+  let songs = await fetch('audio', options)
+  .then(response=>response.json())
+  .then(
+    data => {
+        return data
+    }
+  ).catch(
+    error => M.toast({html: error.message})
+  )
+  return songs
 }
 
 function downloadSong()

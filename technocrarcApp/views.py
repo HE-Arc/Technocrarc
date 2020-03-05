@@ -15,6 +15,7 @@ from django.contrib.auth import *
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication
+import os
 
 
 class Upload(LoginRequiredMixin, APIView):
