@@ -34,7 +34,7 @@ window.addEventListener("DOMContentLoaded", () => {
   }
 });
 
-
+let globalSeekLock = false
 
 // DOM
 const $$ = {
@@ -166,49 +166,76 @@ async function prepareEditor()
   var lastPart = url.substr(url.lastIndexOf('/') + 1);
   if (lastPart === "editor") {
 
-    let songs = await getSongList().then(songs => {
-      return songs
-    })
+    let songs = await getSongList().then(songs => {return songs})
 
     songs = songs['audio_files']
 
     waveArray = []
 
     for (var i = 0; i < songs.length; i++) {
-      console.log(songs[i])
-      var rowElement = document.createElement("div")
-      var colElement = document.createElement("div")
-      var cardPanelElement = document.createElement("div")
-      var waveFormElement = document.createElement("div")
+      currentID = songs[i][1]
+      let rowElement = document.createElement("div")
+      let colElement = document.createElement("div")
+      let cardPanelElement = document.createElement("div")
+      let waveFormElement = document.createElement("div")
 
       rowElement.className += "row"
       colElement.className += "col"
       colElement.className += "s12"
       cardPanelElement.className += "card-panel hoverable"
-      waveFormElement.id = "waveForm_" + songs[i][1]
+      waveFormElement.id = "waveForm_" + currentID
+
+      let preLoader =  '<div id="progressDiv'+ currentID +'" class="progress progress-waveform"><div class="determinate" id="progress_'+ currentID +'" style="width: 30%"></div></div>'
 
       cardPanelElement.appendChild(waveFormElement)
+      cardPanelElement.insertAdjacentHTML('beforeend', preLoader)
       colElement.appendChild(cardPanelElement)
       rowElement.appendChild(colElement)
 
       document.getElementById("wave-container").appendChild(rowElement)
 
 
-      var wavesurfer = WaveSurfer.create({
-        container: '#waveForm_' + songs[i][1],
+      let wavesurfer = WaveSurfer.create({
+        container: '#waveForm_' + currentID,
         waveColor: 'violet',
         progressColor: 'purple'
       });
 
-      wavesurfer.load("download/" + songs[i][1])
-      wavesurfer.on('ready', function () {
-        wavesurfer.play();
-      });
+      // IIFE
+      (function(lockedID){
+        wavesurfer.load("download/" + currentID)
+
+        wavesurfer.on('seek', function(progress) {
+          if(!globalSeekLock){
+            changeSeek(progress)
+          }
+        })
+
+        wavesurfer.on('loading', function(progress){
+          changeProgressPercentage(progress, lockedID)
+        })
+      })(currentID);
 
       waveArray[i] = wavesurfer
     }
+
     console.log("Editor loaded")
   }
+}
+
+function changeProgressPercentage(progress, id)
+{
+  document.getElementById("progress_" + id).style.width = progress + "%"
+}
+
+function changeSeek(progress)
+{
+  globalSeekLock = true
+  for (let index = 0; index < waveArray.length; index++) {
+    let waveSurfer = waveArray[index];
+    waveSurfer.seekTo(progress)
+  }
+  globalSeekLock = false
 }
 
 //

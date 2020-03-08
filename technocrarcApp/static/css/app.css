@@ -65,3 +65,9 @@ form .btn-large {
 .preloader-container .proloader-wrapper {
     position: relative;
 }
+
+.progress-waveform{
+    bottom: -40px;
+    width: 105.5%;
+    margin-left: -24px;
+}
