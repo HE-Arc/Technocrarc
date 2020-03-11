@@ -32,7 +32,7 @@ class Upload(LoginRequiredMixin, APIView):
 
         project = Project()
         project.user_id = request.user.id
-        project.name = request.FILES['file']
+        project.name = request.FILES['file'][:-4]
         project.save()
         request.data['project'] = project.id
 
