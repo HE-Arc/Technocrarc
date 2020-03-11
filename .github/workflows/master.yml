@@ -16,11 +16,27 @@ jobs:
         python-version: [3.6, 3.7]
 
     steps:
+    - name: Setup MySQL server
+      uses: mirromutth/mysql-action@v1.1
+      with:
+        host port: 3800
+        container port: 3307
+        character set server: 'utf8'
+        collation server: 'utf8_general_ci'
+        mysql version: '5.7'
+        mysql database: 'technocrarc'
+        mysql root password: 'technocrarc'
+        mysql user: 'technocrarc'
+        mysql password: 'technocrarc'
     - uses: actions/checkout@v2
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v1
       with:
         python-version: ${{ matrix.python-version }}
+    - name: Switch to CI configuration
+      run: |
+        rm technocrarc/settings.py
+        mv technocrarc/settings.py.production technocrarc/settings.py
     - name: Install Dependencies
       run: |
         python --version
