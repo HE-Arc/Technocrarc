@@ -3,7 +3,6 @@ from .models import AudioFile, EffectFile
 from django.conf import settings
 
 class AudioFileSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = AudioFile
         fields = '__all__'

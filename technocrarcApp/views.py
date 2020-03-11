@@ -8,7 +8,7 @@ from django.conf import settings
 from django.core import serializers
 from .serializers import AudioFileSerializer, EffectFileSerializer
 from .forms import *
-from .models import AudioFile, EffectFile
+from .models import AudioFile, EffectFile, Project
 from django.http import HttpResponseRedirect
 from django.contrib.auth.models import User
 from django.contrib.auth import *
@@ -27,25 +27,33 @@ class Upload(LoginRequiredMixin, APIView):
         return render(request, 'upload.html')
 
     def post(self, request, *args, **kwargs):
-      audio_file_serializer = AudioFileSerializer(data=request.data)
-      request.data['user'] = request.user.id
+        audio_file_serializer = AudioFileSerializer(data=request.data)
+        request.data['user'] = request.user.id
 
-      if audio_file_serializer.is_valid():
-          audio_file_serializer.save()
-          return Response(audio_file_serializer.data, status=status.HTTP_201_CREATED)
-      else:
-          return Response(audio_file_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        project = Project()
+        project.user_id = request.user.id
+        project.save()
+        request.data['project'] = project.id
+
+        if audio_file_serializer.is_valid():
+            audio_file_serializer.save(project=project)
+            return Response(audio_file_serializer.data, status=status.HTTP_201_CREATED)
+        else:
+            return Response(audio_file_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 class AudioEffectView(APIView):
 
     def get(self, request, effect_id):
         user_id = request.user.id
-        file = EffectFile.objects.filter(id=effect_id, user_id=user_id).values('file')
+        file = EffectFile.objects.filter(
+            id=effect_id, user_id=user_id).values('file')
 
         if file.exists():
             path_to_file = os.path.join(settings.MEDIA_ROOT, file[0]['file'])
             with open(path_to_file, 'r') as json_file:
-                response = HttpResponse(json_file, content_type='application/json')
+                response = HttpResponse(
+                    json_file, content_type='application/json')
             return response
         else:
             return HttpResponseNotFound('No matching file found')
@@ -61,6 +69,8 @@ class AudioEffectView(APIView):
             return Response(effect_file_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 # TODO : delete after test
+
+
 class P5(APIView):
 
     def get(self, request, *args, **kwargs):
@@ -71,7 +81,8 @@ class Audio(APIView):
 
     def get(self, request, *args, **kwargs):
         user_id = request.user.id
-        users_file = AudioFile.objects.filter(user_id=user_id).values_list('file', 'id')
+        users_file = AudioFile.objects.filter(
+            user_id=user_id).values_list('file', 'id')
 
         return JsonResponse(dict(audio_files=list(users_file)))
 
@@ -82,7 +93,8 @@ class SplitAudioFileViewDownload(LoginRequiredMixin, APIView):
 
     def get(self, request, song_id):
         user_id = request.user.id
-        file = AudioFile.objects.filter(id=song_id, user_id=user_id).values('file')
+        file = AudioFile.objects.filter(
+            id=song_id, user_id=user_id).values('file')
 
         if file.exists():
             path_to_file = os.path.join(settings.MEDIA_ROOT, file[0]['file'])
@@ -91,6 +103,7 @@ class SplitAudioFileViewDownload(LoginRequiredMixin, APIView):
             return response
         else:
             return HttpResponseNotFound('No matching file found')
+
 
 class Editor(LoginRequiredMixin, APIView):
     login_url = '/log-in'
@@ -104,6 +117,7 @@ class Home(APIView):
 
     def get(self, request, *args, **kwargs):
         return render(request, 'home.html')
+
 
 class LogIn(APIView):
 
@@ -127,12 +141,14 @@ class LogIn(APIView):
                 login(request, user)
                 return HttpResponseRedirect('/upload')
             else:
-                form.add_error('password', 'Your credentials have not been found in our records.')
+                form.add_error(
+                    'password', 'Your credentials have not been found in our records.')
 
         if form.is_valid():
             return HttpResponseRedirect('/upload')
         else:
             return render(request, 'log-in.html', {'form': form})
+
 
 class SignUp(APIView):
 
@@ -152,8 +168,9 @@ class SignUp(APIView):
             email = form.cleaned_data['email']
 
             if password != password_conf:
-                form.add_error('password_conf', 'Password confirmation does not match.')
-                return render(request, 'sign-up.html', {'form': form })
+                form.add_error('password_conf',
+                               'Password confirmation does not match.')
+                return render(request, 'sign-up.html', {'form': form})
 
             # Check if user already exists
             username = str(username)
@@ -170,16 +187,18 @@ class SignUp(APIView):
             newUser.last_name = last_name
             newUser.save()
 
-            #Authenticate the user
+            # Authenticate the user
             login(request, newUser)
 
             return HttpResponseRedirect('/upload')
         else:
             return render(request, 'sign-up.html', {'form': form})
 
+
 class Logout(LoginRequiredMixin, APIView):
     login_url = '/log-in'
     redirect_field_name = 'redirect_to'
+
     def get(self, request, *args, **kwargs):
         logout(request)
         return HttpResponseRedirect('/')
