@@ -1,7 +1,13 @@
 
 /* GENERAL */
-form .btn-large {
-    width: 100%;
+body {
+    color: #fff;
+    background: #333;
+}
+
+.material-tooltip {
+    color: #222;
+    background-color: #fff;
 }
 
 /* HEADER */
@@ -11,6 +17,27 @@ form .btn-large {
 .header #nav-mobile a:hover {
     color: #f4511e;
     background: #fff;
+}
+
+/* FORM */
+form .btn {
+    color: #fff;
+    background: #c2185b;
+}
+form .btn:hover,
+form .btn:focus {
+    color: #c2185b;
+    background: #fff;
+}
+form .btn-large {
+    width: 100%;
+}
+
+.input-field input {
+    color: #f5f5f5;
+}
+.input-field label {
+    color: #c5c5c5;
 }
 
 /* DRAG & DROP FILE INPUT */

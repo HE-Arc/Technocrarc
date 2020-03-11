@@ -21,7 +21,7 @@
     <header class="header">
         <nav class="nav">
             <div class="nav-wrapper deep-orange darken-1">
-                <a href="/" class="brand-logo">Technocrarc</a>
+                <a href="/" class="brand-logo left">Technocrarc</a>
                 <ul id="nav-mobile" class="right">
                     {% if user.is_authenticated %}
                     <li><a href="editor" class="tooltipped" data-position="bottom" data-tooltip="Editor"><i class="material-icons">edit</i></a></li>
@@ -29,6 +29,7 @@
                     <li><a href="logout" class="tooltipped" data-position="bottom" data-tooltip="Logout"><i class="material-icons">logout</i></a></li>
                     {% else %}
                     <li><a href="log-in" class="tooltipped" data-position="bottom" data-tooltip="Login"><i class="material-icons">exit_to_app</i></a></li>
+                    <li><a href="sign-up" class="tooltipped" data-position="bottom" data-tooltip="Register"><i class="material-icons">add_box</i></a></li>
                     {% endif %}
                 </ul>
             </div>
