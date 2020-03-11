@@ -73,12 +73,12 @@ class LogIn(APIView):
 
             if user is not None:
                 login(request, user)
-                return HttpResponseRedirect('/upload')
+                return HttpResponseRedirect('/editor')
             else:
                 form.add_error('password', 'Your credentials have not been found in our records.')
 
         if form.is_valid():
-            return HttpResponseRedirect('/upload')
+            return HttpResponseRedirect('/editor')
         else:
             return render(request, 'log-in.html', {'form': form})
 
@@ -121,7 +121,7 @@ class SignUp(APIView):
             #Authenticate the user
             login(request, newUser)
 
-            return HttpResponseRedirect('/upload')
+            return HttpResponseRedirect('/edit')
         else:
             return render(request, 'sign-up.html', {'form': form})
 

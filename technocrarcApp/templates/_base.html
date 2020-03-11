@@ -21,7 +21,11 @@
     <header class="header">
         <nav class="nav">
             <div class="nav-wrapper deep-orange darken-1">
+                {% if user.is_authenticated %}
+                <a href="/editor" class="brand-logo left">Technocrarc</a>
+                {% else %}
                 <a href="/" class="brand-logo left">Technocrarc</a>
+                {% endif %}
                 <ul id="nav-mobile" class="right">
                     {% if user.is_authenticated %}
                     <li><a href="editor" class="tooltipped" data-position="bottom" data-tooltip="Editor"><i class="material-icons">edit</i></a></li>
