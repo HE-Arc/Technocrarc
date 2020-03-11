@@ -8,7 +8,7 @@
   <title>Technocrarc</title>
   <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+  <!--link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet"-->
 
   <!-- STYLES -->
   <link rel="stylesheet" href="{% get_static_prefix %}css/materialize.css">
@@ -17,23 +17,24 @@
 </head>
 <body>
 
-  <header class="header"></header>
+    <header class="header">
+        <nav class="nav">
+            <div class="nav-wrapper deep-orange darken-1">
+                <a href="/" class="brand-logo left">Technocrarc</a>
+                <ul id="nav-mobile" class="right">
+                    {% if user.is_authenticated %}
+                    <li><a href="editor" class="tooltipped" data-position="bottom" data-tooltip="Editor"><i class="material-icons">edit</i></a></li>
+                    <li><a href="upload" class="tooltipped" data-position="bottom" data-tooltip="Upload"><i class="material-icons">cloud_upload</i></a></li>
+                    <li><a href="logout" class="tooltipped" data-position="bottom" data-tooltip="Logout"><i class="material-icons">logout</i></a></li>
+                    {% else %}
+                    <li><a href="log-in" class="tooltipped" data-position="bottom" data-tooltip="Login"><i class="material-icons">exit_to_app</i></a></li>
+                    <li><a href="sign-up" class="tooltipped" data-position="bottom" data-tooltip="Register"><i class="material-icons">add_box</i></a></li>
+                    {% endif %}
+                </ul>
+            </div>
+        </nav>
+    </header>
 
-  <nav>
-    <div class="nav-wrapper">
-      <a href="/" class="brand-logo">Technocrarc</a>
-      <ul id="nav-mobile" class="right">
-        {% if user.is_authenticated %}
-        <li><a href="editor">Editor</a></li>
-        <li><a href="upload">Upload</a></li>
-        <li><a href="logout">Logout</a></li>
-        {% else %}
-          <li><a href="log-in">Log in</a></li>
-          <li><a href="sign-up">Sign up</a></li>
-        {% endif %}
-      </ul>
-    </div>
-  </nav>
   <main class="main">
     {% block content %}{% endblock content %}
   </main>
