@@ -50,7 +50,7 @@ requests==2.22.0
 scipy==1.4.1
 service-identity==18.1.0
 six==1.14.0
-spleeter==1.4.9
+spleeter
 sqlparse==0.3.0
 #tensorboard==1.14.0
 #tensorflow==1.15.2
