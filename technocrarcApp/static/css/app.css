@@ -5,6 +5,31 @@ body {
     background: #333;
 }
 
+p {
+    font-size: 1.1em;
+}
+
+a {
+    color: #c2185b;
+    position: relative;
+}
+a::after {
+    content: '';
+    background: #fff;
+    width: 100%;
+    height: 0.15em;
+    opacity: 0;
+    position: absolute;
+    bottom: -4px;
+    left: 0;
+    right: 0;
+    transition: all 0.3s;
+}
+a:hover::after,
+a:focus::after {
+    opacity: 1;
+}
+
 .material-tooltip {
     color: #222;
     background-color: #fff;
@@ -51,8 +76,8 @@ form .btn-large {
 }
 .file-field:hover,
 .file-field.dragenter {
-    color: #666;
-    box-shadow: 0.2rem 0.2rem 0.5rem 0.5rem rgba(0, 0, 0, 0.3);
+    color: #c5c5c5;
+    box-shadow: 0.2rem 0.2rem 0.5rem 0.5rem rgba(0, 0, 0, 0.5);
 }
 .file-field i {
     font-size: 4.5rem;
@@ -63,7 +88,7 @@ form .btn-large {
     margin: 0 0 0.5rem 0;
 }
 .file-field p.italic {
-    color: #777;
+    color: #c5c5c5;
     font-size: 0.9rem;
     font-style: italic;
 }
