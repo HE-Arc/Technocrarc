@@ -27,7 +27,7 @@ jobs:
     - name: Switch to CI configuration
       run: |
         rm technocrarc/settings.py
-        mv technocrarc/settings.py.production technocrarc/settings.py
+        mv technocrarc/settings.py.ci technocrarc/settings.py
     - name: Install Dependencies
       run: |
         python --version
@@ -36,3 +36,15 @@ jobs:
     - name: Run Tests
       run: |
         python manage.py test
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Deploy to SSH SRVZ-WEBAPP
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.HOST }}
+        username: ${{ secrets.USERNAME }}
+        password: ${{ secrets.PASSWORD }}
+        port: ${{ secrets.PORT }}
+        script: whoami
+    
