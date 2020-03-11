@@ -35,7 +35,7 @@ jobs:
         python-version: ${{ matrix.python-version }}
     - name: Switch to CI configuration
       run: |
-        ls -al
+        ls -al technocrarc
         pwd
         rm technocrarc/settings.py
         mv technocrarc/settings.py.production technocrarc/settings.py
