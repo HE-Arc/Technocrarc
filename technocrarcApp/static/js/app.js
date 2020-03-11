@@ -24,7 +24,7 @@ window.addEventListener("DOMContentLoaded", () => {
   }
 
   // stems = 5,4,2
-  function splitSound(songId = '36', stems = '10_stems') {
+  function splitSound(songId = '1', stems = '2_stems') {
     socket.send(
       JSON.stringify({
         'song_id': songId,

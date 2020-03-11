@@ -32,6 +32,7 @@ class Upload(LoginRequiredMixin, APIView):
 
         project = Project()
         project.user_id = request.user.id
+        project.name = request.FILES['file']
         project.save()
         request.data['project'] = project.id
 
@@ -40,7 +41,6 @@ class Upload(LoginRequiredMixin, APIView):
             return Response(audio_file_serializer.data, status=status.HTTP_201_CREATED)
         else:
             return Response(audio_file_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
 
 class AudioEffectView(APIView):
 
@@ -81,8 +81,8 @@ class Audio(APIView):
 
     def get(self, request, *args, **kwargs):
         user_id = request.user.id
-        users_file = AudioFile.objects.filter(
-            user_id=user_id).values_list('file', 'id')
+        users_file = Project.objects.filter(
+            user_id=user_id).values_list('id', 'name')
 
         return JsonResponse(dict(audio_files=list(users_file)))
 

@@ -4,6 +4,7 @@ from django.contrib.auth.models import User
 class Project(models.Model):
 
     user = models.ForeignKey(User, on_delete=models.CASCADE)
+    name = models.TextField()
 class AudioFile(models.Model):
 
     file = models.FileField(blank=False, null=False, upload_to='audio/%Y_%d_%m/')
