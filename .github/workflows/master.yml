@@ -56,8 +56,8 @@ jobs:
           cd /var/www/app
           rm -rf Technocrarc
           git clone https://github.com/HE-Arc/Technocrarc
-          git checkout ${BRANCH##*/}
           cd Technocrarc
+          git checkout ${BRANCH##*/}
           git fetch --all
           git pull --all
           rm technocrarc/settings.py
