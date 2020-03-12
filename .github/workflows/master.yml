@@ -45,11 +45,14 @@ jobs:
       run: echo "${{github.ref}}"
     - name: Deploy to SSH SRVZ-WEBAPP
       uses: appleboy/ssh-action@master
+      env:
+        BRANCH: ${{ github.ref }}
       with:
         host: ${{ secrets.HOST }}
         username: ${{ secrets.USERNAME }}
         key: ${{ secrets.SSH_KEY }}
         port: ${{ secrets.PORT }}
+        envs: BRANCH
         script: |
           cd /var/www/app
           rm -rf Technocrarc
@@ -57,7 +60,7 @@ jobs:
           cd Technocrarc
           git fetch --all
           git pull --all
-          git checkout ${GITHUB_REF##*/}
+          git checkout ${BRANCH}
           git status
           git branch
           python3 -m venv venv
