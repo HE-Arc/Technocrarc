@@ -33,6 +33,7 @@ jobs:
         python --version
         python -m pip install --upgrade pip
         pip install -r requirements.txt
+        python manage.py makemigrations
     - name: Run Tests
       run: |
         python manage.py test
@@ -44,7 +45,7 @@ jobs:
       with:
         host: ${{ secrets.HOST }}
         username: ${{ secrets.USERNAME }}
-        password: ${{ secrets.PASSWORD }}
+        key: ${{ secrets.SSH_KEY }}
         port: ${{ secrets.PORT }}
         script: whoami
     
