@@ -67,4 +67,5 @@ jobs:
           pip install wheel django
           pip install -r requirements.txt
           python manage.py makemigrations
+          sudo sv reload uswgi
     
