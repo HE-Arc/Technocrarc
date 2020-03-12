@@ -55,7 +55,7 @@ jobs:
           cd Technocrarc
           python3 -m venv venv
           source venv/bin/activate
-          pip install wheel
+          pip install wheel django
           pip install -r requirements.txt
           python manage.py makemigrations
     
