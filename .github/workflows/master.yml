@@ -41,12 +41,12 @@ jobs:
     runs-on: ubuntu-latest
     #needs: build
     steps:
-    - name: Printenv
-      run: printenv
+    - name: Extract branch name
+      shell: bash
+      run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
+      id: extract_branch
     - name: Deploy to SSH SRVZ-WEBAPP
       uses: appleboy/ssh-action@master
-      env:
-        GITHUB_REF: ${{ github.GITHUB_REF }}
       with:
         host: ${{ secrets.HOST }}
         username: ${{ secrets.USERNAME }}
