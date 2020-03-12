@@ -49,6 +49,12 @@ jobs:
         key: ${{ secrets.SSH_KEY }}
         port: ${{ secrets.PORT }}
         script: |
-          ls -al
-          whoami
+          cd /var/www/app
+          git clone https://github.com/HE-Arc/Technocrarc
+          cd Technocrarc
+          python3 -m venv venv
+          source venv/bin/activate
+          pip install wheel
+          pip install -r requirements.txt
+          python manage.py makemigrations
     
