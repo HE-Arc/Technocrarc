@@ -77,14 +77,23 @@ class P5(APIView):
         return render(request, 'p5_test.html')
 
 
-class Audio(APIView):
+class UserProject(APIView):
 
     def get(self, request, *args, **kwargs):
         user_id = request.user.id
-        users_file = Project.objects.filter(
-            user_id=user_id).values_list('id', 'name')
+        users_project = Project.objects.filter(
+            user_id=user_id).values('id', 'name')
 
-        return JsonResponse(dict(audio_files=list(users_file)))
+        return JsonResponse(dict(users_project=list(users_project)))
+
+class Projects(APIView):
+
+    def get(self, request, project_id):
+        user_id = request.user.id
+        audio_files = AudioFile.objects.filter(
+            user_id=user_id, project_id=project_id).values('id')
+
+        return JsonResponse(dict(audio_files=list(audio_files)))
 
 
 class SplitAudioFileViewDownload(LoginRequiredMixin, APIView):
