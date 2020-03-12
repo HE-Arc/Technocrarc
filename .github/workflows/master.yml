@@ -58,12 +58,12 @@ jobs:
           cd /var/www/app
           rm -rf Technocrarc
           git clone https://github.com/HE-Arc/Technocrarc
+          git checkout ${BRANCH##*/}
           cd Technocrarc
           git fetch --all
           git pull --all
-          git checkout ${BRANCH##*/}
-          git status
-          git branch
+          rm technocrarc/settings.py
+          mv technocrarc/settings.py.production technocrarc/settings.py
           python3 -m venv venv
           source venv/bin/activate
           pip install wheel django
