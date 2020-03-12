@@ -8,8 +8,8 @@ on:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/diabled'
     strategy:
       max-parallel: 4
       matrix:
@@ -50,6 +50,7 @@ jobs:
         port: ${{ secrets.PORT }}
         script: |
           cd /var/www/app
+          rm -rf Technocrarc
           git clone https://github.com/HE-Arc/Technocrarc
           cd Technocrarc
           python3 -m venv venv
