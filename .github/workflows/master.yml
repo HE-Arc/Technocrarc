@@ -54,6 +54,8 @@ jobs:
           git clone https://github.com/HE-Arc/Technocrarc
           cd Technocrarc
           git checkout ${GITHUB_REF}
+          git status
+          git branch
           python3 -m venv venv
           source venv/bin/activate
           pip install wheel django
