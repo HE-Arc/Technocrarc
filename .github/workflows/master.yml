@@ -53,6 +53,7 @@ jobs:
         key: ${{ secrets.SSH_KEY }}
         port: ${{ secrets.PORT }}
         envs: BRANCH
+        script_stop: true
         script: |
           cd /var/www/app
           rm -rf Technocrarc
@@ -60,7 +61,7 @@ jobs:
           cd Technocrarc
           git fetch --all
           git pull --all
-          git checkout ${BRANCH}
+          git checkout ${BRANCH##*/}
           git status
           git branch
           python3 -m venv venv
