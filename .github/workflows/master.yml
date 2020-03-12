@@ -53,6 +53,7 @@ jobs:
           rm -rf Technocrarc
           git clone https://github.com/HE-Arc/Technocrarc
           cd Technocrarc
+          git pull
           git checkout ${GITHUB_REF}
           git status
           git branch
