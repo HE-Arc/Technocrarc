@@ -43,6 +43,8 @@ jobs:
     steps:
     - name: Deploy to SSH SRVZ-WEBAPP
       uses: appleboy/ssh-action@master
+      env:
+        GITHUB_REF: ${{ GITHUB_REF }}
       with:
         host: ${{ secrets.HOST }}
         username: ${{ secrets.USERNAME }}
