@@ -66,8 +66,8 @@ jobs:
           source venv/bin/activate
           pip install wheel django
           pip install -r requirements.txt
-          python manage.py sqlflush
+          python3 manage.py sqlflush
           python3 manage.py flush --noinput
-          python manage.py migrate
-          sudo sv reload uswgi
+          python3 manage.py migrate
+          sudo sv reload uwsgi
     
