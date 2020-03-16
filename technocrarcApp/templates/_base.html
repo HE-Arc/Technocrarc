@@ -16,22 +16,27 @@
 </head>
 <body>
 
-  <header class="header"></header>
+    <header class="header">
+        <nav class="nav">
+            <div class="nav-wrapper deep-orange darken-1">
+                {% if user.is_authenticated %}
+                <a href="/editor" class="brand-logo left">Technocrarc</a>
+                {% else %}
+                <a href="/" class="brand-logo left">Technocrarc</a>
+                {% endif %}
+                <ul id="nav-mobile" class="right">
+                    {% if user.is_authenticated %}
+                    <li><a href="editor" class="tooltipped" data-position="bottom" data-tooltip="Editor"><i class="material-icons">edit</i></a></li>
+                    <li><a href="logout" class="tooltipped" data-position="bottom" data-tooltip="Logout"><i class="material-icons">logout</i></a></li>
+                    {% else %}
+                    <li><a href="log-in" class="tooltipped" data-position="bottom" data-tooltip="Login"><i class="material-icons">exit_to_app</i></a></li>
+                    <li><a href="sign-up" class="tooltipped" data-position="bottom" data-tooltip="Register"><i class="material-icons">add_box</i></a></li>
+                    {% endif %}
+                </ul>
+            </div>
+        </nav>
+    </header>
 
-  <nav>
-    <div class="nav-wrapper">
-      <a href="/" class="brand-logo">Technocrarc</a>
-      <ul id="nav-mobile" class="right">
-        {% if user.is_authenticated %}
-        <li><a href="editor"><i class="material-icons">edit</i></a></li>
-        <li><a href="upload"><i class="material-icons">cloud_upload</i></a></li>
-        <li><a href="logout"><i class="material-icons">logout</i></a></li>
-        {% else %}
-          <li><a href="log-in"><i class="material-icons">exit_to_app</i></a></li>
-        {% endif %}
-      </ul>
-    </div>
-  </nav>
   <main class="main">
     {% block content %}{% endblock content %}
   </main>

@@ -48,18 +48,13 @@ const $$ = {
 
 document.addEventListener('DOMContentLoaded', (evt) =>
 {
-  // Elements with class « file-field »
-  $$.fileFields.forEach((item, i) =>
-  {
-    // Drag enter -> modify style
-    item.addEventListener('dragenter', evt =>
-    {
-      evt.preventDefault();
-      item.classList.add('dragenter');
+    // Inits Tooltips
+    M.Tooltip.init(document.querySelectorAll('.tooltipped'), {
+        enterDelay: 300,
     });
 
-    // Drag leave -> modify style
-    item.addEventListener('dragleave', evt =>
+    // Elements with class « file-field »
+    $$.fileFields.forEach((item, i) =>
     {
       evt.preventDefault();
       item.classList.remove('dragenter');
@@ -112,7 +107,6 @@ document.addEventListener('DOMContentLoaded', (evt) =>
       //TODO
     });
   });
-});
 
 function parseAudioFiles(input, files)
 {
