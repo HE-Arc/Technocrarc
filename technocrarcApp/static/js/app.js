@@ -56,20 +56,31 @@ document.addEventListener('DOMContentLoaded', (evt) =>
     // Elements with class « file-field »
     $$.fileFields.forEach((item, i) =>
     {
-      evt.preventDefault();
-      item.classList.remove('dragenter');
+        // Drag enter -> modify style
+        item.addEventListener('dragenter', evt =>
+        {
+            evt.preventDefault();
+            item.classList.add('dragenter');
+        });
+
+        // Drag leave -> modify style
+        item.addEventListener('dragleave', evt =>
+        {
+            evt.preventDefault();
+            item.classList.remove('dragenter');
+        });
+
+        // Drop on « file input »
+        item.addEventListener('drop', evt =>
+        {
+            evt.preventDefault();
+
+            let input = item.querySelector('.sound-file-input');
+            let files = evt.dataTransfer.files;
+            parseAudioFiles(input, files);
+        });
     });
 
-    // Drop on « file input »
-    item.addEventListener('drop', evt =>
-    {
-      evt.preventDefault();
-
-      let input = item.querySelector('.sound-file-input');
-      let files = evt.dataTransfer.files;
-      parseAudioFiles(input, files);
-    });
-  });
 
   // Elements with class « sound-file-input »
   $$.soundFileInputs.forEach((item, i) =>
@@ -107,6 +118,7 @@ document.addEventListener('DOMContentLoaded', (evt) =>
       //TODO
     });
   });
+});
 
 function parseAudioFiles(input, files)
 {
@@ -160,14 +172,17 @@ async function prepareEditor()
   var lastPart = url.substr(url.lastIndexOf('/') + 1);
   if (lastPart === "editor") {
 
-    let songs = await getSongList().then(songs => {return songs})
+    await prepareProjectSelector()
+    let selectedProject = document.getElementById('projectSelector')
+    let selectedProjectID = selectedProject.options[selectedProject.selectedIndex].value;
 
-    songs = songs['audio_files']
+    let songs = await getData('/project/'+selectedProjectID).then(songs => {return songs['audio_files']})
+    console.log(songs)
 
     waveArray = []
 
     for (var i = 0; i < songs.length; i++) {
-      currentID = songs[i][1]
+      currentID = songs[i]["id"]
       let rowElement = document.createElement("div")
       let colElement = document.createElement("div")
       let cardPanelElement = document.createElement("div")
@@ -215,6 +230,21 @@ async function prepareEditor()
 
     console.log("Editor loaded")
   }
+}
+
+async function prepareProjectSelector()
+{
+  let projects = await getData('projects').then(projects => {return projects['users_project']})
+    let projectSelector = document.getElementById('projectSelector')
+
+    for (let i = 0; i < projects.length; i++) {
+      const element = projects[i];
+      let option = document.createElement('option')
+      option.appendChild(document.createTextNode(element['name']))
+      option.value = element['id']
+      projectSelector.appendChild(option)
+    }
+    M.FormSelect.init(projectSelector, {})
 }
 
 function changeProgressPercentage(progress, id)
@@ -293,7 +323,8 @@ function closeModal(id)
   instance.close();
 }
 
-async function getSongList()
+
+async function getData(route)
 {
   let options = {
     method: 'GET',
@@ -303,7 +334,7 @@ async function getSongList()
     credentials: 'same-origin'
   }
 
-  let songs = await fetch('audio', options)
+  let data = await fetch(route, options)
   .then(response=>response.json())
   .then(
     data => {
@@ -312,7 +343,7 @@ async function getSongList()
   ).catch(
     error => M.toast({html: error.message})
   )
-  return songs
+  return data
 }
 
 function downloadSong()

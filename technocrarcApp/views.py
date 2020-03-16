@@ -126,9 +126,11 @@ class Editor(LoginRequiredMixin, APIView):
 
 
 class Home(APIView):
-
     def get(self, request, *args, **kwargs):
-        return render(request, 'home.html')
+        if request.user.is_authenticated:
+            return HttpResponseRedirect('/editor')
+        else:
+            return render(request, 'home.html')
 
 
 class LogIn(APIView):
