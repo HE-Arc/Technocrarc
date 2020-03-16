@@ -65,7 +65,7 @@ jobs:
           mv technocrarc/settings.py.production technocrarc/settings.py
           python3 -m venv venv
           source venv/bin/activate
-          pip install wheel django
+          pip install wheel
           pip install -r requirements.txt
           python3 manage.py sqlflush
           python3 manage.py flush --noinput
