@@ -4,7 +4,7 @@ from technocrarcApp.views import *
 app_name = 'technocrarcApp'
 
 urlpatterns = [
-    #path('upload', Upload.as_view()),
+    path('upload', Upload.as_view()),
     path('editor', Editor.as_view()),
     path('', Home.as_view()),
     path('log-in', LogIn.as_view()),

@@ -16,15 +16,14 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication
 import os
+import logging
 
+logger = logging.getLogger(__name__)
 
 class Upload(LoginRequiredMixin, APIView):
     parser_class = (FileUploadParser,)
     login_url = '/log-in'
     redirect_field_name = 'redirect_to'
-
-    def get(self, request, *args, **kwargs):
-        return render(request, 'upload.html')
 
     def post(self, request, *args, **kwargs):
         audio_file_serializer = AudioFileSerializer(data=request.data)
@@ -32,7 +31,7 @@ class Upload(LoginRequiredMixin, APIView):
 
         project = Project()
         project.user_id = request.user.id
-        project.name = request.FILES['file'][:-4]
+        project.name = request.FILES['file'].name[:-4]
         project.save()
         request.data['project'] = project.id
 
@@ -77,7 +76,9 @@ class P5(APIView):
         return render(request, 'p5_test.html')
 
 
-class UserProject(APIView):
+class UserProject(LoginRequiredMixin, APIView):
+    login_url = '/log-in'
+    redirect_field_name = 'redirect_to'
 
     def get(self, request, *args, **kwargs):
         user_id = request.user.id
@@ -86,7 +87,9 @@ class UserProject(APIView):
 
         return JsonResponse(dict(users_project=list(users_project)))
 
-class Projects(APIView):
+class Projects(LoginRequiredMixin, APIView):
+    login_url = '/log-in'
+    redirect_field_name = 'redirect_to'
 
     def get(self, request, project_id):
         user_id = request.user.id
@@ -199,7 +202,7 @@ class SignUp(APIView):
             # Authenticate the user
             login(request, newUser)
 
-            return HttpResponseRedirect('/edit')
+            return HttpResponseRedirect('/editor')
         else:
             return render(request, 'sign-up.html', {'form': form})
 
