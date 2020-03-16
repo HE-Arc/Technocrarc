@@ -53,7 +53,7 @@ jobs:
         envs: BRANCH
         script_stop: true
         script: |
-          set -x
+          source /home/poweruser/.bash_profile
           cd /var/www/app
           rm -rf Technocrarc
           git clone https://github.com/HE-Arc/Technocrarc
