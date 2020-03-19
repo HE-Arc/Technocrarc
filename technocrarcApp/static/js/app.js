@@ -4,35 +4,25 @@ window.addEventListener("DOMContentLoaded", () => {
   M.AutoInit();
   prepareEditor();
 
-  var socket = new WebSocket('ws://' + window.location.host + '/ws/background-tasks/')
+  socket = new WebSocket('ws://' + window.location.host + '/ws/background-tasks/')
   socket.onopen = function open(e) {
     console.log('WebSockets connection created.')
-    splitSound()
   }
 
   socket.onmessage = function onMessage(e) {
     let json_data = JSON.parse(e.data)
+    console.log(json_data)
+    prepareEditor(true)
   }
 
   socket.onclose = function onClose(e) {
   }
 
-  if (socket.readyState == WebSocket.OPEN) {
-    socket.onopen()
-  }
-
-  // stems = 5,4,2
-  function splitSound(songId = '1', stems = '2_stems') {
-    socket.send(
-      JSON.stringify({
-        'song_id': songId,
-        'stems': stems,
-      })
-    )
-  }
+  
 });
 
 let globalSeekLock = false
+let globalEditorLock = false
 
 // DOM
 const $$ = {
@@ -166,85 +156,91 @@ function showDragDropFigure(input)
 
 async function prepareEditor(isAlreadyLoaded = false)
 {
-  var url = window.location.href;
-  var lastPart = url.substr(url.lastIndexOf('/') + 1);
-  if (lastPart === "editor") {
+  if(!globalEditorLock){
+    globalEditorLock = true
 
-    document.getElementById("wave-container").innerHTML = ""
+    var url = window.location.href;
+    var lastPart = url.substr(url.lastIndexOf('/') + 1);
+    if (lastPart === "editor") {
 
-    if(!isAlreadyLoaded)
-    { 
-      await prepareProjectSelector() 
-    }
-    else{
-      destroyAll()
-    }
+      document.getElementById("wave-container").innerHTML = ""
 
-     let selectedProject = document.getElementById('projectSelector')
-  
-    if(selectedProject.selectedIndex != -1)
-    {
-      let selectedProjectID = selectedProject.options[selectedProject.selectedIndex].value;
-      let songs = await getData('/project/'+selectedProjectID).then(songs => {return songs['audio_files']})
-
-      waveArray = []
-
-      for (var i = 0; i < songs.length; i++) {
-        currentID = songs[i]["id"]
-        let rowElement = document.createElement("div")
-        let colElement = document.createElement("div")
-        let cardPanelElement = document.createElement("div")
-        let controlsElement = document.createElement("div")
-        let waveFormElement = document.createElement("div")
-
-        rowElement.className += "row"
-        rowElement.className += " flex-row"
-        colElement.className += "col"
-        colElement.className += " s10"
-        cardPanelElement.className += "card-panel hoverable"
-        controlsElement.className += "controls col s2"
-        waveFormElement.id = "waveForm_" + currentID
-
-        let preLoader =  '<div id="progressDiv'+ currentID +'" class="progress progress-waveform"><div class="determinate" id="progress_'+ currentID +'" style="width: 30%"></div></div>'
-
-        controlsElement.innerHTML = '<a onclick="mute('+ i +')" id=muteButton_'+ i +' class="btn-floating btn-small waves-effect waves-light deep-orange darken-1"><i class="material-icons">volume_off</i></a>'
-        controlsElement.innerHTML += '<p class="range-field"><input oninput="changeVolume('+ i +')" type="range" id="inputVolume_'+ i +'" min="0" max="100" value="100"/></p>'
-        controlsElement.innerHTML += '<a onclick="isolate('+ i +')" id=isolateButton_'+ i +' class="btn-floating btn-small waves-effect waves-light deep-orange darken-1"><i class="material-icons">hearing</i></a>'
-
-        cardPanelElement.appendChild(waveFormElement)
-        cardPanelElement.insertAdjacentHTML('beforeend', preLoader)
-        colElement.appendChild(cardPanelElement)
-        rowElement.appendChild(colElement)
-        rowElement.appendChild(controlsElement)
-
-        document.getElementById("wave-container").appendChild(rowElement)
-
-        let wavesurfer = WaveSurfer.create({
-          container: '#waveForm_' + currentID,
-          waveColor: 'violet',
-          progressColor: 'purple'
-        });
-
-        // IIFE
-        (function(lockedID){
-          wavesurfer.load("download/" + currentID)
-
-          wavesurfer.on('seek', function(progress) {
-            if(!globalSeekLock){
-              changeSeek(progress)
-            }
-          })
-
-          wavesurfer.on('loading', function(progress){
-            changeProgressPercentage(progress, lockedID)
-          })
-        })(currentID);
-
-        waveArray[i] = wavesurfer
+      if(!isAlreadyLoaded)
+      { 
+        await prepareProjectSelector() 
       }
+      else{
+        destroyAll()
+      }
+
+      let selectedProject = document.getElementById('projectSelector')
+    
+      if(selectedProject.selectedIndex != -1)
+      {
+        let selectedProjectID = selectedProject.options[selectedProject.selectedIndex].value;
+        songs = await getData('/project/'+selectedProjectID).then(songs => {return songs['audio_files']})
+
+        waveArray = []
+
+        for (var i = 0; i < songs.length; i++) {
+          currentID = songs[i]["id"]
+          let rowElement = document.createElement("div")
+          let colElement = document.createElement("div")
+          let cardPanelElement = document.createElement("div")
+          let controlsElement = document.createElement("div")
+          let waveFormElement = document.createElement("div")
+
+          rowElement.className += "row"
+          rowElement.className += " flex-row"
+          colElement.className += "col"
+          colElement.className += " s10"
+          cardPanelElement.className += "card-panel hoverable"
+          controlsElement.className += "controls col s2"
+          waveFormElement.id = "waveForm_" + currentID
+
+          let preLoader =  '<div id="progressDiv'+ currentID +'" class="progress progress-waveform"><div class="determinate" id="progress_'+ currentID +'" style="width: 30%"></div></div>'
+
+          controlsElement.innerHTML = '<a onclick="mute('+ i +')" id=muteButton_'+ i +' class="btn-floating btn-small waves-effect waves-light deep-orange darken-1"><i class="material-icons">volume_off</i></a>'
+          controlsElement.innerHTML += '<p class="range-field"><input oninput="changeVolume('+ i +')" type="range" id="inputVolume_'+ i +'" min="0" max="100" value="100"/></p>'
+          controlsElement.innerHTML += '<a onclick="isolate('+ i +')" id=isolateButton_'+ i +' class="btn-floating btn-small waves-effect waves-light deep-orange darken-1"><i class="material-icons">hearing</i></a>'
+
+          cardPanelElement.appendChild(waveFormElement)
+          cardPanelElement.insertAdjacentHTML('beforeend', preLoader)
+          colElement.appendChild(cardPanelElement)
+          rowElement.appendChild(colElement)
+          rowElement.appendChild(controlsElement)
+
+          document.getElementById("wave-container").appendChild(rowElement)
+
+          let wavesurfer = WaveSurfer.create({
+            container: '#waveForm_' + currentID,
+            waveColor: 'violet',
+            progressColor: 'purple'
+          });
+
+          // IIFE
+          (function(lockedID){
+            wavesurfer.load("download/" + currentID)
+
+            wavesurfer.on('seek', function(progress) {
+              if(!globalSeekLock){
+                changeSeek(progress)
+              }
+            })
+
+            wavesurfer.on('loading', function(progress){
+              changeProgressPercentage(progress, lockedID)
+            })
+          })(currentID);
+
+          waveArray[i] = wavesurfer
+        }
+      }
+      console.log("EDITOR LOADED")
     }
-    console.log("EDITOR LOADED")
+    globalEditorLock = false
   }
+  
 }
 
 function changeProject()
@@ -335,7 +331,7 @@ function isolate(id)
     const waveSurfer = waveArray[index];
     if(id != index)
     {
-      waveSurfer.toggleMute();
+      waveSurfer.setMute(true);
     }
   }
   checkButtons()
@@ -364,15 +360,40 @@ function checkButtons()
     }
   }
 
+  console.log(nonMuted)
+
+  for (let i = 0; i < waveArray.length; i++) {
+    document.getElementById("isolateButton_" + i).classList.remove("activated-button")
+    console.log(document.getElementById("isolateButton_" + i))
+  }
+
   if(nonMuted.length == 1){
     document.getElementById("isolateButton_" + nonMuted[0]).className += " activated-button"
   }
-  else{
-    for (let i = 0; i < waveArray.length; i++) {
-      document.getElementById("isolateButton_" + i).classList.remove("activated-button")
-      
-    }
+}
+
+function splitSound()
+{
+  if (socket.readyState == WebSocket.OPEN) {
+    socket.onopen()
   }
+
+  if(songs.length == 1){
+    songID = songs[0].id
+
+    socket.send(
+      JSON.stringify({
+        'song_id': songID,
+        'stems': '5_stems',
+      })
+    )
+  }
+  else{
+    M.toast({html: "This song has already been splitted"})
+  }
+  // stems = 5,4,2
+  // stems = '2_stems'
+  
   
 }
 
@@ -477,11 +498,6 @@ async function getData(route)
     error => M.toast({html: error.message})
   )
   return data
-}
-
-function downloadSong()
-{
-  //URL download/SONGID
 }
 
 // Displays the preloader(s)

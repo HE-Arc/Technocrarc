@@ -38,7 +38,7 @@ def split_sound(channel_name, song_id, stems, user_id):
             audio_file = AudioFile()
             audio_file.file = os.path.join(rel_path, file)
             audio_file.user_id = user_id
-            audio_file.projet_id = project_id
+            audio_file.project_id = project_id
             audio_file.save()
 
             file_url = reverse(
