@@ -463,7 +463,7 @@ function uploadSongs()
         enableUploadButton(true)
         closeModal("uploadFileDialog")
         document.getElementById('uploadSongClose').click()
-        prepareEditor(true);
+        prepareEditor();
       }
       else{
         M.toast({html: "An error occured while uploading your song"})
