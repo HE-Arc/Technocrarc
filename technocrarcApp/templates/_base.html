@@ -29,10 +29,9 @@
                     {% if user.is_authenticated %}
                     <li>
                       <div class="input-field col s12 center-align">
-                        <select id="projectSelector">
+                        <select id="projectSelector" onchange="changeProject()">
                         </select>
                       </div>
-                      
                   </li>
                     <li><a href="logout" class="tooltipped" data-position="bottom" data-tooltip="Logout"><i class="material-icons">logout</i></a></li>
                     {% else %}
