@@ -1,4 +1,5 @@
 // TODO : delete or move in another file after test
+document.onkeydown = checkKey
 window.addEventListener("DOMContentLoaded", () => {
   M.AutoInit();
   prepareEditor();
@@ -304,6 +305,40 @@ function destroyAll()
   }
 }
 
+function goForward(sec)
+{
+  for (let index = 0; index < waveArray.length; index++) {
+    const waveSurfer = waveArray[index];
+    waveSurfer.skipForward(sec);
+  }
+}
+
+function goBackward(sec)
+{
+  for (let index = 0; index < waveArray.length; index++) {
+    const waveSurfer = waveArray[index];
+    waveSurfer.skipBackward(sec);
+  }
+}
+
+function checkKey(e)
+{
+  e = e || window.event;
+
+    if (e.keyCode == '39') {
+        //Right arrow -> 5 secs forward
+        goForward(5)
+    }
+    else if (e.keyCode == '37') {
+        //Left arrow -> 5 secs backward
+        goBackward(5)
+    }
+    else if (e.keyCode == '32') {
+      //Spacebar -> play/pause
+      playPauseAll()
+  }
+}
+
 //
 // Uploads a sound file to the server in order to split it
 function uploadSongs()
@@ -342,7 +377,6 @@ function uploadSongs()
     error => M.toast({html: error.message})
   )
 }
-
 
 function enableUploadButton(enable)
 {
