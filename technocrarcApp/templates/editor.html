@@ -12,8 +12,8 @@
       </a>
       <ul>
         <li><a data-target="uploadFileDialog" class="btn-floating green modal-trigger tooltipped" data-position="left" data-tooltip="Create a new project"><i class="material-icons">add</i></a></li>
-        <li><a class="btn-floating purple tooltipped" data-position="left" data-tooltip="Play / Pause" onclick="playPauseAll();"><i id="playPauseButtonImage" class="material-icons">play_arrow</i></a></li>
-        <li><a class="btn-floating blue tooltipped" data-position="left" data-tooltip="AI Split" onclick="splitSound();"><i class="material-icons">shuffle</i></a></li>
+        <li><a id="playPauseMenu" class="btn-floating purple tooltipped hide" data-position="left" data-tooltip="Play / Pause" onclick="playPauseAll();"><i id="playPauseButtonImage" class="material-icons">play_arrow</i></a></li>
+        <li><a id="aiSplitMenu" class="btn-floating blue tooltipped hide" data-position="left" data-tooltip="AI Split" onclick="splitSound();"><i class="material-icons">shuffle</i></a></li>
       </ul>
     </div>
 
@@ -72,4 +72,50 @@
     </div>
   </div>
 </div>
+
+<!-- AI Splitter preloader-->
+<div id="aiSplitterPreloader" class="ai-splitter-preloader hide">
+  <div class="preloader-wrapper big active">
+    <div class="spinner-layer spinner-blue">
+      <div class="circle-clipper left">
+        <div class="circle"></div>
+      </div><div class="gap-patch">
+        <div class="circle"></div>
+      </div><div class="circle-clipper right">
+        <div class="circle"></div>
+      </div>
+    </div>
+
+    <div class="spinner-layer spinner-red">
+      <div class="circle-clipper left">
+        <div class="circle"></div>
+      </div><div class="gap-patch">
+        <div class="circle"></div>
+      </div><div class="circle-clipper right">
+        <div class="circle"></div>
+      </div>
+    </div>
+
+    <div class="spinner-layer spinner-yellow">
+      <div class="circle-clipper left">
+        <div class="circle"></div>
+      </div><div class="gap-patch">
+        <div class="circle"></div>
+      </div><div class="circle-clipper right">
+        <div class="circle"></div>
+      </div>
+    </div>
+
+    <div class="spinner-layer spinner-green">
+      <div class="circle-clipper left">
+        <div class="circle"></div>
+      </div><div class="gap-patch">
+        <div class="circle"></div>
+      </div><div class="circle-clipper right">
+        <div class="circle"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
 {% endblock content %}

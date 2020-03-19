@@ -11,8 +11,14 @@ window.addEventListener("DOMContentLoaded", () => {
 
   socket.onmessage = function onMessage(e) {
     let json_data = JSON.parse(e.data)
-    console.log(json_data)
-    prepareEditor(true)
+    globalSplitCounter++
+
+    if(globalSplitCounter == 5){
+      M.toast({html: "File splitted successfully."})
+      document.getElementById("aiSplitterPreloader").className += " hide"
+      prepareEditor(true)
+    }
+    
   }
 
   socket.onclose = function onClose(e) {
@@ -23,6 +29,9 @@ window.addEventListener("DOMContentLoaded", () => {
 
 let globalSeekLock = false
 let globalEditorLock = false
+let globalPlay = false
+let waveArray = []
+let globalSplitCounter = 0
 
 // DOM
 const $$ = {
@@ -235,6 +244,8 @@ async function prepareEditor(isAlreadyLoaded = false)
 
           waveArray[i] = wavesurfer
         }
+        document.getElementById("playPauseMenu").classList.remove("hide")
+        document.getElementById("aiSplitMenu").classList.remove("hide")
       }
       console.log("EDITOR LOADED")
     }
@@ -287,8 +298,14 @@ function playPauseAll()
 {
   for (let index = 0; index < waveArray.length; index++) {
     const waveSurfer = waveArray[index];
-    waveSurfer.playPause();
+    if(globalPlay){
+      waveSurfer.pause();
+    }
+    else{
+      waveSurfer.play();
+    }
   }
+  globalPlay = !globalPlay
   
   playPauseButtonImage = document.getElementById("playPauseButtonImage")
   if (waveArray[0].isPlaying())
@@ -298,6 +315,7 @@ function playPauseAll()
   else{
     playPauseButtonImage.innerHTML = "play_arrow"
   }
+
 }
 
 function destroyAll()
@@ -379,6 +397,7 @@ function splitSound()
   }
 
   if(songs.length == 1){
+    document.getElementById("aiSplitterPreloader").classList.remove("hide")
     songID = songs[0].id
 
     socket.send(
@@ -387,6 +406,7 @@ function splitSound()
         'stems': '5_stems',
       })
     )
+    M.toast({html: "Split in progress"})
   }
   else{
     M.toast({html: "This song has already been splitted"})
@@ -411,6 +431,7 @@ function checkKey(e)
     }
     else if (e.keyCode == '32') {
       //Spacebar -> play/pause
+      e.preventDefault()
       playPauseAll()
   }
 }
@@ -442,7 +463,7 @@ function uploadSongs()
         enableUploadButton(true)
         closeModal("uploadFileDialog")
         document.getElementById('uploadSongClose').click()
-        prepareProjectSelector();
+        prepareEditor(true);
       }
       else{
         M.toast({html: "An error occured while uploading your song"})

@@ -145,3 +145,9 @@ form .btn-large {
 .activated-button{
     box-shadow: 0 0 3px 3px white;
 }
+
+.ai-splitter-preloader{
+    position: fixed;
+    right: 40px;
+    top: 100px;
+}
