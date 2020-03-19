@@ -325,22 +325,21 @@ function mute(id)
 {
   waveArray[id].toggleMute()
   document.getElementById("muteButton_"+id).className += " activated-button"
-  checkButton(id, "muteButton")
+  checkButtons()
 }
 
 function isolate(id)
 {
+  waveArray[id].setMute(false)
   for (let index = 0; index < waveArray.length; index++) {
     const waveSurfer = waveArray[index];
     if(id != index)
     {
       waveSurfer.toggleMute();
-      checkButton(index, "muteButton")
     }
   }
-  checkButton(id, "isolateButton")
+  checkButtons()
 }
-
 
 function changeVolume(id)
 {
@@ -348,15 +347,33 @@ function changeVolume(id)
   
 }
 
-function checkButton(id, buttonName)
+function checkButtons()
 {
-  let button = document.getElementById(buttonName+"_"+id)
-  if(waveArray[id].isMuted){
-    button.className += " activated-button"
+  let nonMuted = []
+
+  for (let index = 0; index < waveArray.length; index++) {
+    const waveSurfer = waveArray[index];
+    let button = document.getElementById("muteButton_"+index)
+    
+    if(waveSurfer.isMuted){
+      button.className += " activated-button"
+    }
+    else{
+      button.classList.remove("activated-button")
+      nonMuted += index
+    }
+  }
+
+  if(nonMuted.length == 1){
+    document.getElementById("isolateButton_" + nonMuted[0]).className += " activated-button"
   }
   else{
-    button.classList.remove("activated-button")
+    for (let i = 0; i < waveArray.length; i++) {
+      document.getElementById("isolateButton_" + i).classList.remove("activated-button")
+      
+    }
   }
+  
 }
 
 function checkKey(e)
