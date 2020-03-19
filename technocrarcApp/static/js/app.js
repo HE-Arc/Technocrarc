@@ -166,13 +166,22 @@ function showDragDropFigure(input)
   $$.dragDropFigure.removeAttribute('hidden');
 }
 
-async function prepareEditor()
+async function prepareEditor(isAlreadyLoaded = false)
 {
   var url = window.location.href;
   var lastPart = url.substr(url.lastIndexOf('/') + 1);
   if (lastPart === "editor") {
 
-    await prepareProjectSelector()
+    document.getElementById("wave-container").innerHTML = ""
+
+    if(!isAlreadyLoaded)
+    { 
+      await prepareProjectSelector() 
+    }
+    else{
+      destroyAll()
+    }
+
     let selectedProject = document.getElementById('projectSelector')
     let selectedProjectID = selectedProject.options[selectedProject.selectedIndex].value;
 
@@ -232,10 +241,17 @@ async function prepareEditor()
   }
 }
 
+function changeProject()
+{
+  prepareEditor(true);
+  document.getElementById("playPauseButtonImage").innerHTML = "play_arrow"
+}
+
 async function prepareProjectSelector()
 {
   let projects = await getData('projects').then(projects => {return projects['users_project']})
-    let projectSelector = document.getElementById('projectSelector')
+  let projectSelector = document.getElementById('projectSelector')
+  projectSelector.innerHTML = ""
 
     for (let i = 0; i < projects.length; i++) {
       const element = projects[i];
@@ -260,6 +276,32 @@ function changeSeek(progress)
     waveSurfer.seekTo(progress)
   }
   globalSeekLock = false
+}
+
+function playPauseAll()
+{
+  for (let index = 0; index < waveArray.length; index++) {
+    const waveSurfer = waveArray[index];
+    waveSurfer.playPause();
+  }
+  
+  playPauseButtonImage = document.getElementById("playPauseButtonImage")
+  if (waveArray[0].isPlaying())
+  {
+    playPauseButtonImage.innerHTML = "pause"
+  }
+  else{
+    playPauseButtonImage.innerHTML = "play_arrow"
+  }
+}
+
+function destroyAll()
+{
+  for (let index = 0; index < waveArray.length; index++) {
+    const waveSurfer = waveArray[index];
+    waveSurfer.pause();
+    waveSurfer.destroy();
+  }
 }
 
 //
@@ -289,6 +331,7 @@ function uploadSongs()
         enableUploadButton(true)
         closeModal("uploadFileDialog")
         document.getElementById('uploadSongClose').click()
+        prepareProjectSelector();
       }
       else{
         M.toast({html: "An error occured while uploading your song"})

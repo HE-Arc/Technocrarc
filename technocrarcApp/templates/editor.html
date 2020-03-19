@@ -8,10 +8,11 @@
 
     <div class="fixed-action-btn">
       <a class="btn-floating btn-large red">
-        <i class="large material-icons">mode_edit</i>
+        <i class="large material-icons">dehaze</i>
       </a>
       <ul>
-        <li><a data-target="uploadFileDialog" class="btn-floating green modal-trigger"><i class="material-icons">cloud_upload</i></a></li>
+        <li><a class="btn-floating purple tooltipped" data-position="left" data-tooltip="Play" onclick="playPauseAll();"><i id="playPauseButtonImage" class="material-icons">play_arrow</i></a></li>
+        <li><a data-target="uploadFileDialog" class="btn-floating green modal-trigger tooltipped" data-position="left" data-tooltip="Create a new project"><i class="material-icons">add</i></a></li>
       </ul>
     </div>
 
@@ -27,10 +28,6 @@
 
     <div id="wave-container">
     </div>
-
-    
-
-    
   </div>
 </div>
 
@@ -74,6 +71,4 @@
     </div>
   </div>
 </div>
-
-
 {% endblock content %}
