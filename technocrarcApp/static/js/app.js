@@ -11,13 +11,10 @@ window.addEventListener("DOMContentLoaded", () => {
   }
 
   socket.onmessage = function onMessage(e) {
-    console.log(e)
     let json_data = JSON.parse(e.data)
-    console.log(json_data)
   }
 
   socket.onclose = function onClose(e) {
-    console.log(e)
   }
 
   if (socket.readyState == WebSocket.OPEN) {
@@ -183,62 +180,70 @@ async function prepareEditor(isAlreadyLoaded = false)
       destroyAll()
     }
 
-    let selectedProject = document.getElementById('projectSelector')
-    let selectedProjectID = selectedProject.options[selectedProject.selectedIndex].value;
+     let selectedProject = document.getElementById('projectSelector')
+  
+    if(selectedProject.selectedIndex != -1)
+    {
+      let selectedProjectID = selectedProject.options[selectedProject.selectedIndex].value;
+      let songs = await getData('/project/'+selectedProjectID).then(songs => {return songs['audio_files']})
 
-    let songs = await getData('/project/'+selectedProjectID).then(songs => {return songs['audio_files']})
-    console.log(songs)
+      waveArray = []
 
-    waveArray = []
+      for (var i = 0; i < songs.length; i++) {
+        currentID = songs[i]["id"]
+        let rowElement = document.createElement("div")
+        let colElement = document.createElement("div")
+        let cardPanelElement = document.createElement("div")
+        let controlsElement = document.createElement("div")
+        let waveFormElement = document.createElement("div")
 
-    for (var i = 0; i < songs.length; i++) {
-      currentID = songs[i]["id"]
-      let rowElement = document.createElement("div")
-      let colElement = document.createElement("div")
-      let cardPanelElement = document.createElement("div")
-      let waveFormElement = document.createElement("div")
+        rowElement.className += "row"
+        rowElement.className += " flex-row"
+        colElement.className += "col"
+        colElement.className += " s10"
+        cardPanelElement.className += "card-panel hoverable"
+        controlsElement.className += "controls col s2"
+        waveFormElement.id = "waveForm_" + currentID
 
-      rowElement.className += "row"
-      colElement.className += "col"
-      colElement.className += "s12"
-      cardPanelElement.className += "card-panel hoverable"
-      waveFormElement.id = "waveForm_" + currentID
+        let preLoader =  '<div id="progressDiv'+ currentID +'" class="progress progress-waveform"><div class="determinate" id="progress_'+ currentID +'" style="width: 30%"></div></div>'
 
-      let preLoader =  '<div id="progressDiv'+ currentID +'" class="progress progress-waveform"><div class="determinate" id="progress_'+ currentID +'" style="width: 30%"></div></div>'
+        controlsElement.innerHTML = '<a onclick="mute('+ i +')" id=muteButton_'+ i +' class="btn-floating btn-small waves-effect waves-light deep-orange darken-1"><i class="material-icons">volume_off</i></a>'
+        controlsElement.innerHTML += '<p class="range-field"><input oninput="changeVolume('+ i +')" type="range" id="inputVolume_'+ i +'" min="0" max="100" value="100"/></p>'
+        controlsElement.innerHTML += '<a onclick="isolate('+ i +')" id=isolateButton_'+ i +' class="btn-floating btn-small waves-effect waves-light deep-orange darken-1"><i class="material-icons">hearing</i></a>'
 
-      cardPanelElement.appendChild(waveFormElement)
-      cardPanelElement.insertAdjacentHTML('beforeend', preLoader)
-      colElement.appendChild(cardPanelElement)
-      rowElement.appendChild(colElement)
+        cardPanelElement.appendChild(waveFormElement)
+        cardPanelElement.insertAdjacentHTML('beforeend', preLoader)
+        colElement.appendChild(cardPanelElement)
+        rowElement.appendChild(colElement)
+        rowElement.appendChild(controlsElement)
 
-      document.getElementById("wave-container").appendChild(rowElement)
+        document.getElementById("wave-container").appendChild(rowElement)
 
+        let wavesurfer = WaveSurfer.create({
+          container: '#waveForm_' + currentID,
+          waveColor: 'violet',
+          progressColor: 'purple'
+        });
 
-      let wavesurfer = WaveSurfer.create({
-        container: '#waveForm_' + currentID,
-        waveColor: 'violet',
-        progressColor: 'purple'
-      });
+        // IIFE
+        (function(lockedID){
+          wavesurfer.load("download/" + currentID)
 
-      // IIFE
-      (function(lockedID){
-        wavesurfer.load("download/" + currentID)
+          wavesurfer.on('seek', function(progress) {
+            if(!globalSeekLock){
+              changeSeek(progress)
+            }
+          })
 
-        wavesurfer.on('seek', function(progress) {
-          if(!globalSeekLock){
-            changeSeek(progress)
-          }
-        })
+          wavesurfer.on('loading', function(progress){
+            changeProgressPercentage(progress, lockedID)
+          })
+        })(currentID);
 
-        wavesurfer.on('loading', function(progress){
-          changeProgressPercentage(progress, lockedID)
-        })
-      })(currentID);
-
-      waveArray[i] = wavesurfer
+        waveArray[i] = wavesurfer
+      }
     }
-
-    console.log("Editor loaded")
+    console.log("EDITOR LOADED")
   }
 }
 
@@ -251,8 +256,10 @@ function changeProject()
 async function prepareProjectSelector()
 {
   let projects = await getData('projects').then(projects => {return projects['users_project']})
-  let projectSelector = document.getElementById('projectSelector')
-  projectSelector.innerHTML = ""
+  if(projects.length > 0)
+  {
+    let projectSelector = document.getElementById('projectSelector')
+    projectSelector.innerHTML = ""
 
     for (let i = 0; i < projects.length; i++) {
       const element = projects[i];
@@ -262,6 +269,7 @@ async function prepareProjectSelector()
       projectSelector.appendChild(option)
     }
     M.FormSelect.init(projectSelector, {})
+  }  
 }
 
 function changeProgressPercentage(progress, id)
@@ -305,19 +313,49 @@ function destroyAll()
   }
 }
 
-function goForward(sec)
+function skipTo(sec)
 {
   for (let index = 0; index < waveArray.length; index++) {
     const waveSurfer = waveArray[index];
-    waveSurfer.skipForward(sec);
+    waveSurfer.skip(sec);
   }
 }
 
-function goBackward(sec)
+function mute(id)
+{
+  waveArray[id].toggleMute()
+  document.getElementById("muteButton_"+id).className += " activated-button"
+  checkButton(id, "muteButton")
+}
+
+function isolate(id)
 {
   for (let index = 0; index < waveArray.length; index++) {
     const waveSurfer = waveArray[index];
-    waveSurfer.skipBackward(sec);
+    if(id != index)
+    {
+      waveSurfer.toggleMute();
+      checkButton(index, "muteButton")
+    }
+  }
+  checkButton(id, "isolateButton")
+}
+
+
+function changeVolume(id)
+{
+  waveArray[id].setVolume(document.getElementById("inputVolume_"+id).value/100)
+  
+}
+
+function checkButton(id, buttonName)
+{
+  let button = document.getElementById(buttonName+"_"+id)
+  if(waveArray[id].isMuted){
+    button.className += " activated-button"
+  }
+  else{
+    button.classList.remove("activated-button")
   }
 }
 
@@ -327,11 +365,11 @@ function checkKey(e)
 
     if (e.keyCode == '39') {
         //Right arrow -> 5 secs forward
-        goForward(5)
+        skipTo(5)
     }
     else if (e.keyCode == '37') {
         //Left arrow -> 5 secs backward
-        goBackward(5)
+        skipTo(-5)
     }
     else if (e.keyCode == '32') {
       //Spacebar -> play/pause
@@ -371,6 +409,7 @@ function uploadSongs()
       else{
         M.toast({html: "An error occured while uploading your song"})
         enableUploadButton(true)
+        console.log(response)
       }
     }
   ).catch(

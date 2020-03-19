@@ -13,8 +13,9 @@ from django.http import HttpResponseRedirect
 from django.contrib.auth.models import User
 from django.contrib.auth import *
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.csrf import ensure_csrf_cookie
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication
+from django.utils.decorators import method_decorator
 import os
 import logging
 
@@ -25,6 +26,7 @@ class Upload(LoginRequiredMixin, APIView):
     login_url = '/log-in'
     redirect_field_name = 'redirect_to'
 
+    @method_decorator(ensure_csrf_cookie)
     def post(self, request, *args, **kwargs):
         audio_file_serializer = AudioFileSerializer(data=request.data)
         request.data['user'] = request.user.id
@@ -43,6 +45,7 @@ class Upload(LoginRequiredMixin, APIView):
 
 class AudioEffectView(APIView):
 
+    @method_decorator(ensure_csrf_cookie)
     def get(self, request, effect_id):
         user_id = request.user.id
         file = EffectFile.objects.filter(
@@ -57,6 +60,7 @@ class AudioEffectView(APIView):
         else:
             return HttpResponseNotFound('No matching file found')
 
+    @method_decorator(ensure_csrf_cookie)
     def post(self, request, *args, **kwargs):
         effect_file_serializer = EffectFileSerializer(data=request.data)
         request.data['user'] = request.user.id
@@ -80,6 +84,7 @@ class UserProject(LoginRequiredMixin, APIView):
     login_url = '/log-in'
     redirect_field_name = 'redirect_to'
 
+    @method_decorator(ensure_csrf_cookie)
     def get(self, request, *args, **kwargs):
         user_id = request.user.id
         users_project = Project.objects.filter(
@@ -91,6 +96,7 @@ class Projects(LoginRequiredMixin, APIView):
     login_url = '/log-in'
     redirect_field_name = 'redirect_to'
 
+    @method_decorator(ensure_csrf_cookie)
     def get(self, request, project_id):
         user_id = request.user.id
         audio_files = AudioFile.objects.filter(
@@ -103,6 +109,7 @@ class SplitAudioFileViewDownload(LoginRequiredMixin, APIView):
     login_url = '/log-in'
     redirect_field_name = 'redirect_to'
 
+    @method_decorator(ensure_csrf_cookie)
     def get(self, request, song_id):
         user_id = request.user.id
         file = AudioFile.objects.filter(
@@ -121,11 +128,13 @@ class Editor(LoginRequiredMixin, APIView):
     login_url = '/log-in'
     redirect_field_name = 'redirect_to'
 
+    @method_decorator(ensure_csrf_cookie)   
     def get(self, request, *args, **kwargs):
         return render(request, 'editor.html')
 
 
 class Home(APIView):
+    @method_decorator(ensure_csrf_cookie)
     def get(self, request, *args, **kwargs):
         if request.user.is_authenticated:
             return HttpResponseRedirect('/editor')
@@ -135,10 +144,12 @@ class Home(APIView):
 
 class LogIn(APIView):
 
+    @method_decorator(ensure_csrf_cookie)
     def get(self, request, *args, **kwargs):
         form = LogInForm()
         return render(request, 'log-in.html', {'form': form})
 
+    @method_decorator(ensure_csrf_cookie)
     def post(self, request, *args, **kwargs):
         form = LogInForm(request.POST)
 
@@ -166,10 +177,12 @@ class LogIn(APIView):
 
 class SignUp(APIView):
 
+    @method_decorator(ensure_csrf_cookie)
     def get(self, request, *args, **kwargs):
         form = SignUpForm()
         return render(request, 'sign-up.html', {'form': form})
 
+    @method_decorator(ensure_csrf_cookie)
     def post(self, request, *args, **kwargs):
         form = SignUpForm(request.POST)
 
@@ -213,6 +226,7 @@ class Logout(LoginRequiredMixin, APIView):
     login_url = '/log-in'
     redirect_field_name = 'redirect_to'
 
+    @method_decorator(ensure_csrf_cookie)
     def get(self, request, *args, **kwargs):
         logout(request)
         return HttpResponseRedirect('/')

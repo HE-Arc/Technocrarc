@@ -132,3 +132,16 @@ form .btn-large {
     width: 105.5%;
     margin-left: -24px;
 }
+
+.controls{
+    padding: 20px !important;
+}
+
+.flex-row{
+    display:flex;
+    flex-wrap: wrap;
+}
+
+.activated-button{
+    box-shadow: 0 0 3px 3px white;
+}
