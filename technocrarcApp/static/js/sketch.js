@@ -20,6 +20,7 @@ function setUpAllEffects(effects) {
 }
 
 function fetchEffect(effectId){
+
     // fetch(`effect/${effectId}`).then((response) => {
     //     response.json().then((json) => {
     //         setUpAllEffects(json.effects)
@@ -30,6 +31,7 @@ function fetchEffect(effectId){
 
 function preload(){
     // TODO : change sound_id
+
     //sound = loadSound('download/36');
 }
 

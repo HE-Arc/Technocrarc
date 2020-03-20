@@ -25,6 +25,7 @@ window.addEventListener("DOMContentLoaded", () => {
 
   socket.onclose = function onClose(e) {
   }
+
 });
 
 let globalSeekLock = false
