@@ -3,6 +3,7 @@ document.onkeydown = checkKey
 window.addEventListener("DOMContentLoaded", () => {
   M.AutoInit();
   prepareEditor();
+  startupDiscoveryTunnel();
 
   socket = new WebSocket('ws://' + window.location.host + '/ws/background-tasks/')
   socket.onopen = function open(e) {
@@ -17,14 +18,13 @@ window.addEventListener("DOMContentLoaded", () => {
       M.toast({html: "File splitted successfully."})
       document.getElementById("aiSplitterPreloader").className += " hide"
       prepareEditor(true)
+      globalSplitCounter = 0
     }
     
   }
 
   socket.onclose = function onClose(e) {
   }
-
-  
 });
 
 let globalSeekLock = false
@@ -32,6 +32,7 @@ let globalEditorLock = false
 let globalPlay = false
 let waveArray = []
 let globalSplitCounter = 0
+let globalEnableDiscoveryTrack = false
 
 // DOM
 const $$ = {
@@ -163,7 +164,7 @@ function showDragDropFigure(input)
   $$.dragDropFigure.removeAttribute('hidden');
 }
 
-async function prepareEditor(isAlreadyLoaded = false)
+async function prepareEditor(isAlreadyLoaded = false, selectLast = false)
 {
   if(!globalEditorLock){
     globalEditorLock = true
@@ -176,7 +177,7 @@ async function prepareEditor(isAlreadyLoaded = false)
 
       if(!isAlreadyLoaded)
       { 
-        await prepareProjectSelector() 
+        await prepareProjectSelector(selectLast) 
       }
       else{
         destroyAll()
@@ -246,6 +247,17 @@ async function prepareEditor(isAlreadyLoaded = false)
         }
         document.getElementById("playPauseMenu").classList.remove("hide")
         document.getElementById("aiSplitMenu").classList.remove("hide")
+
+        if(selectedProject.options.length == 1 && Cookies.get('discoveryTunnel') == '2')
+        {
+          globalEnableDiscoveryTrack = true;
+          startupDiscoveryTunnel();
+        }
+        else{
+          Cookies.set('discoveryTunnel', '7')
+        }
+
+
       }
       console.log("EDITOR LOADED")
     }
@@ -260,7 +272,7 @@ function changeProject()
   document.getElementById("playPauseButtonImage").innerHTML = "play_arrow"
 }
 
-async function prepareProjectSelector()
+async function prepareProjectSelector(selectLast = false)
 {
   let projects = await getData('projects').then(projects => {return projects['users_project']})
   if(projects.length > 0)
@@ -274,6 +286,7 @@ async function prepareProjectSelector()
       option.appendChild(document.createTextNode(element['name']))
       option.value = element['id']
       projectSelector.appendChild(option)
+      if(i == projects.length-1 && selectLast){projectSelector.value = option.value}
     }
     M.FormSelect.init(projectSelector, {})
   }  
@@ -378,11 +391,9 @@ function checkButtons()
     }
   }
 
-  console.log(nonMuted)
 
   for (let i = 0; i < waveArray.length; i++) {
     document.getElementById("isolateButton_" + i).classList.remove("activated-button")
-    console.log(document.getElementById("isolateButton_" + i))
   }
 
   if(nonMuted.length == 1){
@@ -450,7 +461,7 @@ function uploadSongs()
   let options = {
     method: 'POST',
     headers: {
-      'X-CSRFToken': getCookie('csrftoken')
+      'X-CSRFToken': Cookies.get('csrftoken')
     },
     body: formData,
     credentials: 'same-origin'
@@ -463,12 +474,11 @@ function uploadSongs()
         enableUploadButton(true)
         closeModal("uploadFileDialog")
         document.getElementById('uploadSongClose').click()
-        prepareEditor();
+        prepareEditor(false, true);
       }
       else{
         M.toast({html: "An error occured while uploading your song"})
         enableUploadButton(true)
-        console.log(response)
       }
     }
   ).catch(
@@ -504,7 +514,7 @@ async function getData(route)
   let options = {
     method: 'GET',
     headers: {
-      'X-CSRFToken': getCookie('csrftoken')
+      'X-CSRFToken': Cookies.get('csrftoken')
     },
     credentials: 'same-origin'
   }
@@ -533,18 +543,93 @@ function deactivatePreloader()
   document.querySelector('.preloader-container').style.display = 'none';
 }
 
-function getCookie(name) {
-  var cookieValue = null;
-  if (document.cookie && document.cookie !== '') {
-    var cookies = document.cookie.split(';');
-    for (var i = 0; i < cookies.length; i++) {
-      var cookie = cookies[i].trim();
-      // Does this cookie string begin with the name we want?
-      if (cookie.substring(0, name.length + 1) === (name + '=')) {
-        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+function startupDiscoveryTunnel()
+{
+  currentStep = Cookies.get('discoveryTunnel')
+  if(currentStep == undefined){currentStep = '0'}
+
+  console.log("CURRENT STEP : " + currentStep)
+
+  sleep(1000).then(() => {
+    switch (currentStep) {
+      case '0':
+        getTapDiscovery('mainEditorMenuDiscovery').open();
+        Cookies.set('discoveryTunnel', '1')
         break;
-      }
+      case '1':
+        M.FloatingActionButton.getInstance(document.getElementById("FABMenu")).open()
+        sleep(500).then(() => {
+          getTapDiscovery('createProjectDiscovery').open()
+          Cookies.set('discoveryTunnel', '2')
+        })
+        
+        break;
+      case '2':
+        if(globalEnableDiscoveryTrack){
+          getTapDiscovery('muteDiscovery').open();
+          Cookies.set('discoveryTunnel', '3')
+        }
+        break;
+      case '3':
+        if(globalEnableDiscoveryTrack){
+          getTapDiscovery('volumeDiscovery').open()
+          Cookies.set('discoveryTunnel', '4')
+        }
+        break;
+      case '4':
+        if(globalEnableDiscoveryTrack){
+          getTapDiscovery('isolateDiscovery').open()
+          Cookies.set('discoveryTunnel', '5')
+        }
+        break;
+      case '5':
+        if(globalEnableDiscoveryTrack){
+          M.FloatingActionButton.getInstance(document.getElementById("FABMenu")).open()
+          sleep(500).then(() => {
+            getTapDiscovery('AISplitDiscovery').open()
+            Cookies.set('discoveryTunnel', '6')
+          })
+        }
+        break;
+      case '6':
+        if(globalEnableDiscoveryTrack){
+          getTapDiscovery('trackDiscovery').open()
+          Cookies.set('discoveryTunnel', '7')
+        }
+      default:
+        break;
     }
+  })
+
+  console.log("END")
+}
+
+function getTapDiscovery(name){
+  console.log(name)
+  let elem = document.getElementById(name)
+  elem.className += " tap-target"
+  elem.classList.remove("hide")
+  let options = {
+    onClose: () => closeDiscovery(name)
   }
-  return cookieValue;
+  let discovery = M.TapTarget.init(elem, options)
+  
+  return discovery
+}
+
+function closeDiscovery(name)
+{
+  sleep(500).then(() => {
+    let elem = document.getElementById(name)
+    let discovery = M.TapTarget.getInstance(elem).destroy()
+
+    document.querySelectorAll('.tap-target-wrapper').forEach(function(a) {
+      a.remove()
+    })
+    startupDiscoveryTunnel()
+  })
+}
+
+const sleep = (milliseconds) => {
+  return new Promise(resolve => setTimeout(resolve, milliseconds))
 }
