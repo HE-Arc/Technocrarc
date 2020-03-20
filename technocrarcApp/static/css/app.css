@@ -30,6 +30,10 @@ a.underline:focus::after {
     opacity: 1;
 }
 
+.card-panel{
+    background-color: #333;
+}
+
 .material-tooltip {
     color: #222;
     background-color: #fff;
