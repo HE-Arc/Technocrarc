@@ -20,17 +20,19 @@ function setUpAllEffects(effects) {
 }
 
 function fetchEffect(effectId){
-    fetch(`effect/${effectId}`).then((response) => {
-        response.json().then((json) => {
-            setUpAllEffects(json.effects)
-            sound.play()
-        })
-    })
+
+    // fetch(`effect/${effectId}`).then((response) => {
+    //     response.json().then((json) => {
+    //         setUpAllEffects(json.effects)
+    //         sound.play()
+    //     })
+    // })
 }
 
 function preload(){
     // TODO : change sound_id
-    sound = loadSound('download/36');
+
+    //sound = loadSound('download/36');
 }
 
 function setup() {

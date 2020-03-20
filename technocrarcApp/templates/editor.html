@@ -2,12 +2,176 @@
 
 {% block content %}
 <div class="container">
-    <div class="center">
-        <h1 class="main-title">Editor</h1>
+  <div class="center">
 
-        <h4>Best website ever</h4>
-        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-        
+    <h1 class="main-title" style="display: inline-block;">Editor</h1>
+
+    <div id="FABMenu" class="fixed-action-btn">
+      <a id="mainEditorMenu" class="btn btn-large btn-floating deep-orange darken-1">
+        <i class="large material-icons">dehaze</i>
+      </a>
+      <ul>
+        <li><a id="createProjectMenu" data-target="uploadFileDialog" class="btn-floating green modal-trigger tooltipped" data-position="left" data-tooltip="Create a new project"><i class="material-icons">add</i></a></li>
+        <li><a id="playPauseMenu" class="btn-floating purple tooltipped hide" data-position="left" data-tooltip="Play / Pause" onclick="playPauseAll();"><i id="playPauseButtonImage" class="material-icons">play_arrow</i></a></li>
+        <li><a id="aiSplitMenu" class="btn-floating blue tooltipped hide" data-position="left" data-tooltip="AI Split" onclick="splitSound();"><i class="material-icons">shuffle</i></a></li>
+      </ul>
     </div>
+
+    {% comment %} <div>
+      <div class="row">
+        <div class="col s12">
+          <div class="card-panel hoverable">
+            <div class="progress progress-waveform"><div class="indeterminate" style="width: 70%"></div></div>
+          </div>
+        </div>
+      </div>
+    </div> {% endcomment %}
+
+    <div id="wave-container">
+    </div>
+  </div>
 </div>
+
+<!-- Modal Structure -->
+<div id="uploadFileDialog" class="modal">
+  <div class="modal-content">
+    <div class="center">
+      <div class="file-field input-field">
+          <input class="sound-file-input" id="sound-file-input" name="file" type="file" accept="audio/x-waw" required>
+          <div class="file-path-wrapper">
+              <div class="dragdrop-figure">
+                  <i class="material-icons">cloud_upload</i>
+                  <p>Drop your sound here !</p>
+                  <p class="italic">Max 50 MB</p>
+                  <input class="file-path validate" type="text" hidden>
+              </div>
+              <div class="dragdrop-uploaded" hidden>
+                  <i id="uploadSongClose" class="material-icons close">close</i>
+                  <i class="material-icons">audiotrack</i>
+                  <p class="uploaded-file-name italic"></p>
+                  <p class="uploaded-file-size italic"></p>
+              </div>
+          </div>
+      </div>
+      <button class="btn btn-large waves-effect waves-light" id="uploadSongButton" onclick="uploadSongs();">UPLOAD
+
+          <div id="uploadSongPreloader" class="preloader-container">
+              <div class="preloader-wrapper active">
+                <div class="spinner-layer spinner-blue-only">
+                  <div class="circle-clipper left">
+                    <div class="circle"></div>
+                  </div><div class="gap-patch">
+                    <div class="circle"></div>
+                  </div><div class="circle-clipper right">
+                    <div class="circle"></div>
+                  </div>
+                </div>
+              </div>
+          </div>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- AI Splitter preloader-->
+<div id="aiSplitterPreloader" class="ai-splitter-preloader hide">
+  <div class="preloader-wrapper big active">
+    <div class="spinner-layer spinner-blue">
+      <div class="circle-clipper left">
+        <div class="circle"></div>
+      </div><div class="gap-patch">
+        <div class="circle"></div>
+      </div><div class="circle-clipper right">
+        <div class="circle"></div>
+      </div>
+    </div>
+
+    <div class="spinner-layer spinner-red">
+      <div class="circle-clipper left">
+        <div class="circle"></div>
+      </div><div class="gap-patch">
+        <div class="circle"></div>
+      </div><div class="circle-clipper right">
+        <div class="circle"></div>
+      </div>
+    </div>
+
+    <div class="spinner-layer spinner-yellow">
+      <div class="circle-clipper left">
+        <div class="circle"></div>
+      </div><div class="gap-patch">
+        <div class="circle"></div>
+      </div><div class="circle-clipper right">
+        <div class="circle"></div>
+      </div>
+    </div>
+
+    <div class="spinner-layer spinner-green">
+      <div class="circle-clipper left">
+        <div class="circle"></div>
+      </div><div class="gap-patch">
+        <div class="circle"></div>
+      </div><div class="circle-clipper right">
+        <div class="circle"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+<!--Feature discovery-->
+<div id="mainEditorMenuDiscovery" class="deep-orange lighten-1 hide" data-target="mainEditorMenu"> <!-- tap-target class added in app.js-->
+  <div class="tap-target-content">
+    <h5>Main menu</h5>
+    <p>Use this menu to create a new project or manage the current one</p>
+  </div>
+</div>
+
+<div id="createProjectDiscovery" class="deep-orange lighten-1 hide" data-target="createProjectMenu">
+  <div class="tap-target-content">
+    <h5>Create a project</h5>
+    <p>Create a new project by uploading a song. You can switch between projects using the selector on the top right corner.</p>
+  </div>
+</div>
+
+<div id="AISplitDiscovery" class="deep-orange lighten-1 hide" data-target="aiSplitMenu">
+  <div class="tap-target-content">
+    <h5>AI Split</h5>
+    <p>Split your music into 5 different stems : Vocals, drums, bass, piano and others</p>
+  </div>
+</div>
+
+<div id="muteDiscovery" class="deep-orange lighten-1 hide" data-target="muteButton_0">
+  <div class="tap-target-content">
+    <h5>Mute</h5>
+    <p>Mute this track using this button</p>
+  </div>
+</div>
+
+<div id="volumeDiscovery" class="deep-orange lighten-1 hide" data-target="inputVolume_0">
+  <div class="tap-target-content">
+    <h5>Volume</h5>
+    <p>Change the track volume with this slider</p>
+  </div>
+</div>
+
+<div id="isolateDiscovery" class="deep-orange lighten-1 hide" data-target="isolateButton_0">
+  <div class="tap-target-content">
+    <h5>Isolate</h5>
+    <p>Mute every other track except this one</p>
+  </div>
+</div>
+ 
+<div id="trackDiscovery" class="deep-orange lighten-1 hide" data-target="mainEditorMenu">
+  <div class="tap-target-content">
+    <h5>Track</h5>
+    <p>Kebyoard shortcuts are also available:<br />
+    Left arrow : Go 5 seconds backward <br/>
+    Right arrow : Go 5 seconds forward <br/>
+    Spacebar : Play / Pause</p>
+  </div>
+</div>
+
+
 {% endblock content %}
