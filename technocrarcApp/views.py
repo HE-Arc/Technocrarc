@@ -119,6 +119,8 @@ class SplitAudioFileViewDownload(LoginRequiredMixin, APIView):
             path_to_file = os.path.join(settings.MEDIA_ROOT, file[0]['file'])
             with open(path_to_file, 'rb') as wav_file:
                 response = HttpResponse(wav_file, content_type='audio/wav')
+                file_name = file[0]['file'].split("/")[-1]
+                response['Content-Disposition'] = f'attachment; filename="{file_name[:-4]}"'
             return response
         else:
             return HttpResponseNotFound('No matching file found')

@@ -231,7 +231,6 @@ async function prepareEditor(isAlreadyLoaded = false, selectLast = false)
 
           // IIFE
           (function(lockedID){
-            wavesurfer.load("download/" + currentID)
 
             wavesurfer.on('seek', function(progress) {
               if(!globalSeekLock){
@@ -242,7 +241,27 @@ async function prepareEditor(isAlreadyLoaded = false, selectLast = false)
             wavesurfer.on('loading', function(progress){
               changeProgressPercentage(progress, lockedID)
             })
+
+            wavesurfer.on('ready', function(){
+              changeProgressPercentage(100, lockedID)
+            })
+
+            fetch("download/" + currentID).then(response => {
+              let filename = response.headers.get('content-disposition').split("filename=")[1].replace(/['"]+/g, '')
+
+              controlsElement.innerHTML += '<p>' + filename + '</p>'
+              return response.blob();
+            })
+            .then((blob) => {
+              wavesurfer.loadBlob(blob);
+              console.log('full')
+            })
+            .catch((e) => {
+              console.error('error', e);
+            });
+
           })(currentID);
+
 
           waveArray[i] = wavesurfer
         }
