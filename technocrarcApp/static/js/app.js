@@ -211,7 +211,8 @@ async function prepareEditor(isAlreadyLoaded = false, selectLast = false)
 
           let preLoader =  '<div id="progressDiv'+ currentID +'" class="progress progress-waveform"><div class="determinate" id="progress_'+ currentID +'" style="width: 30%"></div></div>'
 
-          controlsElement.innerHTML = '<a onclick="mute('+ i +')" id=muteButton_'+ i +' class="btn-floating btn-small waves-effect waves-light deep-orange darken-1"><i class="material-icons">volume_off</i></a>'
+          controlsElement.innerHTML = '<a class="btn-floating btn-small waves-effect waves-light red" href="'+ "download/" + currentID + '"><i class="material-icons">file_download</i></a>'
+          controlsElement.innerHTML += '<a onclick="mute('+ i +')" id=muteButton_'+ i +' class="btn-floating btn-small waves-effect waves-light deep-orange darken-1"><i class="material-icons">volume_off</i></a>'
           controlsElement.innerHTML += '<p class="range-field"><input oninput="changeVolume('+ i +')" type="range" id="inputVolume_'+ i +'" min="0" max="100" value="100"/></p>'
           controlsElement.innerHTML += '<a onclick="isolate('+ i +')" id=isolateButton_'+ i +' class="btn-floating btn-small waves-effect waves-light deep-orange darken-1"><i class="material-icons">hearing</i></a>'
 
@@ -246,7 +247,7 @@ async function prepareEditor(isAlreadyLoaded = false, selectLast = false)
               changeProgressPercentage(100, lockedID)
             })
 
-            fetch("download/" + currentID).then(response => {
+            fetch("download/" + lockedID).then(response => {
               let filename = response.headers.get('content-disposition').split("filename=")[1].replace(/['"]+/g, '')
 
               controlsElement.innerHTML += '<p>' + filename + '</p>'
