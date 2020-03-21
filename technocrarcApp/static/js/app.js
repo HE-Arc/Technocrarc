@@ -14,13 +14,13 @@ window.addEventListener("DOMContentLoaded", () => {
     let json_data = JSON.parse(e.data)
     globalSplitCounter++
 
-    if(globalSplitCounter == 5){
-      M.toast({html: "File splitted successfully."})
+    if (globalSplitCounter == 5) {
+      M.toast({ html: "File splitted successfully." })
       document.getElementById("aiSplitterPreloader").className += " hide"
       prepareEditor(true)
       globalSplitCounter = 0
     }
-    
+
   }
 
   socket.onclose = function onClose(e) {
@@ -45,48 +45,41 @@ const $$ = {
   dragDropCloses: document.querySelectorAll('.dragdrop-uploaded .close'),
 };
 
-document.addEventListener('DOMContentLoaded', (evt) =>
-{
-    // Inits Tooltips
-    M.Tooltip.init(document.querySelectorAll('.tooltipped'), {
-        enterDelay: 300,
+document.addEventListener('DOMContentLoaded', (evt) => {
+  // Inits Tooltips
+  M.Tooltip.init(document.querySelectorAll('.tooltipped'), {
+    enterDelay: 300,
+  });
+
+  // Elements with class « file-field »
+  $$.fileFields.forEach((item, i) => {
+    // Drag enter -> modify style
+    item.addEventListener('dragenter', evt => {
+      evt.preventDefault();
+      item.classList.add('dragenter');
     });
 
-    // Elements with class « file-field »
-    $$.fileFields.forEach((item, i) =>
-    {
-        // Drag enter -> modify style
-        item.addEventListener('dragenter', evt =>
-        {
-            evt.preventDefault();
-            item.classList.add('dragenter');
-        });
-
-        // Drag leave -> modify style
-        item.addEventListener('dragleave', evt =>
-        {
-            evt.preventDefault();
-            item.classList.remove('dragenter');
-        });
-
-        // Drop on « file input »
-        item.addEventListener('drop', evt =>
-        {
-            evt.preventDefault();
-
-            let input = item.querySelector('.sound-file-input');
-            let files = evt.dataTransfer.files;
-            parseAudioFiles(input, files);
-        });
+    // Drag leave -> modify style
+    item.addEventListener('dragleave', evt => {
+      evt.preventDefault();
+      item.classList.remove('dragenter');
     });
+
+    // Drop on « file input »
+    item.addEventListener('drop', evt => {
+      evt.preventDefault();
+
+      let input = item.querySelector('.sound-file-input');
+      let files = evt.dataTransfer.files;
+      parseAudioFiles(input, files);
+    });
+  });
 
 
   // Elements with class « sound-file-input »
-  $$.soundFileInputs.forEach((item, i) =>
-  {
+  $$.soundFileInputs.forEach((item, i) => {
     // File uploaded by file dialog
-    item.addEventListener('change', (evt) =>
-    {
+    item.addEventListener('change', (evt) => {
       evt.preventDefault();
 
       let files = evt.target.files;
@@ -95,23 +88,19 @@ document.addEventListener('DOMContentLoaded', (evt) =>
   });
 
   // Elements with class « close »
-  $$.dragDropCloses.forEach((item, i) =>
-  {
+  $$.dragDropCloses.forEach((item, i) => {
     let input = item.parentElement.parentElement.parentElement.querySelector('.sound-file-input');
 
     // Drag & Drop « close » icon
-    item.addEventListener('click', evt =>
-    {
+    item.addEventListener('click', evt => {
       showDragDropFigure(input);
     });
   });
 
   // Elements with class « form-upload-sound »
-  $$.soundUploadForms.forEach((item, i) =>
-  {
+  $$.soundUploadForms.forEach((item, i) => {
     // Upload sound file form on submit
-    item.addEventListener('submit', evt =>
-    {
+    item.addEventListener('submit', evt => {
       evt.preventDefault();
 
       //TODO
@@ -119,26 +108,21 @@ document.addEventListener('DOMContentLoaded', (evt) =>
   });
 });
 
-function parseAudioFiles(input, files)
-{
-  if (files.length > 1)
-  {
+function parseAudioFiles(input, files) {
+  if (files.length > 1) {
     alert('You can only upload one audio file at a time.');
   }
-  else
-  {
+  else {
     let file = files[0];
     let fileName = file.name;
     let fileType = file.type;
     let fileSize = file.size;
 
-    if (! fileType.includes('audio'))
-    {
+    if (!fileType.includes('audio')) {
       alert('The file format must be audio.');
     }
     // TODO: Can limit size here
-    else
-    {
+    else {
       input.files = files;
       showUploadedFile(input);
     }
@@ -146,8 +130,7 @@ function parseAudioFiles(input, files)
 }
 
 // Displays the uploaded sound file information
-function showUploadedFile(input)
-{
+function showUploadedFile(input) {
   let file = input.files[0];
   $$.dragDropUploaded.querySelector('.uploaded-file-name').innerHTML = file.name;
   $$.dragDropUploaded.querySelector('.uploaded-file-size').innerHTML = file.size;
@@ -157,17 +140,15 @@ function showUploadedFile(input)
 }
 
 // Displays the Drag & Drop information
-function showDragDropFigure(input)
-{
+function showDragDropFigure(input) {
   input.value = '';
 
   $$.dragDropUploaded.setAttribute('hidden', true);
   $$.dragDropFigure.removeAttribute('hidden');
 }
 
-async function prepareEditor(isAlreadyLoaded = false, selectLast = false)
-{
-  if(!globalEditorLock){
+async function prepareEditor(isAlreadyLoaded = false, selectLast = false) {
+  if (!globalEditorLock) {
     globalEditorLock = true
 
     var url = window.location.href;
@@ -176,20 +157,18 @@ async function prepareEditor(isAlreadyLoaded = false, selectLast = false)
 
       document.getElementById("wave-container").innerHTML = ""
 
-      if(!isAlreadyLoaded)
-      { 
-        await prepareProjectSelector(selectLast) 
+      if (!isAlreadyLoaded) {
+        await prepareProjectSelector(selectLast)
       }
-      else{
+      else {
         destroyAll()
       }
 
       let selectedProject = document.getElementById('projectSelector')
-    
-      if(selectedProject.selectedIndex != -1)
-      {
+
+      if (selectedProject.selectedIndex != -1) {
         let selectedProjectID = selectedProject.options[selectedProject.selectedIndex].value;
-        songs = await getData('/project/'+selectedProjectID).then(songs => {return songs['audio_files']})
+        songs = await getData('/project/' + selectedProjectID).then(songs => { return songs['audio_files'] })
 
         waveArray = []
 
@@ -199,26 +178,28 @@ async function prepareEditor(isAlreadyLoaded = false, selectLast = false)
           let colElement = document.createElement("div")
           let cardPanelElement = document.createElement("div")
           let controlsElement = document.createElement("div")
+          let infoElement = document.createElement("div")
           let waveFormElement = document.createElement("div")
 
           rowElement.className += "row"
           rowElement.className += " flex-row"
           colElement.className += "col"
-          colElement.className += " s10"
+          colElement.className += " s8"
           cardPanelElement.className += "card-panel hoverable"
           controlsElement.className += "controls col s2"
+          infoElement.className += "controls col s2"
           waveFormElement.id = "waveForm_" + currentID
 
-          let preLoader =  '<div id="progressDiv'+ currentID +'" class="progress progress-waveform"><div class="determinate" id="progress_'+ currentID +'" style="width: 30%"></div></div>'
+          let preLoader = '<div id="progressDiv' + currentID + '" class="progress progress-waveform"><div class="determinate" id="progress_' + currentID + '" style="width: 30%"></div></div>'
 
-          controlsElement.innerHTML = '<a class="btn-floating btn-small waves-effect waves-light red" href="'+ "download/" + currentID + '"><i class="material-icons">file_download</i></a>'
-          controlsElement.innerHTML += '<a onclick="mute('+ i +')" id=muteButton_'+ i +' class="btn-floating btn-small waves-effect waves-light deep-orange darken-1"><i class="material-icons">volume_off</i></a>'
-          controlsElement.innerHTML += '<p class="range-field"><input oninput="changeVolume('+ i +')" type="range" id="inputVolume_'+ i +'" min="0" max="100" value="100"/></p>'
-          controlsElement.innerHTML += '<a onclick="isolate('+ i +')" id=isolateButton_'+ i +' class="btn-floating btn-small waves-effect waves-light deep-orange darken-1"><i class="material-icons">hearing</i></a>'
+          controlsElement.innerHTML += '<a onclick="mute(' + i + ')" id=muteButton_' + i + ' class="btn-floating btn-small waves-effect waves-light deep-orange darken-1"><i class="material-icons">volume_off</i></a>'
+          controlsElement.innerHTML += '<p class="range-field"><input oninput="changeVolume(' + i + ')" type="range" id="inputVolume_' + i + '" min="0" max="100" value="100"/></p>'
+          controlsElement.innerHTML += '<a onclick="isolate(' + i + ')" id=isolateButton_' + i + ' class="btn-floating btn-small waves-effect waves-light deep-orange darken-1"><i class="material-icons">hearing</i></a>'
 
           cardPanelElement.appendChild(waveFormElement)
           cardPanelElement.insertAdjacentHTML('beforeend', preLoader)
           colElement.appendChild(cardPanelElement)
+          rowElement.appendChild(infoElement)
           rowElement.appendChild(colElement)
           rowElement.appendChild(controlsElement)
 
@@ -227,54 +208,58 @@ async function prepareEditor(isAlreadyLoaded = false, selectLast = false)
           let wavesurfer = WaveSurfer.create({
             container: '#waveForm_' + currentID,
             waveColor: 'violet',
-            progressColor: 'purple'
+            progressColor: 'purple',
+            plugins: [
+              WaveSurfer.regions.create({})
+            ]
           });
 
           // IIFE
-          (function(lockedID){
+          (function (lockedID) {
 
-            wavesurfer.on('seek', function(progress) {
-              if(!globalSeekLock){
+            wavesurfer.on('seek', function (progress) {
+              if (!globalSeekLock) {
                 changeSeek(progress)
               }
             })
 
-            wavesurfer.on('loading', function(progress){
+            wavesurfer.on('loading', function (progress) {
               changeProgressPercentage(progress, lockedID)
             })
 
-            wavesurfer.on('ready', function(){
+            wavesurfer.on('ready', function () {
               changeProgressPercentage(100, lockedID)
+              loadRegions([{ "start": 2.7, "end": 50.1, "attributes": {}, "data": {} }], wavesurfer)
             })
 
             fetch("download/" + lockedID).then(response => {
               let filename = response.headers.get('content-disposition').split("filename=")[1].replace(/['"]+/g, '')
 
-              controlsElement.innerHTML += '<p>' + filename + '</p>'
+              infoElement.innerHTML += '<p>' + filename + '</p>'
+              infoElement.innerHTML += '<a class="btn-floating btn-small waves-effect waves-light red" href="' + "download/" + currentID + '"><i class="material-icons">file_download</i></a>'
+
               return response.blob();
             })
-            .then((blob) => {
-              wavesurfer.loadBlob(blob);
-              console.log('full')
-            })
-            .catch((e) => {
-              console.error('error', e);
-            });
-
+              .then((blob) => {
+                wavesurfer.loadBlob(blob);
+              })
+              .catch((e) => {
+                console.error('error', e);
+              });
           })(currentID);
 
-
           waveArray[i] = wavesurfer
+
         }
+
         document.getElementById("playPauseMenu").classList.remove("hide")
         document.getElementById("aiSplitMenu").classList.remove("hide")
 
-        if(selectedProject.options.length == 1 && Cookies.get('discoveryTunnel') == '2')
-        {
+        if (selectedProject.options.length == 1 && Cookies.get('discoveryTunnel') == '2') {
           globalEnableDiscoveryTrack = true;
           startupDiscoveryTunnel();
         }
-        else{
+        else {
           Cookies.set('discoveryTunnel', '7')
         }
 
@@ -284,20 +269,17 @@ async function prepareEditor(isAlreadyLoaded = false, selectLast = false)
     }
     globalEditorLock = false
   }
-  
+
 }
 
-function changeProject()
-{
+function changeProject() {
   prepareEditor(true);
   document.getElementById("playPauseButtonImage").innerHTML = "play_arrow"
 }
 
-async function prepareProjectSelector(selectLast = false)
-{
-  let projects = await getData('projects').then(projects => {return projects['users_project']})
-  if(projects.length > 0)
-  {
+async function prepareProjectSelector(selectLast = false) {
+  let projects = await getData('projects').then(projects => { return projects['users_project'] })
+  if (projects.length > 0) {
     let projectSelector = document.getElementById('projectSelector')
     projectSelector.innerHTML = ""
 
@@ -307,19 +289,17 @@ async function prepareProjectSelector(selectLast = false)
       option.appendChild(document.createTextNode(element['name']))
       option.value = element['id']
       projectSelector.appendChild(option)
-      if(i == projects.length-1 && selectLast){projectSelector.value = option.value}
+      if (i == projects.length - 1 && selectLast) { projectSelector.value = option.value }
     }
     M.FormSelect.init(projectSelector, {})
-  }  
+  }
 }
 
-function changeProgressPercentage(progress, id)
-{
+function changeProgressPercentage(progress, id) {
   document.getElementById("progress_" + id).style.width = progress + "%"
 }
 
-function changeSeek(progress)
-{
+function changeSeek(progress) {
   globalSeekLock = true
   for (let index = 0; index < waveArray.length; index++) {
     let waveSurfer = waveArray[index];
@@ -328,32 +308,29 @@ function changeSeek(progress)
   globalSeekLock = false
 }
 
-function playPauseAll()
-{
+function playPauseAll() {
   for (let index = 0; index < waveArray.length; index++) {
     const waveSurfer = waveArray[index];
-    if(globalPlay){
+    if (globalPlay) {
       waveSurfer.pause();
     }
-    else{
+    else {
       waveSurfer.play();
     }
   }
   globalPlay = !globalPlay
-  
+
   playPauseButtonImage = document.getElementById("playPauseButtonImage")
-  if (waveArray[0].isPlaying())
-  {
+  if (waveArray[0].isPlaying()) {
     playPauseButtonImage.innerHTML = "pause"
   }
-  else{
+  else {
     playPauseButtonImage.innerHTML = "play_arrow"
   }
 
 }
 
-function destroyAll()
-{
+function destroyAll() {
   for (let index = 0; index < waveArray.length; index++) {
     const waveSurfer = waveArray[index];
     waveSurfer.pause();
@@ -361,52 +338,46 @@ function destroyAll()
   }
 }
 
-function skipTo(sec)
-{
+function skipTo(sec) {
   for (let index = 0; index < waveArray.length; index++) {
     const waveSurfer = waveArray[index];
     waveSurfer.skip(sec);
   }
 }
 
-function mute(id)
-{
+function mute(id) {
   waveArray[id].toggleMute()
-  document.getElementById("muteButton_"+id).className += " activated-button"
+  document.getElementById("muteButton_" + id).className += " activated-button"
   checkButtons()
 }
 
-function isolate(id)
-{
+function isolate(id) {
   waveArray[id].setMute(false)
   for (let index = 0; index < waveArray.length; index++) {
     const waveSurfer = waveArray[index];
-    if(id != index)
-    {
+    if (id != index) {
       waveSurfer.setMute(true);
     }
   }
   checkButtons()
 }
 
-function changeVolume(id)
-{
-  waveArray[id].setVolume(document.getElementById("inputVolume_"+id).value/100)
-  
+function changeVolume(id) {
+  waveArray[id].setVolume(document.getElementById("inputVolume_" + id).value / 100)
+
 }
 
-function checkButtons()
-{
+function checkButtons() {
   let nonMuted = []
 
   for (let index = 0; index < waveArray.length; index++) {
     const waveSurfer = waveArray[index];
-    let button = document.getElementById("muteButton_"+index)
-    
-    if(waveSurfer.isMuted){
+    let button = document.getElementById("muteButton_" + index)
+
+    if (waveSurfer.isMuted) {
       button.className += " activated-button"
     }
-    else{
+    else {
       button.classList.remove("activated-button")
       nonMuted += index
     }
@@ -417,18 +388,17 @@ function checkButtons()
     document.getElementById("isolateButton_" + i).classList.remove("activated-button")
   }
 
-  if(nonMuted.length == 1){
+  if (nonMuted.length == 1) {
     document.getElementById("isolateButton_" + nonMuted[0]).className += " activated-button"
   }
 }
 
-function splitSound()
-{
+function splitSound() {
   if (socket.readyState == WebSocket.OPEN) {
     socket.onopen()
   }
 
-  if(songs.length == 1){
+  if (songs.length == 1) {
     document.getElementById("aiSplitterPreloader").classList.remove("hide")
     songID = songs[0].id
 
@@ -438,40 +408,38 @@ function splitSound()
         'stems': '5_stems',
       })
     )
-    M.toast({html: "Split in progress"})
+    M.toast({ html: "Split in progress" })
   }
-  else{
-    M.toast({html: "This song has already been splitted"})
+  else {
+    M.toast({ html: "This song has already been splitted" })
   }
   // stems = 5,4,2
   // stems = '2_stems'
-  
-  
+
+
 }
 
-function checkKey(e)
-{
+function checkKey(e) {
   e = e || window.event;
 
-    if (e.keyCode == '39') {
-        //Right arrow -> 5 secs forward
-        skipTo(5)
-    }
-    else if (e.keyCode == '37') {
-        //Left arrow -> 5 secs backward
-        skipTo(-5)
-    }
-    else if (e.keyCode == '32') {
-      //Spacebar -> play/pause
-      e.preventDefault()
-      playPauseAll()
+  if (e.keyCode == '39') {
+    //Right arrow -> 5 secs forward
+    skipTo(5)
+  }
+  else if (e.keyCode == '37') {
+    //Left arrow -> 5 secs backward
+    skipTo(-5)
+  }
+  else if (e.keyCode == '32') {
+    //Spacebar -> play/pause
+    e.preventDefault()
+    playPauseAll()
   }
 }
 
 //
 // Uploads a sound file to the server in order to split it
-function uploadSongs()
-{
+function uploadSongs() {
   enableUploadButton(false)
   fileInput = document.getElementById('sound-file-input')
 
@@ -490,48 +458,45 @@ function uploadSongs()
 
   fetch('upload', options).then(
     response => {
-      if(response.ok){
-        M.toast({html: "Successfully uploaded song"})
+      if (response.ok) {
+        M.toast({ html: "Successfully uploaded song" })
         enableUploadButton(true)
         closeModal("uploadFileDialog")
         document.getElementById('uploadSongClose').click()
         prepareEditor(false, true);
       }
-      else{
-        M.toast({html: "An error occured while uploading your song"})
+      else {
+        M.toast({ html: "An error occured while uploading your song" })
         enableUploadButton(true)
       }
     }
   ).catch(
-    error => M.toast({html: error.message})
+    error => M.toast({ html: error.message })
   )
 }
 
-function enableUploadButton(enable)
-{
+function enableUploadButton(enable) {
   let button = document.getElementById('uploadSongButton')
   let preLoader = document.getElementById('uploadSongPreloader')
 
-  if(enable){
+  if (enable) {
     button.disabled = false;
     preLoader.style.display = "none"
   }
-  else{
+  else {
     button.disabled = true;
     preLoader.style.display = "block"
   }
 }
 
-function closeModal(id)
-{
+function closeModal(id) {
   let modal = document.getElementById(id)
   let instance = M.Modal.getInstance(modal)
   instance.close();
 }
 
 
-async function getData(route)
-{
+async function getData(route) {
   let options = {
     method: 'GET',
     headers: {
@@ -541,33 +506,30 @@ async function getData(route)
   }
 
   let data = await fetch(route, options)
-  .then(response=>response.json())
-  .then(
-    data => {
+    .then(response => response.json())
+    .then(
+      data => {
         return data
-    }
-  ).catch(
-    error => M.toast({html: error.message})
-  )
+      }
+    ).catch(
+      error => M.toast({ html: error.message })
+    )
   return data
 }
 
 // Displays the preloader(s)
-function activatePreloader()
-{
+function activatePreloader() {
   document.querySelector('.preloader-container').style.display = 'block';
 }
 
 // Hides the preloader(s)
-function deactivatePreloader()
-{
+function deactivatePreloader() {
   document.querySelector('.preloader-container').style.display = 'none';
 }
 
-function startupDiscoveryTunnel()
-{
+function startupDiscoveryTunnel() {
   currentStep = Cookies.get('discoveryTunnel')
-  if(currentStep == undefined){currentStep = '0'}
+  if (currentStep == undefined) { currentStep = '0' }
 
   console.log("CURRENT STEP : " + currentStep)
 
@@ -583,28 +545,28 @@ function startupDiscoveryTunnel()
           getTapDiscovery('createProjectDiscovery').open()
           Cookies.set('discoveryTunnel', '2')
         })
-        
+
         break;
       case '2':
-        if(globalEnableDiscoveryTrack){
+        if (globalEnableDiscoveryTrack) {
           getTapDiscovery('muteDiscovery').open();
           Cookies.set('discoveryTunnel', '3')
         }
         break;
       case '3':
-        if(globalEnableDiscoveryTrack){
+        if (globalEnableDiscoveryTrack) {
           getTapDiscovery('volumeDiscovery').open()
           Cookies.set('discoveryTunnel', '4')
         }
         break;
       case '4':
-        if(globalEnableDiscoveryTrack){
+        if (globalEnableDiscoveryTrack) {
           getTapDiscovery('isolateDiscovery').open()
           Cookies.set('discoveryTunnel', '5')
         }
         break;
       case '5':
-        if(globalEnableDiscoveryTrack){
+        if (globalEnableDiscoveryTrack) {
           M.FloatingActionButton.getInstance(document.getElementById("FABMenu")).open()
           sleep(500).then(() => {
             getTapDiscovery('AISplitDiscovery').open()
@@ -613,7 +575,7 @@ function startupDiscoveryTunnel()
         }
         break;
       case '6':
-        if(globalEnableDiscoveryTrack){
+        if (globalEnableDiscoveryTrack) {
           getTapDiscovery('trackDiscovery').open()
           Cookies.set('discoveryTunnel', '7')
         }
@@ -625,7 +587,7 @@ function startupDiscoveryTunnel()
   console.log("END")
 }
 
-function getTapDiscovery(name){
+function getTapDiscovery(name) {
   console.log(name)
   let elem = document.getElementById(name)
   elem.className += " tap-target"
@@ -634,21 +596,27 @@ function getTapDiscovery(name){
     onClose: () => closeDiscovery(name)
   }
   let discovery = M.TapTarget.init(elem, options)
-  
+
   return discovery
 }
 
-function closeDiscovery(name)
-{
+function closeDiscovery(name) {
   sleep(500).then(() => {
     let elem = document.getElementById(name)
     let discovery = M.TapTarget.getInstance(elem).destroy()
 
-    document.querySelectorAll('.tap-target-wrapper').forEach(function(a) {
+    document.querySelectorAll('.tap-target-wrapper').forEach(function (a) {
       a.remove()
     })
     startupDiscoveryTunnel()
   })
+}
+
+function loadRegions(regions, wavesurfer) {
+  regions.forEach(function (region) {
+    region.color = 'rgba(244, 81, 30, 0.1)';
+    wavesurfer.addRegion(region);
+  });
 }
 
 const sleep = (milliseconds) => {
