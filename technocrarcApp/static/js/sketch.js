@@ -43,7 +43,7 @@ function setEffect(sound, effect)
     let func;
 
     // Instantiates a new p5 effect class
-    if (effect.hasOwnProperty('class'))
+    if (effect.class != null)
     {
         let obj = new p5[effect.class]();
         func = () => obj[effect.method](sound, ...effect.arguments);
