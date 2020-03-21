@@ -26,7 +26,7 @@ document.querySelector('#test-form').addEventListener('submit', (evt) =>
 function preload()
 {
     //FIXME: temporary testing
-    sound = loadSound('static/media/Chiquitita.wav');
+    sound = loadSound('static/media/audio/2020_11_03/50cent-in-da-club.mp3');
 }
 
 function setup()
