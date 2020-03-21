@@ -1,29 +1,36 @@
 
+/*
+    FIXME: temporary testing
+ */
 var sound;
 
-function preload()
-{
-    sound = loadSound('static/media/Chiquitita.wav');
-}
-
-function test()
-{
-    let reverb = {
-        class: 'Reverb',
-        method: 'process',
-        arguments: [3, 2],
-        timestamp: 0,
-    };
-
-    setEffect(sound, reverb);
-}
-
+// To call from console to play the sound
 function playSound()
 {
     sound.play();
 }
 
-function setup() {
+// Test form at /p5
+document.querySelector('#test-form').addEventListener('submit', (evt) =>
+{
+    evt.preventDefault();
+    let effect = parseEffectForm(evt.target);
+    setEffect(sound, effect);
+
+    // Call playSound() from console
+});
+/*
+    END temporary testing
+ */
+
+function preload()
+{
+    //FIXME: temporary testing
+    sound = loadSound('static/media/Chiquitita.wav');
+}
+
+function setup()
+{
     noCanvas()
     //fetchEffect(1)
 }
@@ -32,7 +39,6 @@ function setup() {
 function setEffect(sound, effect)
 {
     // TODO : manage error
-    //
 
     let func;
 
@@ -68,4 +74,29 @@ function fetchEffect(effectId)
     //         sound.play()
     //     })
     // })
+}
+
+// Parses the given form in order to create a sound effect
+function parseEffectForm(form)
+{
+    let _class = form.getAttribute('data-class');
+    let method = form.getAttribute('data-method');
+
+    let timestamp = form.querySelector('input.timestamp').value;
+
+    let argumentsInputs = form.querySelectorAll('input.argument');
+    let arguments = [];
+    // Number of arguments is variable
+    for (let i = 0; i < argumentsInputs.length; i++)
+    {
+        let val = argumentsInputs[i].value;
+        arguments.push(val);
+    }
+
+    return {
+        class: _class,
+        method: method,
+        arguments: arguments,
+        timestamp: timestamp,
+    };
 }

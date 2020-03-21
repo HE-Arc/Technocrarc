@@ -1,4 +1,14 @@
 {% extends '_base.html' %}
-<!-- TODO delete : after test -->
 {% block content %}
+<!-- TODO delete : after test -->
+
+<form id="test-form" data-class="Reverb" data-method="process">
+    <label for="arg1">Arg 1</label>
+    <input class="argument" type=number id="arg1">
+    <label for="arg2">Arg 2</label>
+    <input class="argument" type=number id="arg2">
+    <label for="ts">Timestampe</label>
+    <input class="timestamp" type="number" id="ts">
+    <button type="submit">Parse</button>
+</form>
 {% endblock content %}
