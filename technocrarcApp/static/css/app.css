@@ -159,3 +159,7 @@ form .btn-large {
 .controls > .btn-floating.btn-small {
     margin: 0px 5px 0 0px;
 }
+
+#effectModal{
+    background-color: #f4511e;
+}

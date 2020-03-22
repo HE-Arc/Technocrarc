@@ -32,6 +32,7 @@ let globalSeekLock = false
 let globalEditorLock = false
 let globalPlay = false
 let waveArray = []
+let soundEffect = new SoundEffect()
 let globalSplitCounter = 0
 let globalEnableDiscoveryTrack = false
 
@@ -50,6 +51,10 @@ document.addEventListener('DOMContentLoaded', (evt) => {
   M.Tooltip.init(document.querySelectorAll('.tooltipped'), {
     enterDelay: 300,
   });
+
+  // Inits modals
+  var elems = document.querySelectorAll('.modal');
+  var instances = M.Modal.init(elems);
 
   // Elements with class « file-field »
   $$.fileFields.forEach((item, i) => {
@@ -195,6 +200,7 @@ async function prepareEditor(isAlreadyLoaded = false, selectLast = false) {
           controlsElement.innerHTML += '<a onclick="mute(' + i + ')" id=muteButton_' + i + ' class="btn-floating btn-small waves-effect waves-light deep-orange darken-1"><i class="material-icons">volume_off</i></a>'
           controlsElement.innerHTML += '<p class="range-field"><input oninput="changeVolume(' + i + ')" type="range" id="inputVolume_' + i + '" min="0" max="100" value="100"/></p>'
           controlsElement.innerHTML += '<a onclick="isolate(' + i + ')" id=isolateButton_' + i + ' class="btn-floating btn-small waves-effect waves-light deep-orange darken-1"><i class="material-icons">hearing</i></a>'
+          controlsElement.innerHTML += '<a class="btn-floating btn-small waves-effect waves-light deep-orange darken-1 modal-trigger" onclick="selectTrack(' + i +  ')" href="#effectModal"><i class="material-icons">blur_on</i></a>'
 
           cardPanelElement.appendChild(waveFormElement)
           cardPanelElement.insertAdjacentHTML('beforeend', preLoader)
@@ -249,6 +255,7 @@ async function prepareEditor(isAlreadyLoaded = false, selectLast = false) {
           })(currentID);
 
           waveArray[i] = wavesurfer
+          soundEffect.addWave(i, wavesurfer)
 
         }
 
