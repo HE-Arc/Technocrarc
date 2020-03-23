@@ -3,13 +3,12 @@ import {sleep} from "/static/js/utils/utils.js"
 export class DiscoveryTunnel {
 
     constructor() {
-        this.globalEnableDiscoveryTrack = false
+        this.globalEnableDiscoveryTrack = true
     }
 
-    startupDiscoveryTunnel() {
-        console.log("start")
+    startupDiscoveryTunnel() {)
         let currentStep = Cookies.get('discoveryTunnel')
-        console.log(currentStep)
+
         if (currentStep == undefined) { currentStep = '0' }
 
         sleep(1000).then(() => {
