@@ -14,6 +14,5 @@ urlpatterns = [
     path('effect', AudioEffectView.as_view()),
     path('effect/<int:effect_id>', AudioEffectView.as_view()),
     path('projects', UserProject.as_view()),
-    path('project/<int:project_id>', Projects.as_view()),
-    path('p5', P5.as_view()), # TODO : delete after test
+    path('project/<int:project_id>', Projects.as_view())
 ]

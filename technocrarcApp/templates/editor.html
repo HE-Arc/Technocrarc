@@ -1,4 +1,5 @@
 {% extends '_base.html' %}
+{% load static %}
 
 {% block content %}
 <div class="container">
@@ -11,9 +12,13 @@
         <i class="large material-icons">dehaze</i>
       </a>
       <ul>
-        <li><a id="createProjectMenu" data-target="uploadFileDialog" class="btn-floating green modal-trigger tooltipped" data-position="left" data-tooltip="Create a new project"><i class="material-icons">add</i></a></li>
-        <li><a id="playPauseMenu" class="btn-floating purple tooltipped hide" data-position="left" data-tooltip="Play / Pause" onclick="playPauseAll();"><i id="playPauseButtonImage" class="material-icons">play_arrow</i></a></li>
-        <li><a id="aiSplitMenu" class="btn-floating blue tooltipped hide" data-position="left" data-tooltip="AI Split" onclick="splitSound();"><i class="material-icons">shuffle</i></a></li>
+        <li><a id="createProjectMenu" data-target="uploadFileDialog" class="btn-floating green modal-trigger tooltipped"
+            data-position="left" data-tooltip="Create a new project"><i class="material-icons">add</i></a></li>
+        <li><a id="playPauseMenu" class="btn-floating purple tooltipped hide" data-position="left"
+            data-tooltip="Play / Pause" onclick="playPauseAll();"><i id="playPauseButtonImage"
+              class="material-icons">play_arrow</i></a></li>
+        <li><a id="aiSplitMenu" class="btn-floating blue tooltipped hide" data-position="left"
+            data-tooltip="AI Split"><i class="material-icons">shuffle</i></a></li>
       </ul>
     </div>
 
@@ -21,7 +26,9 @@
       <div class="row">
         <div class="col s12">
           <div class="card-panel hoverable">
-            <div class="progress progress-waveform"><div class="indeterminate" style="width: 70%"></div></div>
+            <div class="progress progress-waveform">
+              <div class="indeterminate" style="width: 70%"></div>
+            </div>
           </div>
         </div>
       </div>
@@ -37,37 +44,39 @@
   <div class="modal-content">
     <div class="center">
       <div class="file-field input-field">
-          <input class="sound-file-input" id="sound-file-input" name="file" type="file" accept="audio/x-waw" required>
-          <div class="file-path-wrapper">
-              <div class="dragdrop-figure">
-                  <i class="material-icons">cloud_upload</i>
-                  <p>Drop your sound here !</p>
-                  <p class="italic">Max 50 MB</p>
-                  <input class="file-path validate" type="text" hidden>
-              </div>
-              <div class="dragdrop-uploaded" hidden>
-                  <i id="uploadSongClose" class="material-icons close">close</i>
-                  <i class="material-icons">audiotrack</i>
-                  <p class="uploaded-file-name italic"></p>
-                  <p class="uploaded-file-size italic"></p>
-              </div>
+        <input class="sound-file-input" id="sound-file-input" name="file" type="file" accept="audio/x-waw" required>
+        <div class="file-path-wrapper">
+          <div class="dragdrop-figure">
+            <i class="material-icons">cloud_upload</i>
+            <p>Drop your sound here !</p>
+            <p class="italic">Max 50 MB</p>
+            <input class="file-path validate" type="text" hidden>
           </div>
+          <div class="dragdrop-uploaded" hidden>
+            <i id="uploadSongClose" class="material-icons close">close</i>
+            <i class="material-icons">audiotrack</i>
+            <p class="uploaded-file-name italic"></p>
+            <p class="uploaded-file-size italic"></p>
+          </div>
+        </div>
       </div>
-      <button class="btn btn-large waves-effect waves-light" id="uploadSongButton" onclick="uploadSongs();">UPLOAD
+      <button class="btn btn-large waves-effect waves-light" id="uploadSongButton">UPLOAD
 
-          <div id="uploadSongPreloader" class="preloader-container">
-              <div class="preloader-wrapper active">
-                <div class="spinner-layer spinner-blue-only">
-                  <div class="circle-clipper left">
-                    <div class="circle"></div>
-                  </div><div class="gap-patch">
-                    <div class="circle"></div>
-                  </div><div class="circle-clipper right">
-                    <div class="circle"></div>
-                  </div>
-                </div>
+        <div id="uploadSongPreloader" class="preloader-container">
+          <div class="preloader-wrapper active">
+            <div class="spinner-layer spinner-blue-only">
+              <div class="circle-clipper left">
+                <div class="circle"></div>
               </div>
+              <div class="gap-patch">
+                <div class="circle"></div>
+              </div>
+              <div class="circle-clipper right">
+                <div class="circle"></div>
+              </div>
+            </div>
           </div>
+        </div>
       </button>
     </div>
   </div>
@@ -79,9 +88,11 @@
     <div class="spinner-layer spinner-blue">
       <div class="circle-clipper left">
         <div class="circle"></div>
-      </div><div class="gap-patch">
+      </div>
+      <div class="gap-patch">
         <div class="circle"></div>
-      </div><div class="circle-clipper right">
+      </div>
+      <div class="circle-clipper right">
         <div class="circle"></div>
       </div>
     </div>
@@ -89,9 +100,11 @@
     <div class="spinner-layer spinner-red">
       <div class="circle-clipper left">
         <div class="circle"></div>
-      </div><div class="gap-patch">
+      </div>
+      <div class="gap-patch">
         <div class="circle"></div>
-      </div><div class="circle-clipper right">
+      </div>
+      <div class="circle-clipper right">
         <div class="circle"></div>
       </div>
     </div>
@@ -99,9 +112,11 @@
     <div class="spinner-layer spinner-yellow">
       <div class="circle-clipper left">
         <div class="circle"></div>
-      </div><div class="gap-patch">
+      </div>
+      <div class="gap-patch">
         <div class="circle"></div>
-      </div><div class="circle-clipper right">
+      </div>
+      <div class="circle-clipper right">
         <div class="circle"></div>
       </div>
     </div>
@@ -109,9 +124,11 @@
     <div class="spinner-layer spinner-green">
       <div class="circle-clipper left">
         <div class="circle"></div>
-      </div><div class="gap-patch">
+      </div>
+      <div class="gap-patch">
         <div class="circle"></div>
-      </div><div class="circle-clipper right">
+      </div>
+      <div class="circle-clipper right">
         <div class="circle"></div>
       </div>
     </div>
@@ -121,7 +138,8 @@
 
 
 <!--Feature discovery-->
-<div id="mainEditorMenuDiscovery" class="deep-orange lighten-1 hide" data-target="mainEditorMenu"> <!-- tap-target class added in app.js-->
+<div id="mainEditorMenuDiscovery" class="deep-orange lighten-1 hide" data-target="mainEditorMenu">
+  <!-- tap-target class added in app.js-->
   <div class="tap-target-content">
     <h5>Main menu</h5>
     <p>Use this menu to create a new project or manage the current one</p>
@@ -131,7 +149,8 @@
 <div id="createProjectDiscovery" class="deep-orange lighten-1 hide" data-target="createProjectMenu">
   <div class="tap-target-content">
     <h5>Create a project</h5>
-    <p>Create a new project by uploading a song. You can switch between projects using the selector on the top right corner.</p>
+    <p>Create a new project by uploading a song. You can switch between projects using the selector on the top right
+      corner.</p>
   </div>
 </div>
 
@@ -162,16 +181,68 @@
     <p>Mute every other track except this one</p>
   </div>
 </div>
- 
+
 <div id="trackDiscovery" class="deep-orange lighten-1 hide" data-target="mainEditorMenu">
   <div class="tap-target-content">
     <h5>Track</h5>
     <p>Kebyoard shortcuts are also available:<br />
-    Left arrow : Go 5 seconds backward <br/>
-    Right arrow : Go 5 seconds forward <br/>
-    Spacebar : Play / Pause</p>
+      Left arrow : Go 5 seconds backward <br />
+      Right arrow : Go 5 seconds forward <br />
+      Spacebar : Play / Pause</p>
   </div>
 </div>
 
+<!-- Effect modal Structure -->
+<div id="effectModal" class="modal bottom-sheet">
+  <div class="modal-content">
+    <h4>Effect editor</h4>
+
+    <form id="effectForm">
+      <p class="range-field">
+        <label for="">Range</label>
+        <input type="range" id="test5" min="0" max="100" />
+      </p>
+      <div class="input-field col s12">
+        <select>
+          <option value="" disabled selected>Choose your option</option>
+          <option value="1">Option 1</option>
+          <option value="2">Option 2</option>
+          <option value="3">Option 3</option>
+        </select>
+        <label>Materialize Select</label>
+      </div>
+    </form>
+    <a id="applyEffectBtn" class="waves-effect waves-light btn">Apply</a>
+    <a id="removeEffectBtn" class="waves-effect waves-light btn">Remove</a>
+  </div>
+</div>
 
 {% endblock content %}
+
+{% block scripts %}
+
+<!-- SCRIPTS -->
+<script type="text/javascript">
+  // GLOBAL VARIABLES
+  const STATIC_URL = {% get_static_prefix %}
+</script>
+<script src="//code.jquery.com/jquery-3.1.1.min.js" defer></script>
+<script src="{% static 'js/materialize.js' %}" defer></script>
+<script src="{% static 'js/wavesurfer.js' %}" defer></script>
+<script src="{% static 'js/wavesurfer.regions.min.js' %}" defer></script>
+<script src="{% static 'js/cookies.js' %}" defer></script>
+<script src="{% static 'js/editor.js' %}" type="module" defer></script>
+<script src="{% static 'js/discovery/tunnel.js' %}" type="module" defer></script>
+<script src="{% static 'js/utils/utils.js' %}" type="module" defer></script>
+<script src="{% static 'js/project/project.js' %}" type="module" defer></script>
+<script src="{% static 'js/project/projectControl.js' %}" type="module" defer></script>
+<script src="{% static 'js/sound/musicUpload.js' %}" type="module" defer></script>
+<script src="{% static 'js/sound/regions.js' %}" type="module" defer></script>
+<script src="{% static 'js/sound/splitter.js' %}" type="module" defer></script>
+<script src="{% static 'js/sound/effect/effectManager.js' %}" type="module" defer></script>
+<script src="{% static 'js/sound/effect/effects.js' %}" type="module" defer></script>
+<script src="{% static 'js/sound/effect/utils.js' %}" type="module" defer></script>
+<script src="{% static 'js/sound/effect/utils.js' %}" type="module" defer></script>
+<script src="{% static 'js/sound/effect/form/formGeneration.js' %}" type="module" defer></script>
+
+{% endblock scripts %}
