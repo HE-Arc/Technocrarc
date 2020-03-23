@@ -1,25 +1,29 @@
-// TODO : delete or move in another file after test
-document.onkeydown = checkKey
-window.addEventListener("DOMContentLoaded", () => {
-  M.AutoInit();
-  prepareEditor();
-  startupDiscoveryTunnel();
-});
+import {ProjectManager} from "/static/js/project/project.js"
+import {ProjectController} from "/static/js/project/projectControl.js"
+import {DiscoveryTunnel} from "/static/js/discovery/tunnel.js"
+import {PubSub} from "/static/js/utils/pubsub.js"
+import {SongUploader} from "/static/js/sound/musicUpload.js"
+import {AISpleeter} from "/static/js/sound/splitter.js"
 
-let globalSeekLock = false
-let globalEditorLock = false
-let globalPlay = false
-let waveArray = []
-let soundEffect = new SoundEffect()
-let globalSplitCounter = 0
-let globalEnableDiscoveryTrack = false
+(function () {
+  M.AutoInit()
 
-// DOM
-const $$ = {
-  soundUploadForms: document.querySelectorAll('.form-upload-sound'),
-  soundFileInputs: document.querySelectorAll('.sound-file-input'),
-  fileFields: document.querySelectorAll('.file-field'),
-  dragDropFigure: document.querySelector('.dragdrop-figure'),
-  dragDropUploaded: document.querySelector('.dragdrop-uploaded'),
-  dragDropCloses: document.querySelectorAll('.dragdrop-uploaded .close'),
-};
+  let pubSub = new PubSub()
+
+  let projectManager = new ProjectManager(pubSub)
+  projectManager.prepareEditor()
+
+  let discoveryTunnel = new DiscoveryTunnel()
+  discoveryTunnel.startupDiscoveryTunnel()
+
+  let projectController = new ProjectController()
+  pubSub.subscribe("songLoaded", (waveArray) => projectController.loadSong(waveArray))
+  pubSub.subscribe("changeProject", () => projectController.destroyAll())
+
+  let songUploader = new SongUploader()
+
+  let aiSpleeter = new AISpleeter(pubSub)
+  pubSub.subscribe("songsLoaded", (songs) => aiSpleeter.updateSongs(songs))
+  pubSub.subscribe("songSplitted", () => projectManager.prepareEditor(true))
+})()
+

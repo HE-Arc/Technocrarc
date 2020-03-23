@@ -16,8 +16,7 @@
         <li><a id="playPauseMenu" class="btn-floating purple tooltipped hide" data-position="left"
             data-tooltip="Play / Pause" onclick="playPauseAll();"><i id="playPauseButtonImage"
               class="material-icons">play_arrow</i></a></li>
-        <li><a id="aiSplitMenu" class="btn-floating blue tooltipped hide" data-position="left" data-tooltip="AI Split"
-            onclick="splitSound();"><i class="material-icons">shuffle</i></a></li>
+        <li><a id="aiSplitMenu" class="btn-floating blue tooltipped hide" data-position="left" data-tooltip="AI Split"><i class="material-icons">shuffle</i></a></li>
       </ul>
     </div>
 
@@ -59,7 +58,7 @@
           </div>
         </div>
       </div>
-      <button class="btn btn-large waves-effect waves-light" id="uploadSongButton" onclick="uploadSongs();">UPLOAD
+      <button class="btn btn-large waves-effect waves-light" id="uploadSongButton">UPLOAD
 
         <div id="uploadSongPreloader" class="preloader-container">
           <div class="preloader-wrapper active">
@@ -211,8 +210,8 @@
         <label>Materialize Select</label>
       </div>
     </form>
-    <a class="waves-effect waves-light btn" onclick="applyEffect()">Apply</a>
-    <a class="waves-effect waves-light btn" onclick="removeEffect()">Remove</a>
+    <a id="applyEffectBtn" class="waves-effect waves-light btn">Apply</a>
+    <a id="removeEffectBtn" class="waves-effect waves-light btn">Remove</a>
   </div>
 </div>
 

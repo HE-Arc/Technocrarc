@@ -1,16 +1,14 @@
-import sleep from "utils"
+import {sleep} from "/static/js/utils/utils.js"
 
-export default class Tunnel {
+export class DiscoveryTunnel {
 
     constructor() {
-
+        this.globalEnableDiscoveryTrack = false
     }
 
     startupDiscoveryTunnel() {
-        currentStep = Cookies.get('discoveryTunnel')
+        let currentStep = Cookies.get('discoveryTunnel')
         if (currentStep == undefined) { currentStep = '0' }
-
-        console.log("CURRENT STEP : " + currentStep)
 
         sleep(1000).then(() => {
             switch (currentStep) {
@@ -27,25 +25,25 @@ export default class Tunnel {
 
                     break;
                 case '2':
-                    if (globalEnableDiscoveryTrack) {
+                    if (this.globalEnableDiscoveryTrack) {
                         this._getTapDiscovery('muteDiscovery').open();
                         Cookies.set('discoveryTunnel', '3')
                     }
                     break;
                 case '3':
-                    if (globalEnableDiscoveryTrack) {
+                    if (this.globalEnableDiscoveryTrack) {
                         this._getTapDiscovery('volumeDiscovery').open()
                         Cookies.set('discoveryTunnel', '4')
                     }
                     break;
                 case '4':
-                    if (globalEnableDiscoveryTrack) {
+                    if (this.globalEnableDiscoveryTrack) {
                         this._getTapDiscovery('isolateDiscovery').open()
                         Cookies.set('discoveryTunnel', '5')
                     }
                     break;
                 case '5':
-                    if (globalEnableDiscoveryTrack) {
+                    if (this.globalEnableDiscoveryTrack) {
                         M.FloatingActionButton.getInstance(document.getElementById("FABMenu")).open()
                         sleep(500).then(() => {
                             this._getTapDiscovery('AISplitDiscovery').open()
@@ -54,7 +52,7 @@ export default class Tunnel {
                     }
                     break;
                 case '6':
-                    if (globalEnableDiscoveryTrack) {
+                    if (this.globalEnableDiscoveryTrack) {
                         this._getTapDiscovery('trackDiscovery').open()
                         Cookies.set('discoveryTunnel', '7')
                     }

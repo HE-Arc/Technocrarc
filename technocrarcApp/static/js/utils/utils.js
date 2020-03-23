@@ -1,10 +1,19 @@
-export default betweenClosed = (x, min, max) => x >= min && x <= max
+export const $$ = {
+    soundUploadForms: document.querySelectorAll('.form-upload-sound'),
+    soundFileInputs: document.querySelectorAll('.sound-file-input'),
+    fileFields: document.querySelectorAll('.file-field'),
+    dragDropFigure: document.querySelector('.dragdrop-figure'),
+    dragDropUploaded: document.querySelector('.dragdrop-uploaded'),
+    dragDropCloses: document.querySelectorAll('.dragdrop-uploaded .close'),
+}
 
-export default sleep = (milliseconds) => {
+export const betweenClosed = (x, min, max) => x >= min && x <= max;
+
+export const sleep = (milliseconds) => {
     return new Promise(resolve => setTimeout(resolve, milliseconds))
 }
 
-export default async function getData(route) {
+export async function getData(route) {
     let options = {
         method: 'GET',
         headers: {
@@ -26,17 +35,17 @@ export default async function getData(route) {
     return data
 }
 
-// Displays the preloader(s)
-export default function activatePreloader() {
+export function activatePreloader() {
+    // Displays the preloader(s)
     document.querySelector('.preloader-container').style.display = 'block';
 }
 
-// Hides the preloader(s)
-export default function deactivatePreloader() {
+export function deactivatePreloader() {
+    // Hides the preloader(s)
     document.querySelector('.preloader-container').style.display = 'none';
 }
 
-export default function closeModal(id) {
+export function closeModal(id) {
     let modal = document.getElementById(id)
     let instance = M.Modal.getInstance(modal)
     instance.close();

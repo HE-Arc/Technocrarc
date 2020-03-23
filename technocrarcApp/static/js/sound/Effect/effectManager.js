@@ -1,12 +1,13 @@
-export default class SoundEffect {
+import { FilterOption } from "/static/js/sound/effect/effects.js"
+
+export class SoundEffect {
 
     constructor() {
-        this._waves = {}
+        this._waves = []
     }
 
-    addWave(idx, wave) {
-        if (!this._isValidIdx(idx))
-            this._waves[idx] = wave
+    updateWaves(waves) {
+        this._waves = waves
     }
 
     addFilter(idx, options) {

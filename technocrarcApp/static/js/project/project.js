@@ -1,162 +1,179 @@
-async function prepareEditor(isAlreadyLoaded = false, selectLast = false) {
-    if (!globalEditorLock) {
-        globalEditorLock = true
+import { getData } from "/static/js/utils/utils.js"
+import { SoundEffect } from "/static/js/sound/effect/effectManager.js"
 
-        var url = window.location.href;
-        var lastPart = url.substr(url.lastIndexOf('/') + 1);
-        if (lastPart === "editor") {
+export class ProjectManager {
 
-            document.getElementById("wave-container").innerHTML = ""
+    constructor(pubSub) {
+        this.pubSub = pubSub
+        this.isEditorLocked = false
+        this.isSeekLocked = false
+        this.waveArray = []
+        this.soundEffect = new SoundEffect()
+        this._bindEventListener()
+    }
 
-            if (!isAlreadyLoaded) {
-                await prepareProjectSelector(selectLast)
-            }
-            else {
-                destroyAll()
-            }
+    async prepareEditor(isAlreadyLoaded = false, selectLast = false) {
+        if (!this.isEditorLocked) {
+            this.isEditorLocked = true
 
-            let selectedProject = document.getElementById('projectSelector')
+            var url = window.location.href;
+            var lastPart = url.substr(url.lastIndexOf('/') + 1);
+            if (lastPart === "editor") {
 
-            if (selectedProject.selectedIndex != -1) {
-                let selectedProjectID = selectedProject.options[selectedProject.selectedIndex].value;
-                songs = await getData('/project/' + selectedProjectID).then(songs => { return songs['audio_files'] })
+                document.getElementById("wave-container").innerHTML = ""
 
-                waveArray = []
+                if (!isAlreadyLoaded) {
+                    await this.prepareProjectSelector(selectLast)
+                }
+                else {
+                    this.pubSub.publish("changeProject", null)
+                }
 
-                for (var i = 0; i < songs.length; i++) {
-                    currentID = songs[i]["id"]
-                    let rowElement = document.createElement("div")
-                    let colElement = document.createElement("div")
-                    let cardPanelElement = document.createElement("div")
-                    let controlsElement = document.createElement("div")
-                    let infoElement = document.createElement("div")
-                    let waveFormElement = document.createElement("div")
+                let selectedProject = document.getElementById('projectSelector')
 
-                    rowElement.className += "row"
-                    rowElement.className += " flex-row"
-                    colElement.className += "col"
-                    colElement.className += " s8"
-                    cardPanelElement.className += "card-panel hoverable"
-                    controlsElement.className += "controls col s2"
-                    infoElement.className += "controls col s2"
-                    waveFormElement.id = "waveForm_" + currentID
+                if (selectedProject.selectedIndex != -1) {
+                    let selectedProjectID = selectedProject.options[selectedProject.selectedIndex].value;
+                    let songs = await getData('/project/' + selectedProjectID).then(songs => { return songs['audio_files'] })
+                    this.pubSub.publish("songsLoaded", songs)
 
-                    let preLoader = '<div id="progressDiv' + currentID + '" class="progress progress-waveform"><div class="determinate" id="progress_' + currentID + '" style="width: 30%"></div></div>'
+                    for (var i = 0; i < songs.length; i++) {
+                        let currentID = songs[i]["id"]
+                        let rowElement = document.createElement("div")
+                        let colElement = document.createElement("div")
+                        let cardPanelElement = document.createElement("div")
+                        let controlsElement = document.createElement("div")
+                        let infoElement = document.createElement("div")
+                        let waveFormElement = document.createElement("div")
 
-                    controlsElement.innerHTML += '<a onclick="mute(' + i + ')" id=muteButton_' + i + ' class="btn-floating btn-small waves-effect waves-light deep-orange darken-1"><i class="material-icons">volume_off</i></a>'
-                    controlsElement.innerHTML += '<p class="range-field"><input oninput="changeVolume(' + i + ')" type="range" id="inputVolume_' + i + '" min="0" max="100" value="100"/></p>'
-                    controlsElement.innerHTML += '<a onclick="isolate(' + i + ')" id=isolateButton_' + i + ' class="btn-floating btn-small waves-effect waves-light deep-orange darken-1"><i class="material-icons">hearing</i></a>'
-                    controlsElement.innerHTML += '<a class="btn-floating btn-small waves-effect waves-light deep-orange darken-1 modal-trigger" onclick="selectTrack(' + i + ')" href="#effectModal"><i class="material-icons">blur_on</i></a>'
+                        rowElement.className += "row"
+                        rowElement.className += " flex-row"
+                        colElement.className += "col"
+                        colElement.className += " s8"
+                        cardPanelElement.className += "card-panel hoverable"
+                        controlsElement.className += "controls col s2"
+                        infoElement.className += "controls col s2"
+                        waveFormElement.id = "waveForm_" + currentID
 
-                    cardPanelElement.appendChild(waveFormElement)
-                    cardPanelElement.insertAdjacentHTML('beforeend', preLoader)
-                    colElement.appendChild(cardPanelElement)
-                    rowElement.appendChild(infoElement)
-                    rowElement.appendChild(colElement)
-                    rowElement.appendChild(controlsElement)
+                        let preLoader = '<div id="progressDiv' + currentID + '" class="progress progress-waveform"><div class="determinate" id="progress_' + currentID + '" style="width: 30%"></div></div>'
 
-                    document.getElementById("wave-container").appendChild(rowElement)
+                        controlsElement.innerHTML += '<a id="muteButton_' + i + '" class="btn-floating btn-small waves-effect waves-light deep-orange darken-1"><i class="material-icons">volume_off</i></a>'
+                        controlsElement.innerHTML += '<p class="range-field"><input type="range" id="inputVolume_' + i + '" min="0" max="100" value="100"/></p>'
+                        controlsElement.innerHTML += '<a id="isolateButton_' + i + '" class="btn-floating btn-small waves-effect waves-light deep-orange darken-1"><i class="material-icons">hearing</i></a>'
+                        controlsElement.innerHTML += '<a id="effectButton_' + i + '" class="btn-floating btn-small waves-effect waves-light deep-orange darken-1 modal-trigger" href="#effectModal"><i class="material-icons">blur_on</i></a>'
 
-                    let wavesurfer = WaveSurfer.create({
-                        container: '#waveForm_' + currentID,
-                        waveColor: 'violet',
-                        progressColor: 'purple',
-                        plugins: [
-                            WaveSurfer.regions.create({})
-                        ]
-                    });
+                        cardPanelElement.appendChild(waveFormElement)
+                        cardPanelElement.insertAdjacentHTML('beforeend', preLoader)
+                        colElement.appendChild(cardPanelElement)
+                        rowElement.appendChild(infoElement)
+                        rowElement.appendChild(colElement)
+                        rowElement.appendChild(controlsElement)
 
-                    // IIFE
-                    (function (lockedID) {
+                        document.getElementById("wave-container").appendChild(rowElement)
 
-                        wavesurfer.on('seek', function (progress) {
-                            if (!globalSeekLock) {
-                                changeSeek(progress)
-                            }
-                        })
+                        let wavesurfer = WaveSurfer.create({
+                            container: '#waveForm_' + currentID,
+                            waveColor: 'violet',
+                            progressColor: 'purple',
+                            plugins: [
+                                WaveSurfer.regions.create({})
+                            ]
+                        });
 
-                        wavesurfer.on('loading', function (progress) {
-                            changeProgressPercentage(progress, lockedID)
-                        })
+                        // IIFE
+                        (function (lockedID) {
 
-                        wavesurfer.on('ready', function () {
-                            changeProgressPercentage(100, lockedID)
-                            loadRegions([{ "start": 2.7, "end": 50.1, "attributes": {}, "data": {} }], wavesurfer)
-                        })
+                            wavesurfer.on('seek', function (progress) {
+                                if (!this.isSeekLocked) {
+                                    this.changeSeek(progress)
+                                }
+                            }.bind(this))
 
-                        fetch("download/" + lockedID).then(response => {
-                            let filename = response.headers.get('content-disposition').split("filename=")[1].replace(/['"]+/g, '')
+                            wavesurfer.on('loading', function (progress) {
+                                this.changeProgressPercentage(progress, lockedID)
+                            }.bind(this))
 
-                            infoElement.innerHTML += '<p>' + filename + '</p>'
-                            infoElement.innerHTML += '<a class="btn-floating btn-small waves-effect waves-light red" href="' + "download/" + currentID + '"><i class="material-icons">file_download</i></a>'
+                            wavesurfer.on('ready', function () {
+                                this.changeProgressPercentage(100, lockedID)
+                            }.bind(this))
 
-                            return response.blob();
-                        })
+                            fetch("download/" + lockedID).then(response => {
+                                let filename = response.headers.get('content-disposition').split("filename=")[1].replace(/['"]+/g, '')
+
+                                infoElement.innerHTML += '<p>' + filename + '</p>'
+                                infoElement.innerHTML += '<a class="btn-floating btn-small waves-effect waves-light red" href="' + "download/" + currentID + '"><i class="material-icons">file_download</i></a>'
+
+                                return response.blob();
+                            })
                             .then((blob) => {
                                 wavesurfer.loadBlob(blob);
                             })
-                            .catch((e) => {
-                                console.error('error', e);
-                            });
-                    })(currentID);
 
-                    waveArray[i] = wavesurfer
-                    soundEffect.addWave(i, wavesurfer)
+
+                        }).bind(this)(currentID);
+
+                        this.waveArray[i] = wavesurfer
+                    }
+
+                    this.pubSub.publish('songLoaded', this.waveArray)
+
+                    document.getElementById("playPauseMenu").classList.remove("hide")
+                    document.getElementById("aiSplitMenu").classList.remove("hide")
+
+                    if (selectedProject.options.length == 1 && Cookies.get('discoveryTunnel') == '2') {
+                        globalEnableDiscoveryTrack = true;
+                        startupDiscoveryTunnel();
+                    }
+                    else {
+                        Cookies.set('discoveryTunnel', '7')
+                    }
+
 
                 }
-
-                document.getElementById("playPauseMenu").classList.remove("hide")
-                document.getElementById("aiSplitMenu").classList.remove("hide")
-
-                if (selectedProject.options.length == 1 && Cookies.get('discoveryTunnel') == '2') {
-                    globalEnableDiscoveryTrack = true;
-                    startupDiscoveryTunnel();
-                }
-                else {
-                    Cookies.set('discoveryTunnel', '7')
-                }
-
-
             }
-            console.log("EDITOR LOADED")
+            this.isEditorLocked = false
         }
-        globalEditorLock = false
+
     }
 
-}
+    changeProject() {
+        this.waveArray = []
+        this.prepareEditor(true);
+        document.getElementById("playPauseButtonImage").innerHTML = "play_arrow"
+    }
 
-function changeProject() {
-    prepareEditor(true);
-    document.getElementById("playPauseButtonImage").innerHTML = "play_arrow"
-}
+    async prepareProjectSelector(selectLast = false) {
+        let projects = await getData('projects').then(projects => { return projects['users_project'] })
+        if (projects.length > 0) {
+            let projectSelector = document.getElementById('projectSelector')
+            projectSelector.innerHTML = ""
 
-async function prepareProjectSelector(selectLast = false) {
-    let projects = await getData('projects').then(projects => { return projects['users_project'] })
-    if (projects.length > 0) {
-        let projectSelector = document.getElementById('projectSelector')
-        projectSelector.innerHTML = ""
-
-        for (let i = 0; i < projects.length; i++) {
-            const element = projects[i];
-            let option = document.createElement('option')
-            option.appendChild(document.createTextNode(element['name']))
-            option.value = element['id']
-            projectSelector.appendChild(option)
-            if (i == projects.length - 1 && selectLast) { projectSelector.value = option.value }
+            for (let i = 0; i < projects.length; i++) {
+                const element = projects[i];
+                let option = document.createElement('option')
+                option.appendChild(document.createTextNode(element['name']))
+                option.value = element['id']
+                projectSelector.appendChild(option)
+                if (i == projects.length - 1 && selectLast) { projectSelector.value = option.value }
+            }
+            M.FormSelect.init(projectSelector, {})
         }
-        M.FormSelect.init(projectSelector, {})
     }
-}
 
-function changeProgressPercentage(progress, id) {
-    document.getElementById("progress_" + id).style.width = progress + "%"
-}
-
-function changeSeek(progress) {
-    globalSeekLock = true
-    for (let index = 0; index < waveArray.length; index++) {
-        let waveSurfer = waveArray[index];
-        waveSurfer.seekTo(progress)
+    changeProgressPercentage(progress, id) {
+        document.getElementById("progress_" + id).style.width = progress + "%"
     }
-    globalSeekLock = false
+
+    changeSeek(progress) {
+        this.isSeekLocked = true
+        for (let index = 0; index < this.waveArray.length; index++) {
+            let waveSurfer = this.waveArray[index];
+            waveSurfer.seekTo(progress)
+        }
+        this.isSeekLocked = false
+    }
+
+    _bindEventListener() {
+        let projectSelector = document.getElementById("projectSelector")
+        projectSelector.addEventListener("change", () => this.changeProject())
+    }
 }

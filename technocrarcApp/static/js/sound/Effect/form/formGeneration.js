@@ -1,4 +1,4 @@
-export default class OptionFormGenerator {
+export class OptionFormGenerator {
 
     constructor(formId, options) {
         this.form = document.getElementById(formId)
@@ -20,15 +20,17 @@ export default class OptionFormGenerator {
                 switch (field.type) {
                     case "number":
                         elem = this._makeSlider(prop, prop, field.range[0], field.range[1])
+                        this.form.appendChild(elem)
                         break
                     case "string":
                         elem = this._makeSelect(prop, prop, field.range)
+                        this.form.appendChild(elem)
+                        var elems = document.querySelectorAll('select')
+                        var instances = M.FormSelect.init(elems, {})
                         break
                     default:
                         break
                 }
-
-                this.form.appendChild(elem)
             }
         }
     }
