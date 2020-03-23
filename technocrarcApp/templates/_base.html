@@ -54,29 +54,14 @@
 
   <footer class="footer"></footer>
 
-  <!-- SCRIPTS -->
+  {% block scripts %}
   <script type="text/javascript">
     // GLOBAL VARIABLES
     const STATIC_URL = {% get_static_prefix %}
   </script>
   <script src="//code.jquery.com/jquery-3.1.1.min.js" defer></script>
   <script src="{% static 'js/materialize.js' %}" defer></script>
-  <script src="{% static 'js/wavesurfer.js' %}" defer></script>
-  <script src="{% static 'js/wavesurfer.regions.min.js' %}" defer></script>
-  <script src="{% static 'js/cookies.js' %}" defer></script>
-  <script src="{% static 'js/app.js' %}" type="module" defer></script>
-  <script src="{% static 'js/discovery/tunnel.js' %}" type="module" defer></script>
-  <script src="{% static 'js/utils/utils.js' %}" type="module" defer></script>
-  <script src="{% static 'js/project/project.js' %}" type="module" defer></script>
-  <script src="{% static 'js/project/projectControl.js' %}" type="module" defer></script>
-  <script src="{% static 'js/sound/musicUpload.js' %}" type="module" defer></script>
-  <script src="{% static 'js/sound/regions.js' %}" type="module" defer></script>
-  <script src="{% static 'js/sound/splitter.js' %}" type="module" defer></script>
-  <script src="{% static 'js/sound/effect/effectManager.js' %}" type="module" defer></script>
-  <script src="{% static 'js/sound/effect/effects.js' %}" type="module" defer></script>
-  <script src="{% static 'js/sound/effect/utils.js' %}" type="module" defer></script>
-  <script src="{% static 'js/sound/effect/utils.js' %}" type="module" defer></script>
-  <script src="{% static 'js/sound/effect/form/formGeneration.js' %}" type="module" defer></script>
+  {% endblock scripts %}
 
 </body>
 

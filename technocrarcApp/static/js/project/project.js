@@ -120,7 +120,7 @@ export class ProjectManager {
                     document.getElementById("aiSplitMenu").classList.remove("hide")
 
                     if (selectedProject.options.length == 1 && Cookies.get('discoveryTunnel') == '2') {
-                        globalEnableDiscoveryTrack = true;
+                        globalEnableDiscoveryTrack = true; // TODO fix
                         startupDiscoveryTunnel();
                     }
                     else {

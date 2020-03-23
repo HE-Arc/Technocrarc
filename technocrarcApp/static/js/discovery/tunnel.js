@@ -7,7 +7,9 @@ export class DiscoveryTunnel {
     }
 
     startupDiscoveryTunnel() {
+        console.log("start")
         let currentStep = Cookies.get('discoveryTunnel')
+        console.log(currentStep)
         if (currentStep == undefined) { currentStep = '0' }
 
         sleep(1000).then(() => {

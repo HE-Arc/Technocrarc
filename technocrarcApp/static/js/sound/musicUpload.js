@@ -1,4 +1,4 @@
-import {$$} from "/static/js/utils/utils.js"
+import {$$, closeModal} from "/static/js/utils/utils.js"
 
 export class SongUploader {
 

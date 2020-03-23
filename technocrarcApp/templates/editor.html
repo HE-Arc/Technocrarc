@@ -1,4 +1,5 @@
 {% extends '_base.html' %}
+{% load static %}
 
 {% block content %}
 <div class="container">
@@ -16,7 +17,8 @@
         <li><a id="playPauseMenu" class="btn-floating purple tooltipped hide" data-position="left"
             data-tooltip="Play / Pause" onclick="playPauseAll();"><i id="playPauseButtonImage"
               class="material-icons">play_arrow</i></a></li>
-        <li><a id="aiSplitMenu" class="btn-floating blue tooltipped hide" data-position="left" data-tooltip="AI Split"><i class="material-icons">shuffle</i></a></li>
+        <li><a id="aiSplitMenu" class="btn-floating blue tooltipped hide" data-position="left"
+            data-tooltip="AI Split"><i class="material-icons">shuffle</i></a></li>
       </ul>
     </div>
 
@@ -215,5 +217,32 @@
   </div>
 </div>
 
-
 {% endblock content %}
+
+{% block scripts %}
+
+<!-- SCRIPTS -->
+<script type="text/javascript">
+  // GLOBAL VARIABLES
+  const STATIC_URL = {% get_static_prefix %}
+</script>
+<script src="//code.jquery.com/jquery-3.1.1.min.js" defer></script>
+<script src="{% static 'js/materialize.js' %}" defer></script>
+<script src="{% static 'js/wavesurfer.js' %}" defer></script>
+<script src="{% static 'js/wavesurfer.regions.min.js' %}" defer></script>
+<script src="{% static 'js/cookies.js' %}" defer></script>
+<script src="{% static 'js/editor.js' %}" type="module" defer></script>
+<script src="{% static 'js/discovery/tunnel.js' %}" type="module" defer></script>
+<script src="{% static 'js/utils/utils.js' %}" type="module" defer></script>
+<script src="{% static 'js/project/project.js' %}" type="module" defer></script>
+<script src="{% static 'js/project/projectControl.js' %}" type="module" defer></script>
+<script src="{% static 'js/sound/musicUpload.js' %}" type="module" defer></script>
+<script src="{% static 'js/sound/regions.js' %}" type="module" defer></script>
+<script src="{% static 'js/sound/splitter.js' %}" type="module" defer></script>
+<script src="{% static 'js/sound/effect/effectManager.js' %}" type="module" defer></script>
+<script src="{% static 'js/sound/effect/effects.js' %}" type="module" defer></script>
+<script src="{% static 'js/sound/effect/utils.js' %}" type="module" defer></script>
+<script src="{% static 'js/sound/effect/utils.js' %}" type="module" defer></script>
+<script src="{% static 'js/sound/effect/form/formGeneration.js' %}" type="module" defer></script>
+
+{% endblock scripts %}
