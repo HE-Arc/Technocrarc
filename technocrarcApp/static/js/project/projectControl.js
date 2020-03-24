@@ -1,7 +1,9 @@
 import { OptionFormGenerator } from "/static/js/sound/effect/form/formGeneration.js"
-import { FilterOption } from "/static/js/sound/effect/effects.js"
+import { FilterOption } from "/static/js/sound/effect/filters.js"
+import { PannerOption, Position, Orientation } from "/static/js/sound/effect/panners.js"
 import { SoundEffect } from "/static/js/sound/effect/effectManager.js"
 import { sortByValue } from "/static/js/utils/utils.js"
+import { EFFECTS } from "/static/js/sound/effect/options.js"
 
 export class ProjectController {
 
@@ -12,11 +14,11 @@ export class ProjectController {
         this._bindEvents()
     }
 
-    applyEffect() {
-        let freq = document.getElementById('frequency').value
-        let gain = document.getElementById('gain').value
-        let Q = document.getElementById('Q').value
-        let type = document.getElementById('type').value
+    applyFilter() {
+        let freq = document.getElementById("frequency").value
+        let gain = document.getElementById("gain").value
+        let Q = document.getElementById("Q").value
+        let type = document.getElementById("type").value
 
         let filterOption = new FilterOption(parseInt(freq), parseInt(gain), parseInt(Q), type)
 
@@ -24,8 +26,24 @@ export class ProjectController {
         SoundEffect.addFilter(waveSurfer, filterOption)
     }
 
+    applyPanner() {
+        let waveSurfer = this.waveArray[this.selectedTrack]
+
+        let coneOuterGain = document.getElementById("coneOuterGain").value
+        let coneOuterAngle = document.getElementById("coneOuterAngle").value
+        let coneInnerAngle = document.getElementById("coneInnerAngle").value
+
+        SoundEffect.addPanner(
+            waveSurfer,
+            new PannerOption(coneOuterGain, coneOuterAngle, coneInnerAngle,
+                new Position(5, 0, 0),
+                new Orientation(90, 90, 0)
+            )
+        )
+    }
+
     playPauseAll() {
-        for(let index in this.waveArray) {
+        for (let index in this.waveArray) {
             const waveSurfer = this.waveArray[index];
             if (this.isPlayOn) {
                 waveSurfer.pause();
@@ -48,7 +66,7 @@ export class ProjectController {
     }
 
     destroyAll() {
-        for(let index in this.waveArray) {
+        for (let index in this.waveArray) {
             const waveSurfer = this.waveArray[index];
             waveSurfer.pause();
             waveSurfer.destroy();
@@ -57,7 +75,7 @@ export class ProjectController {
     }
 
     skipTo(sec) {
-        for(let index in this.waveArray) {
+        for (let index in this.waveArray) {
             const waveSurfer = this.waveArray[index];
             waveSurfer.skip(sec);
         }
@@ -71,7 +89,7 @@ export class ProjectController {
 
     isolate(id) {
         this.waveArray[id].setMute(false)
-        for(let index in this.waveArray) {
+        for (let index in this.waveArray) {
             const waveSurfer = this.waveArray[index];
 
             if (id != index) {
@@ -86,15 +104,60 @@ export class ProjectController {
     }
 
     displayEffectPannel(i) {
-        let ofg = new OptionFormGenerator("effectForm", FilterOption.options)
+        let ofg = new OptionFormGenerator("effectForm", "editorActionBar", EFFECTS)
         ofg.buidlFormField()
+
+        let select = document.getElementById("available")
+        select.addEventListener("change", () => {
+            // TODO : refactor
+            switch (select.value) {
+                case "filters":
+                    ofg = new OptionFormGenerator("effectForm", "editorActionBar", FilterOption.options)
+                    ofg.buidlFormField()
+                    ofg.addActions({
+                        "Apply": {
+                            "name": "applyEffectBtn",
+                            "action": () => this.applyFilter()
+                        },
+                        "Remove": {
+                            "name": "removeEffectBtn",
+                            "action": () => this.removeEffect()
+                        },
+                        "Back": {
+                            "name": "backBtn",
+                            "action": () => this.displayEffectPannel()
+                        }
+                    })
+                    break
+                case "panner":
+                    ofg = new OptionFormGenerator("effectForm", "editorActionBar", PannerOption.options)
+                    ofg.buidlFormField()
+                    ofg.addActions({
+                        "Apply": {
+                            "name": "applyEffectBtn",
+                            "action": () => this.applyPanner()
+                        },
+                        "Remove": {
+                            "name": "removeEffectBtn",
+                            "action": () => this.removeEffect()
+                        },
+                        "Back": {
+                            "name": "backBtn",
+                            "action": () => this.displayEffectPannel()
+                        }
+                    })
+                    break
+                default:
+                    break
+            }
+        })
         this.selectedTrack = i
     }
 
     checkButtons() {
         let nonMuted = []
 
-        for(let index in this.waveArray) {
+        for (let index in this.waveArray) {
             const waveSurfer = this.waveArray[index];
             let button = document.getElementById("muteButton_" + index)
 
@@ -108,7 +171,7 @@ export class ProjectController {
         }
 
 
-        for(let i in this.waveArray) {
+        for (let i in this.waveArray) {
             document.getElementById("isolateButton_" + i).classList.remove("activated-button")
         }
 
@@ -162,12 +225,6 @@ export class ProjectController {
 
     _bindEvents() {
         document.onkeydown = this.checkKey.bind(this)
-
-        let applyEffectBtn = document.getElementById("applyEffectBtn")
-        applyEffectBtn.addEventListener("click", () => this.applyEffect())
-
-        let removeEffectBtn = document.getElementById("removeEffectBtn")
-        removeEffectBtn.addEventListener("click", () => this.removeEffect())
     }
 
     _bindTrackControl(i) {
