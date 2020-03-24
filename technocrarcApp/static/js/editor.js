@@ -21,14 +21,14 @@ import { AISpleeter } from "/static/js/sound/splitter.js"
     })
 
     let projectController = new ProjectController()
-    pubSub.subscribe("songLoaded", (waveArray) => projectController.loadSong(waveArray))
     pubSub.subscribe("changeProject", () => projectController.destroyAll())
+    pubSub.subscribe("trackLoaded", (track) => projectController.syncTracks(track))
 
 
     let songUploader = new SongUploader()
 
     let aiSpleeter = new AISpleeter(pubSub)
-    pubSub.subscribe("songsLoaded", (songs) => aiSpleeter.updateSongs(songs))
+    pubSub.subscribe("projectLoaded", (songs) => aiSpleeter.updateSongs(songs))
     pubSub.subscribe("songSplitted", () => projectManager.prepareEditor(true))
 })()
 

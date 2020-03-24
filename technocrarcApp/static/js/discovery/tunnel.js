@@ -6,7 +6,7 @@ export class DiscoveryTunnel {
         this.globalEnableDiscoveryTrack = true
     }
 
-    startupDiscoveryTunnel() {)
+    startupDiscoveryTunnel() {
         let currentStep = Cookies.get('discoveryTunnel')
 
         if (currentStep == undefined) { currentStep = '0' }

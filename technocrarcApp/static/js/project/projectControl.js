@@ -1,14 +1,14 @@
 import { OptionFormGenerator } from "/static/js/sound/effect/form/formGeneration.js"
 import { FilterOption } from "/static/js/sound/effect/effects.js"
 import { SoundEffect } from "/static/js/sound/effect/effectManager.js"
+import { sortByValue } from "/static/js/utils/utils.js"
 
 export class ProjectController {
 
     constructor() {
-        this.waveArray = []
+        this.waveArray = {}
         this.isPlayOn = false
         this.selectedTrack = 0
-        this.soundEffect = new SoundEffect()
         this._bindEvents()
     }
 
@@ -20,11 +20,12 @@ export class ProjectController {
 
         let filterOption = new FilterOption(parseInt(freq), parseInt(gain), parseInt(Q), type)
 
-        this.soundEffect.addFilter(this.selectedTrack, filterOption)
+        let waveSurfer = this.waveArray[this.selectedTrack]
+        SoundEffect.addFilter(waveSurfer, filterOption)
     }
 
     playPauseAll() {
-        for (let index = 0; index < this.waveArray.length; index++) {
+        for(let index in this.waveArray) {
             const waveSurfer = this.waveArray[index];
             if (this.isPlayOn) {
                 waveSurfer.pause();
@@ -47,15 +48,16 @@ export class ProjectController {
     }
 
     destroyAll() {
-        for (let index = 0; index < this.waveArray.length; index++) {
+        for(let index in this.waveArray) {
             const waveSurfer = this.waveArray[index];
             waveSurfer.pause();
             waveSurfer.destroy();
         }
+        this.waveArray = {}
     }
 
     skipTo(sec) {
-        for (let index = 0; index < this.waveArray.length; index++) {
+        for(let index in this.waveArray) {
             const waveSurfer = this.waveArray[index];
             waveSurfer.skip(sec);
         }
@@ -69,8 +71,9 @@ export class ProjectController {
 
     isolate(id) {
         this.waveArray[id].setMute(false)
-        for (let index = 0; index < this.waveArray.length; index++) {
+        for(let index in this.waveArray) {
             const waveSurfer = this.waveArray[index];
+
             if (id != index) {
                 waveSurfer.setMute(true);
             }
@@ -91,7 +94,7 @@ export class ProjectController {
     checkButtons() {
         let nonMuted = []
 
-        for (let index = 0; index < this.waveArray.length; index++) {
+        for(let index in this.waveArray) {
             const waveSurfer = this.waveArray[index];
             let button = document.getElementById("muteButton_" + index)
 
@@ -105,7 +108,7 @@ export class ProjectController {
         }
 
 
-        for (let i = 0; i < this.waveArray.length; i++) {
+        for(let i in this.waveArray) {
             document.getElementById("isolateButton_" + i).classList.remove("activated-button")
         }
 
@@ -132,27 +135,29 @@ export class ProjectController {
         }
     }
 
-    loadSong(waveArray) {
-        this.waveArray = waveArray
-        this.soundEffect.updateWaves(this.waveArray)
-
-        for (let i = 0; i < this.waveArray.length; i++) {
-            let muteBtn = document.getElementById("muteButton_" + i)
-            muteBtn.addEventListener("click", () => this.mute(i))
-
-            let isolateBtn = document.getElementById("isolateButton_" + i)
-            isolateBtn.addEventListener("click", () => this.isolate(i))
-
-            let volumeBtn = document.getElementById("inputVolume_" + i)
-            volumeBtn.addEventListener("input", () => this.changeVolume(i))
-
-            let effectBtn = document.getElementById("effectButton_" + i)
-            effectBtn.addEventListener("click", () => this.displayEffectPannel(i))
-        }
+    removeEffect() {
+        let waveSurfer = this.waveArray[this.selectedTrack]
+        SoundEffect.removeFilter(waveSurfer)
     }
 
-    removeEffect() {
-        this.soundEffect.removeFilter(this.selectedTrack)
+    syncTracks(track) {
+        // {"trackID": trackID, "wave": wavesurfer}
+        let trackID = track["trackID"]
+        let waveSurfer = track["wave"]
+        this.waveArray[trackID] = track["wave"]
+
+        let mostAdvancedTrack = sortByValue(this.waveArray, (first, second) => {
+            return second[1].getCurrentTime() - first[1].getCurrentTime()
+        })[0][1]
+        let skipLenght = mostAdvancedTrack.getCurrentTime() - waveSurfer.getCurrentTime()
+
+        if (trackID !== 0) {
+            waveSurfer.skip(skipLenght)
+            waveSurfer.setMute(true)
+            waveSurfer.play()
+        }
+
+        this._bindTrackControl(trackID)
     }
 
     _bindEvents() {
@@ -163,6 +168,20 @@ export class ProjectController {
 
         let removeEffectBtn = document.getElementById("removeEffectBtn")
         removeEffectBtn.addEventListener("click", () => this.removeEffect())
+    }
+
+    _bindTrackControl(i) {
+        let muteBtn = document.getElementById("muteButton_" + i)
+        muteBtn.addEventListener("click", () => this.mute(i))
+
+        let isolateBtn = document.getElementById("isolateButton_" + i)
+        isolateBtn.addEventListener("click", () => this.isolate(i))
+
+        let volumeBtn = document.getElementById("inputVolume_" + i)
+        volumeBtn.addEventListener("input", () => this.changeVolume(i))
+
+        let effectBtn = document.getElementById("effectButton_" + i)
+        effectBtn.addEventListener("click", () => this.displayEffectPannel(i))
     }
 }
 
