@@ -1,22 +1,37 @@
 export class OptionFormGenerator {
 
-    constructor(formId, options) {
+    constructor(formId, actionBarId, options) {
         this.form = document.getElementById(formId)
+        console.log(actionBarId)
+        this.actionBar = document.getElementById(actionBarId)
         this.options = options
     }
 
+    addActions(actions) {
+        for (let action in actions) {
+            let act = actions[action]
+            let a = document.createElement("a")
+            a.classList.add(...["waves-effect", "waves-light", "btn"])
+            a.setAttribute("id", act["name"])
+            a.addEventListener("click", act["action"])
+            a.innerHTML = action
+            this.actionBar.appendChild(a)
+        }
+    }
+
     buidlFormField() {
-        this._clearForm()
+        this._clear()
 
         this._parseOptions()
     }
 
     _parseOptions() {
-        for (var prop in this.options) {
+        for (let prop in this.options) {
             if (Object.prototype.hasOwnProperty.call(this.options, prop)) {
                 let field = this.options[prop]
                 let elem;
-
+                console.log(prop)
+                console.log(field.type)
                 switch (field.type) {
                     case "number":
                         elem = this._makeSlider(prop, prop, field.range[0], field.range[1])
@@ -35,9 +50,13 @@ export class OptionFormGenerator {
         }
     }
 
-    _clearForm() {
+    _clear() {
         while (this.form.firstChild) {
             this.form.removeChild(this.form.lastChild);
+        }
+
+        while (this.actionBar.firstChild) {
+            this.actionBar.removeChild(this.actionBar.lastChild);
         }
     }
 
