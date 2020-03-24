@@ -1,5 +1,4 @@
 import { getData } from "/static/js/utils/utils.js"
-import { SoundEffect } from "/static/js/sound/effect/effectManager.js"
 
 export class ProjectManager {
 
@@ -8,7 +7,6 @@ export class ProjectManager {
         this.isEditorLocked = false
         this.isSeekLocked = false
         this.waveArray = []
-        this.soundEffect = new SoundEffect()
         this._bindEventListener()
     }
 
@@ -34,7 +32,7 @@ export class ProjectManager {
                 if (selectedProject.selectedIndex != -1) {
                     let selectedProjectID = selectedProject.options[selectedProject.selectedIndex].value;
                     let songs = await getData('/project/' + selectedProjectID).then(songs => { return songs['audio_files'] })
-                    this.pubSub.publish("songsLoaded", songs)
+                    this.pubSub.publish("projectLoaded", songs)
 
                     for (var i = 0; i < songs.length; i++) {
                         let currentID = songs[i]["id"]
@@ -52,14 +50,17 @@ export class ProjectManager {
                         cardPanelElement.className += "card-panel hoverable"
                         controlsElement.className += "controls col s2"
                         infoElement.className += "controls col s2"
-                        waveFormElement.id = "waveForm_" + currentID
+                        waveFormElement.id = "waveForm_" + i
 
-                        let preLoader = '<div id="progressDiv' + currentID + '" class="progress progress-waveform"><div class="determinate" id="progress_' + currentID + '" style="width: 30%"></div></div>'
+                        let preLoader = '<div id="progressDiv' + i + '" class="progress progress-waveform"><div class="determinate" id="progress_' + i + '" style="width: 30%"></div></div>'
 
                         controlsElement.innerHTML += '<a id="muteButton_' + i + '" class="btn-floating btn-small waves-effect waves-light deep-orange darken-1"><i class="material-icons">volume_off</i></a>'
                         controlsElement.innerHTML += '<p class="range-field"><input type="range" id="inputVolume_' + i + '" min="0" max="100" value="100"/></p>'
                         controlsElement.innerHTML += '<a id="isolateButton_' + i + '" class="btn-floating btn-small waves-effect waves-light deep-orange darken-1"><i class="material-icons">hearing</i></a>'
                         controlsElement.innerHTML += '<a id="effectButton_' + i + '" class="btn-floating btn-small waves-effect waves-light deep-orange darken-1 modal-trigger" href="#effectModal"><i class="material-icons">blur_on</i></a>'
+
+                        infoElement.innerHTML += '<p id="trackName_' + i + '"></p>'
+                        infoElement.innerHTML += '<a id="downloadButton_' + i + '" class="btn-floating btn-small waves-effect waves-light red"><i class="material-icons">file_download</i></a>'
 
                         cardPanelElement.appendChild(waveFormElement)
                         cardPanelElement.insertAdjacentHTML('beforeend', preLoader)
@@ -71,7 +72,7 @@ export class ProjectManager {
                         document.getElementById("wave-container").appendChild(rowElement)
 
                         let wavesurfer = WaveSurfer.create({
-                            container: '#waveForm_' + currentID,
+                            container: '#waveForm_' + i,
                             waveColor: 'violet',
                             progressColor: 'purple',
                             plugins: [
@@ -80,7 +81,7 @@ export class ProjectManager {
                         });
 
                         // IIFE
-                        (function (lockedID) {
+                        (function (lockedID, trackID) {
 
                             wavesurfer.on('seek', function (progress) {
                                 if (!this.isSeekLocked) {
@@ -89,18 +90,19 @@ export class ProjectManager {
                             }.bind(this))
 
                             wavesurfer.on('loading', function (progress) {
-                                this.changeProgressPercentage(progress, lockedID)
+                                this.changeProgressPercentage(progress, trackID)
                             }.bind(this))
 
                             wavesurfer.on('ready', function () {
-                                this.changeProgressPercentage(100, lockedID)
+                                this.changeProgressPercentage(100, trackID)
+                                this.pubSub.publish("trackLoaded", {"trackID": trackID, "wave": wavesurfer})
                             }.bind(this))
 
                             fetch("download/" + lockedID).then(response => {
                                 let filename = response.headers.get('content-disposition').split("filename=")[1].replace(/['"]+/g, '')
-
-                                infoElement.innerHTML += '<p>' + filename + '</p>'
-                                infoElement.innerHTML += '<a class="btn-floating btn-small waves-effect waves-light red" href="' + "download/" + currentID + '"><i class="material-icons">file_download</i></a>'
+                                let downloadBtn = document.getElementById("downloadButton_" + trackID)
+                                downloadBtn.setAttribute("href", "download/" + lockedID)
+                                document.getElementById("trackName_" + trackID).innerHTML = filename
 
                                 return response.blob();
                             })
@@ -109,12 +111,10 @@ export class ProjectManager {
                             })
 
 
-                        }).bind(this)(currentID);
+                        }).bind(this)(currentID, i);
 
                         this.waveArray[i] = wavesurfer
                     }
-
-                    this.pubSub.publish('songLoaded', this.waveArray)
 
                     document.getElementById("playPauseMenu").classList.remove("hide")
                     document.getElementById("aiSplitMenu").classList.remove("hide")

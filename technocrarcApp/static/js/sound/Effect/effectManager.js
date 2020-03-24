@@ -2,22 +2,10 @@ import { FilterOption } from "/static/js/sound/effect/effects.js"
 
 export class SoundEffect {
 
-    constructor() {
-        this._waves = []
-    }
-
-    updateWaves(waves) {
-        this._waves = waves
-    }
-
-    addFilter(idx, options) {
-        if (!this._isValidIdx(idx))
-            throw "Invalid index"
-
+    static addFilter(wavesurfer, options) {
         if (!options instanceof FilterOption)
             throw "Invalid option for filter"
 
-        let wavesurfer = this._waves[idx]
         let filter = wavesurfer.backend.ac.createBiquadFilter()
         filter.type = options.type
         filter.Q.value = options.Q
@@ -27,13 +15,8 @@ export class SoundEffect {
         wavesurfer.backend.setFilter(filter);
     }
 
-    removeFilter(idx) {
-        let wavesurfer = this._waves[idx]
+    static removeFilter(wavesurfer) {
         wavesurfer.backend.disconnectFilters()
-    }
-
-    _isValidIdx(idx) {
-        return idx in this._waves
     }
 
 }

@@ -50,3 +50,11 @@ export function closeModal(id) {
     let instance = M.Modal.getInstance(modal)
     instance.close();
 }
+
+export function sortByValue(dict, sortComparison) {
+    var items = Object.keys(dict).map(function(key) {
+        return [key, dict[key]];
+    })
+
+    return items.sort(sortComparison)
+}
