@@ -71,15 +71,6 @@ class AudioEffectView(APIView):
         else:
             return Response(effect_file_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-# TODO : delete after test
-
-
-class P5(APIView):
-
-    def get(self, request, *args, **kwargs):
-        return render(request, 'p5_test.html')
-
-
 class UserProject(LoginRequiredMixin, APIView):
     login_url = '/log-in'
     redirect_field_name = 'redirect_to'

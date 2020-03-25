@@ -16,13 +16,14 @@ export class ProjectController {
 
     addRegion(waveSurfer, inRegionCb) {
         const currentTime = waveSurfer.getCurrentTime()
-        waveSurfer.addRegion({
-            "start": currentTime,
-            "end" : currentTime + 10
-        })
 
         waveSurfer.on("region-in", inRegionCb)
         waveSurfer.on("region-out", () => SoundEffect.removeFilter(waveSurfer))
+
+        return waveSurfer.addRegion({
+            "start": currentTime,
+            "end": currentTime + 10
+        })
     }
 
     applyFilter() {
@@ -35,7 +36,9 @@ export class ProjectController {
 
         let waveSurfer = this.waveArray[this.selectedTrack]
 
-        this.addRegion(waveSurfer, () => SoundEffect.addFilter(waveSurfer, filterOption))
+        let region = this.addRegion(waveSurfer, () => SoundEffect.addFilter(waveSurfer, filterOption))
+        region["effect"] = FilterOption.name
+        region["effectOption"] = filterOption
     }
 
     applyPanner() {
@@ -50,10 +53,12 @@ export class ProjectController {
             new Orientation(90, 90, 0)
         )
 
-        this.addRegion(waveSurfer, () => SoundEffect.addPanner(
+        let region = this.addRegion(waveSurfer, () => SoundEffect.addPanner(
             waveSurfer,
             pannerOption
         ))
+        region["effect"] = PannerOption.name
+        region["effectOption"] = pannerOption
     }
 
     playPauseAll() {
@@ -204,8 +209,44 @@ export class ProjectController {
         }
     }
 
+    saveEffect(i) {
+        let waveSurfer = this.waveArray[i]
+        let songID = waveSurfer.songID
+
+        let trackEffects = []
+        for(let regionIdx in waveSurfer.regions.list){
+            let region = waveSurfer.regions.list[regionIdx]
+            trackEffects.push({
+                "start": region.start,
+                "end": region.end,
+                "effect": region.effect,
+                "effectOption": region.effectOption
+            })
+        }
+
+        let myHeaders = new Headers()
+        myHeaders.append("Content-Type", "application/x-www-form-urlencoded")
+        myHeaders.append("X-CSRFToken", Cookies.get("csrftoken"), "") // TODO set CSRF
+
+        let formdata = new FormData();
+        formdata.append("file", JSON.stringify(trackEffects))
+        formdata.append("audio", songID)
+
+        var requestOptions = {
+            method: "POST",
+            headers: myHeaders,
+            body: formdata,
+            redirect: "follow"
+        }
+
+        fetch("/effect", requestOptions)
+            .then(response => response.text())
+            .then(result => console.log(result))
+            .catch(error => console.log("error", error))
+    }
+
     syncTracks(track) {
-        // {"trackID": trackID, "wave": wavesurfer}
+        let songID = track["songID"]
         let trackID = track["trackID"]
         let waveSurfer = track["wave"]
         this.waveArray[trackID] = track["wave"]
@@ -221,7 +262,24 @@ export class ProjectController {
             waveSurfer.play()
         }
 
+        waveSurfer["songID"] = songID
+
         this._bindTrackControl(trackID)
+        this._loadEffect(trackID, songID)
+    }
+
+    _loadEffect(i, songID) {
+        let waveSurfer = this.waveArray[i]
+
+        fetch("/effect/" + songID).then(response => {
+            // TODO get regions from response
+            regions.forEach(function (region) {
+                wavesurfer.addRegion(region)
+                // TODO add effect
+            });
+        }).catch(error => {
+            console.log("error", error)
+        })
     }
 
     _bindEvents() {
@@ -240,6 +298,9 @@ export class ProjectController {
 
         let effectBtn = document.getElementById("effectButton_" + i)
         effectBtn.addEventListener("click", () => this.displayEffectPannel(i))
+
+        let saveBtn = document.getElementById("saveButton_" + i)
+        saveBtn.addEventListener("click", () => this.saveEffect(i))
     }
 }
 
