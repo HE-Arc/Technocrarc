@@ -2,7 +2,6 @@ export class OptionFormGenerator {
 
     constructor(formId, actionBarId, options) {
         this.form = document.getElementById(formId)
-        console.log(actionBarId)
         this.actionBar = document.getElementById(actionBarId)
         this.options = options
     }
@@ -30,8 +29,7 @@ export class OptionFormGenerator {
             if (Object.prototype.hasOwnProperty.call(this.options, prop)) {
                 let field = this.options[prop]
                 let elem;
-                console.log(prop)
-                console.log(field.type)
+
                 switch (field.type) {
                     case "number":
                         elem = this._makeSlider(prop, prop, field.range[0], field.range[1])

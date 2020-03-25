@@ -157,7 +157,6 @@ export class SongUploader {
 
     showDragDropFigure(input) {
         // Displays the Drag & Drop information
-        console.log("show drag drop")
         input.value = '';
 
         $$.dragDropUploaded.setAttribute('hidden', true);

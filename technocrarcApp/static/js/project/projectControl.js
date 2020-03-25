@@ -14,6 +14,17 @@ export class ProjectController {
         this._bindEvents()
     }
 
+    addRegion(waveSurfer, inRegionCb) {
+        const currentTime = waveSurfer.getCurrentTime()
+        waveSurfer.addRegion({
+            "start": currentTime,
+            "end" : currentTime + 10
+        })
+
+        waveSurfer.on("region-in", inRegionCb)
+        waveSurfer.on("region-out", () => SoundEffect.removeFilter(waveSurfer))
+    }
+
     applyFilter() {
         let freq = document.getElementById("frequency").value
         let gain = document.getElementById("gain").value
@@ -23,7 +34,8 @@ export class ProjectController {
         let filterOption = new FilterOption(parseInt(freq), parseInt(gain), parseInt(Q), type)
 
         let waveSurfer = this.waveArray[this.selectedTrack]
-        SoundEffect.addFilter(waveSurfer, filterOption)
+
+        this.addRegion(waveSurfer, () => SoundEffect.addFilter(waveSurfer, filterOption))
     }
 
     applyPanner() {
@@ -33,13 +45,15 @@ export class ProjectController {
         let coneOuterAngle = document.getElementById("coneOuterAngle").value
         let coneInnerAngle = document.getElementById("coneInnerAngle").value
 
-        SoundEffect.addPanner(
-            waveSurfer,
-            new PannerOption(coneOuterGain, coneOuterAngle, coneInnerAngle,
-                new Position(5, 0, 0),
-                new Orientation(90, 90, 0)
-            )
+        let pannerOption = new PannerOption(coneOuterGain, coneOuterAngle, coneInnerAngle,
+            new Position(5, 0, 0),
+            new Orientation(90, 90, 0)
         )
+
+        this.addRegion(waveSurfer, () => SoundEffect.addPanner(
+            waveSurfer,
+            pannerOption
+        ))
     }
 
     playPauseAll() {
@@ -119,10 +133,6 @@ export class ProjectController {
                             "name": "applyEffectBtn",
                             "action": () => this.applyFilter()
                         },
-                        "Remove": {
-                            "name": "removeEffectBtn",
-                            "action": () => this.removeEffect()
-                        },
                         "Back": {
                             "name": "backBtn",
                             "action": () => this.displayEffectPannel()
@@ -136,10 +146,6 @@ export class ProjectController {
                         "Apply": {
                             "name": "applyEffectBtn",
                             "action": () => this.applyPanner()
-                        },
-                        "Remove": {
-                            "name": "removeEffectBtn",
-                            "action": () => this.removeEffect()
                         },
                         "Back": {
                             "name": "backBtn",
@@ -196,11 +202,6 @@ export class ProjectController {
             e.preventDefault()
             this.playPauseAll()
         }
-    }
-
-    removeEffect() {
-        let waveSurfer = this.waveArray[this.selectedTrack]
-        SoundEffect.removeFilter(waveSurfer)
     }
 
     syncTracks(track) {
