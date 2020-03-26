@@ -250,7 +250,7 @@ export class ProjectController {
 
         fetch("/effect", requestOptions)
             .then(response => response.text())
-            .then(result => console.log(result))
+            .then(result => M.toast({ html: "Successfully saved file" }))
             .catch(error => console.log("error", error))
 
     }
