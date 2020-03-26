@@ -13,7 +13,7 @@ export class SoundEffect {
         filter.frequency.value = options.frequency
         filter.gain.value = options.gain
 
-        wavesurfer.backend.setFilter(filter);
+        wavesurfer.backend.setFilter(filter)
     }
 
     static addPanner(wavesurfer, options) {
