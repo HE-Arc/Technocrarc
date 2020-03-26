@@ -14,6 +14,16 @@ export class ProjectController {
         this._bindEvents()
     }
 
+    addRegion(waveSurfer, startT, endT, inRegionCb) {
+        waveSurfer.on("region-in", inRegionCb)
+        waveSurfer.on("region-out", () => SoundEffect.removeFilter(waveSurfer))
+
+        return waveSurfer.addRegion({
+            "start": startT,
+            "end": endT
+        })
+    }
+
     applyFilter() {
         let freq = document.getElementById("frequency").value
         let gain = document.getElementById("gain").value
@@ -23,23 +33,42 @@ export class ProjectController {
         let filterOption = new FilterOption(parseInt(freq), parseInt(gain), parseInt(Q), type)
 
         let waveSurfer = this.waveArray[this.selectedTrack]
-        SoundEffect.addFilter(waveSurfer, filterOption)
+        let currentTime = waveSurfer.getCurrentTime()
+
+        let region = this.addRegion(
+            waveSurfer,
+            currentTime,
+            currentTime + 10,
+            () => SoundEffect.addFilter(waveSurfer, filterOption)
+        )
+        region["effect"] = FilterOption.name
+        region["effectOption"] = filterOption
     }
 
     applyPanner() {
         let waveSurfer = this.waveArray[this.selectedTrack]
+        let currentTime = waveSurfer.getCurrentTime()
 
         let coneOuterGain = document.getElementById("coneOuterGain").value
         let coneOuterAngle = document.getElementById("coneOuterAngle").value
         let coneInnerAngle = document.getElementById("coneInnerAngle").value
 
-        SoundEffect.addPanner(
+        let pannerOption = new PannerOption(coneOuterGain, coneOuterAngle, coneInnerAngle,
+            new Position(5, 0, 0),
+            new Orientation(90, 90, 0)
+        )
+
+        let region = this.addRegion(
             waveSurfer,
-            new PannerOption(coneOuterGain, coneOuterAngle, coneInnerAngle,
-                new Position(5, 0, 0),
-                new Orientation(90, 90, 0)
+            currentTime,
+            currentTime + 10,
+            () => SoundEffect.addPanner(
+                waveSurfer,
+                pannerOption
             )
         )
+        region["effect"] = PannerOption.name
+        region["effectOption"] = pannerOption
     }
 
     playPauseAll() {
@@ -109,7 +138,6 @@ export class ProjectController {
 
         let select = document.getElementById("available")
         select.addEventListener("change", () => {
-            // TODO : refactor
             switch (select.value) {
                 case "filters":
                     ofg = new OptionFormGenerator("effectForm", "editorActionBar", FilterOption.options)
@@ -118,10 +146,6 @@ export class ProjectController {
                         "Apply": {
                             "name": "applyEffectBtn",
                             "action": () => this.applyFilter()
-                        },
-                        "Remove": {
-                            "name": "removeEffectBtn",
-                            "action": () => this.removeEffect()
                         },
                         "Back": {
                             "name": "backBtn",
@@ -136,10 +160,6 @@ export class ProjectController {
                         "Apply": {
                             "name": "applyEffectBtn",
                             "action": () => this.applyPanner()
-                        },
-                        "Remove": {
-                            "name": "removeEffectBtn",
-                            "action": () => this.removeEffect()
                         },
                         "Back": {
                             "name": "backBtn",
@@ -198,13 +218,45 @@ export class ProjectController {
         }
     }
 
-    removeEffect() {
-        let waveSurfer = this.waveArray[this.selectedTrack]
-        SoundEffect.removeFilter(waveSurfer)
+    saveEffect(i) {
+        let waveSurfer = this.waveArray[i]
+        let songID = waveSurfer.songID
+
+        let trackEffects = []
+        for (let regionIdx in waveSurfer.regions.list) {
+            let region = waveSurfer.regions.list[regionIdx]
+            trackEffects.push({
+                "start": region.start,
+                "end": region.end,
+                "effect": region.effect,
+                "effectOption": region.effectOption
+            })
+        }
+
+        let myHeaders = new Headers()
+        myHeaders.append("X-CSRFToken", Cookies.get("csrftoken"))
+
+
+        let formdata = new FormData()
+        formdata.append("audio", songID)
+        formdata.append("file", new Blob([JSON.stringify(trackEffects)], { type: "application/json" }), "effect.json")
+
+        let requestOptions = {
+            method: "POST",
+            headers: myHeaders,
+            body: formdata,
+            redirect: "follow"
+        }
+
+        fetch("/effect", requestOptions)
+            .then(response => response.text())
+            .then(result => M.toast({ html: "Successfully saved file" }))
+            .catch(error => console.log("error", error))
+
     }
 
     syncTracks(track) {
-        // {"trackID": trackID, "wave": wavesurfer}
+        let songID = track["songID"]
         let trackID = track["trackID"]
         let waveSurfer = track["wave"]
         this.waveArray[trackID] = track["wave"]
@@ -220,7 +272,48 @@ export class ProjectController {
             waveSurfer.play()
         }
 
+        waveSurfer["songID"] = songID
+
         this._bindTrackControl(trackID)
+        this._loadEffect(trackID, songID)
+    }
+
+    _loadEffect(i, songID) {
+        let waveSurfer = this.waveArray[i]
+
+        fetch("/effect/" + songID).then(response => {
+            return response.json()
+        }).then(effects => {
+            effects.forEach(effect => {
+                let callbackFn = () => { }
+                let opt = effect["effectOption"]
+
+                switch (effect.effect) {
+                    case "FilterOption":
+                        let filterOption = new FilterOption(opt._frequency, opt._gain, opt._Q, opt._type)
+                        callbackFn = () => SoundEffect.addFilter(waveSurfer, filterOption)
+                        break;
+                    case "PannerOption":
+                        let pannerOption = new PannerOption(opt._coneOuterGain, opt._coneOuterAngle, opt._coneInnerAngle,
+                            new Position(5, 0, 0),
+                            new Orientation(90, 90, 0)
+                        )
+                        callbackFn = () => SoundEffect.addPanner(waveSurfer, pannerOption)
+                        break;
+                    default:
+                        break;
+                }
+
+                this.addRegion(
+                    waveSurfer,
+                    effect.start,
+                    effect.end,
+                    callbackFn
+                )
+            });
+        }).catch(error => {
+            console.log("error", error)
+        })
     }
 
     _bindEvents() {
@@ -239,6 +332,9 @@ export class ProjectController {
 
         let effectBtn = document.getElementById("effectButton_" + i)
         effectBtn.addEventListener("click", () => this.displayEffectPannel(i))
+
+        let saveBtn = document.getElementById("saveButton_" + i)
+        saveBtn.addEventListener("click", () => this.saveEffect(i))
     }
 }
 

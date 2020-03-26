@@ -61,6 +61,9 @@ export class ProjectManager {
 
                         infoElement.innerHTML += '<p id="trackName_' + i + '"></p>'
                         infoElement.innerHTML += '<a id="downloadButton_' + i + '" class="btn-floating btn-small waves-effect waves-light red"><i class="material-icons">file_download</i></a>'
+                        infoElement.innerHTML += '<p>Save effects</p>'
+                        infoElement.innerHTML += '<a id="saveButton_' + i + '" class="btn-floating btn-small waves-effect waves-ligth red"><i class="material-icons">save</i></a>'
+
 
                         cardPanelElement.appendChild(waveFormElement)
                         cardPanelElement.insertAdjacentHTML('beforeend', preLoader)
@@ -95,7 +98,7 @@ export class ProjectManager {
 
                             wavesurfer.on('ready', function () {
                                 this.changeProgressPercentage(100, trackID)
-                                this.pubSub.publish("trackLoaded", {"trackID": trackID, "wave": wavesurfer})
+                                this.pubSub.publish("trackLoaded", {"songID": lockedID, "trackID": trackID, "wave": wavesurfer})
                             }.bind(this))
 
                             fetch("download/" + lockedID).then(response => {

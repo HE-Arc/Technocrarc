@@ -21,6 +21,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
+
 class Upload(LoginRequiredMixin, APIView):
     parser_class = (FileUploadParser,)
     login_url = '/log-in'
@@ -43,13 +44,17 @@ class Upload(LoginRequiredMixin, APIView):
         else:
             return Response(audio_file_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+
 class AudioEffectView(APIView):
+    parser_class = (FileUploadParser,)
+    login_url = '/log-in'
+    redirect_field_name = 'redirect_to'
 
     @method_decorator(ensure_csrf_cookie)
-    def get(self, request, effect_id):
+    def get(self, request, audio_id):
         user_id = request.user.id
         file = EffectFile.objects.filter(
-            id=effect_id, user_id=user_id).values('file')
+            audio_id=audio_id, user_id=user_id).values('file')
 
         if file.exists():
             path_to_file = os.path.join(settings.MEDIA_ROOT, file[0]['file'])
@@ -63,21 +68,17 @@ class AudioEffectView(APIView):
     @method_decorator(ensure_csrf_cookie)
     def post(self, request, *args, **kwargs):
         effect_file_serializer = EffectFileSerializer(data=request.data)
+
+        tmp_mutable = request.data._mutable
+        request.data._mutable = True
         request.data['user'] = request.user.id
+        request.data._mutable = tmp_mutable
 
         if effect_file_serializer.is_valid():
             effect_file_serializer.save()
             return Response(effect_file_serializer.data, status=status.HTTP_201_CREATED)
         else:
             return Response(effect_file_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-# TODO : delete after test
-
-
-class P5(APIView):
-
-    def get(self, request, *args, **kwargs):
-        return render(request, 'p5_test.html')
 
 
 class UserProject(LoginRequiredMixin, APIView):
@@ -91,6 +92,7 @@ class UserProject(LoginRequiredMixin, APIView):
             user_id=user_id).values('id', 'name')
 
         return JsonResponse(dict(users_project=list(users_project)))
+
 
 class Projects(LoginRequiredMixin, APIView):
     login_url = '/log-in'
@@ -130,7 +132,7 @@ class Editor(LoginRequiredMixin, APIView):
     login_url = '/log-in'
     redirect_field_name = 'redirect_to'
 
-    @method_decorator(ensure_csrf_cookie)   
+    @method_decorator(ensure_csrf_cookie)
     def get(self, request, *args, **kwargs):
         return render(request, 'editor.html')
 

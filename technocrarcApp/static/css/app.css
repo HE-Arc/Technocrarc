@@ -163,3 +163,7 @@ form .btn-large {
 #effectModal{
     background-color: #f4511e;
 }
+
+#editorActionBar > a {
+    margin: 20px;
+}
