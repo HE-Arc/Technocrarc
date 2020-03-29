@@ -17,7 +17,7 @@ jobs:
     steps:
     - name: Create DB
       run: |
-        service mysql restart
+        systemctl restart mysql
         sleep 20s
         mysql -h127.0.0.1 -uroot -proot -e "CREATE DATABASE technocrarc;"
     - uses: actions/checkout@v2
