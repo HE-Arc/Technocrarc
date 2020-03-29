@@ -17,6 +17,7 @@ jobs:
     steps:
     - name: Create DB
       run: |
+        sleep 20s
         mysql -uroot -proot -e "CREATE DATABASE technocrarc;"
     - uses: actions/checkout@v2
     - name: Set up Python ${{ matrix.python-version }}
