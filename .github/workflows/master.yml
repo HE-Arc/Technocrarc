@@ -1,0 +1,75 @@
+name: Django CI
+
+on:
+  push:
+    branches: [ master, add-ci ]
+  pull_request:
+    branches: [ master, add-ci ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      max-parallel: 4
+      matrix:
+        python-version: [3.6, 3.7]
+
+    steps:
+    - name: Create DB
+      run: |
+        sudo systemctl restart mysql
+        sleep 20s
+        mysql -h127.0.0.1 -uroot -proot -e "CREATE DATABASE technocrarc;"
+    - uses: actions/checkout@v2
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v1
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Switch to CI configuration
+      run: |
+        rm technocrarc/settings.py
+        mv technocrarc/settings.py.ci technocrarc/settings.py
+    - name: Install Dependencies
+      run: |
+        python --version
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        python manage.py makemigrations
+    - name: Run Tests
+      run: |
+        python manage.py test
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+    - name: Deploy to SSH SRVZ-WEBAPP
+      uses: appleboy/ssh-action@master
+      env:
+        BRANCH: ${{ github.ref }}
+      with:
+        host: ${{ secrets.HOST }}
+        username: ${{ secrets.USERNAME }}
+        key: ${{ secrets.SSH_KEY }}
+        port: ${{ secrets.PORT }}
+        envs: BRANCH
+        script_stop: true
+        script: |
+          source /home/poweruser/.bash_profile
+          cd /var/www/app
+          rm -rf Technocrarc
+          git clone https://github.com/HE-Arc/Technocrarc
+          cd Technocrarc
+          git checkout ${BRANCH##*/}
+          git fetch --all
+          git pull --all
+          rm technocrarc/settings.py
+          mv technocrarc/settings.py.production technocrarc/settings.py
+          python3 -m venv venv
+          source venv/bin/activate
+          pip install wheel
+          pip install -r requirements.txt
+          python3 manage.py sqlflush
+          python3 manage.py flush --noinput
+          python3 manage.py migrate
+          sudo sv reload uwsgi
+    
