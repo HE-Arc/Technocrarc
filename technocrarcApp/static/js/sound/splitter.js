@@ -2,7 +2,7 @@ export class AISpleeter {
 
     constructor(pubSub) {
         let webSocketProtocol;
-        if (location.protocol == 'https:') { webSocketProtocol = "wss" } else { webSocketProtocol = "wss" }
+        if (location.protocol == 'https:') { webSocketProtocol = "wss" } else { webSocketProtocol = "ws" }
         this.pubSub = pubSub
         this.socket = new WebSocket(webSocketProtocol + '://' + window.location.host + '/ws/background-tasks/')
         this.splitCounter = 0
