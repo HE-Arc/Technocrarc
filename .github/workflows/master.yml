@@ -17,7 +17,6 @@ jobs:
     steps:
     - name: Create DB
       run: |
-        service mysql status
         service mysql restart
         sleep 20s
         mysql -h127.0.0.1 -uroot -proot -e "CREATE DATABASE technocrarc;"
