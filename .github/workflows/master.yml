@@ -68,6 +68,7 @@ jobs:
           source venv/bin/activate
           pip install wheel
           pip install -r requirements.txt
+          python3 manage.py migrate
           python3 manage.py flush --noinput
           python3 manage.py migrate
           sudo sv reload uwsgi
