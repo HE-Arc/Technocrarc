@@ -18,7 +18,7 @@ jobs:
     - name: Create DB
       run: |
         sleep 20s
-        mysql -uroot -proot -e "CREATE DATABASE technocrarc;"
+        mysql -h127.0.0.1 -uroot -proot -e "CREATE DATABASE technocrarc;"
     - uses: actions/checkout@v2
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v1
