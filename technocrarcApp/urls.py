@@ -1,6 +1,6 @@
 from django.urls import path
 from technocrarcApp.views import *
-from django.templatetags.static import static
+from django.conf.urls.static import static
 
 app_name = 'technocrarcApp'
 
