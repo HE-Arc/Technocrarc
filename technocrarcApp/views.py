@@ -8,46 +8,71 @@ from django.conf import settings
 from django.core import serializers
 from .serializers import AudioFileSerializer, EffectFileSerializer
 from .forms import *
-from .models import AudioFile, EffectFile
+from .models import AudioFile, EffectFile, Project
 from django.http import HttpResponseRedirect
 from django.contrib.auth.models import User
 from django.contrib.auth import *
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.views.decorators.csrf import ensure_csrf_cookie
+from rest_framework.authentication import SessionAuthentication, BasicAuthentication
+from django.utils.decorators import method_decorator
 import os
+import logging
 
-class Upload(APIView):
+logger = logging.getLogger(__name__)
 
+
+class Upload(LoginRequiredMixin, APIView):
     parser_class = (FileUploadParser,)
+    login_url = '/log-in'
+    redirect_field_name = 'redirect_to'
 
-    def get(self, request, *args, **kwargs):
-        return render(request, 'upload.html')
-
+    @method_decorator(ensure_csrf_cookie)
     def post(self, request, *args, **kwargs):
-      audio_file_serializer = AudioFileSerializer(data=request.data)
-      request.data['user'] = request.user.id
+        audio_file_serializer = AudioFileSerializer(data=request.data)
+        request.data['user'] = request.user.id
 
-      if audio_file_serializer.is_valid():
-          audio_file_serializer.save()
-          return Response(audio_file_serializer.data, status=status.HTTP_201_CREATED)
-      else:
-          return Response(audio_file_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        project = Project()
+        project.user_id = request.user.id
+        project.name = request.FILES['file'].name[:-4]
+        project.save()
+        request.data['project'] = project.id
+
+        if audio_file_serializer.is_valid():
+            audio_file_serializer.save(project=project)
+            return Response(audio_file_serializer.data, status=status.HTTP_201_CREATED)
+        else:
+            return Response(audio_file_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 class AudioEffectView(APIView):
+    parser_class = (FileUploadParser,)
+    login_url = '/log-in'
+    redirect_field_name = 'redirect_to'
 
-    def get(self, request, effect_id):
+    @method_decorator(ensure_csrf_cookie)
+    def get(self, request, audio_id):
         user_id = request.user.id
-        file = EffectFile.objects.filter(id=effect_id, user_id=user_id).values('file')
+        file = EffectFile.objects.filter(
+            audio_id=audio_id, user_id=user_id).values('file')
 
         if file.exists():
             path_to_file = os.path.join(settings.MEDIA_ROOT, file[0]['file'])
             with open(path_to_file, 'r') as json_file:
-                response = HttpResponse(json_file, content_type='application/json')
+                response = HttpResponse(
+                    json_file, content_type='application/json')
             return response
         else:
             return HttpResponseNotFound('No matching file found')
 
+    @method_decorator(ensure_csrf_cookie)
     def post(self, request, *args, **kwargs):
         effect_file_serializer = EffectFileSerializer(data=request.data)
+
+        tmp_mutable = request.data._mutable
+        request.data._mutable = True
         request.data['user'] = request.user.id
+        request.data._mutable = tmp_mutable
 
         if effect_file_serializer.is_valid():
             effect_file_serializer.save()
@@ -55,51 +80,80 @@ class AudioEffectView(APIView):
         else:
             return Response(effect_file_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-# TODO : delete after test
-class P5(APIView):
 
-    def get(self, request, *args, **kwargs):
-        return render(request, 'p5_test.html')
+class UserProject(LoginRequiredMixin, APIView):
+    login_url = '/log-in'
+    redirect_field_name = 'redirect_to'
 
-class Audio(APIView):
-
+    @method_decorator(ensure_csrf_cookie)
     def get(self, request, *args, **kwargs):
         user_id = request.user.id
-        users_file = AudioFile.objects.filter(user_id=user_id).values_list('file', 'id')
+        users_project = Project.objects.filter(
+            user_id=user_id).values('id', 'name')
 
-        return JsonResponse(dict(audio_files=list(users_file)))
+        return JsonResponse(dict(users_project=list(users_project)))
 
 
-class SplitAudioFileViewDownload(APIView):
+class Projects(LoginRequiredMixin, APIView):
+    login_url = '/log-in'
+    redirect_field_name = 'redirect_to'
 
+    @method_decorator(ensure_csrf_cookie)
+    def get(self, request, project_id):
+        user_id = request.user.id
+        audio_files = AudioFile.objects.filter(
+            user_id=user_id, project_id=project_id).values('id')
+
+        return JsonResponse(dict(audio_files=list(audio_files)))
+
+
+class SplitAudioFileViewDownload(LoginRequiredMixin, APIView):
+    login_url = '/log-in'
+    redirect_field_name = 'redirect_to'
+
+    @method_decorator(ensure_csrf_cookie)
     def get(self, request, song_id):
         user_id = request.user.id
-        file = AudioFile.objects.filter(id=song_id, user_id=user_id).values('file')
+        file = AudioFile.objects.filter(
+            id=song_id, user_id=user_id).values('file')
 
         if file.exists():
             path_to_file = os.path.join(settings.MEDIA_ROOT, file[0]['file'])
             with open(path_to_file, 'rb') as wav_file:
                 response = HttpResponse(wav_file, content_type='audio/wav')
+                file_name = file[0]['file'].split("/")[-1]
+                response['Content-Disposition'] = f'attachment; filename="{file_name[:-4]}"'
             return response
         else:
             return HttpResponseNotFound('No matching file found')
 
-class Editor(APIView):
 
+class Editor(LoginRequiredMixin, APIView):
+    login_url = '/log-in'
+    redirect_field_name = 'redirect_to'
+
+    @method_decorator(ensure_csrf_cookie)
     def get(self, request, *args, **kwargs):
         return render(request, 'editor.html')
 
-class Home(APIView):
 
+class Home(APIView):
+    @method_decorator(ensure_csrf_cookie)
     def get(self, request, *args, **kwargs):
-        return render(request, 'home.html')
+        if request.user.is_authenticated:
+            return HttpResponseRedirect('/editor')
+        else:
+            return render(request, 'home.html')
+
 
 class LogIn(APIView):
 
+    @method_decorator(ensure_csrf_cookie)
     def get(self, request, *args, **kwargs):
         form = LogInForm()
         return render(request, 'log-in.html', {'form': form})
 
+    @method_decorator(ensure_csrf_cookie)
     def post(self, request, *args, **kwargs):
         form = LogInForm(request.POST)
 
@@ -114,21 +168,25 @@ class LogIn(APIView):
 
             if user is not None:
                 login(request, user)
-                return HttpResponseRedirect('/upload')
+                return HttpResponseRedirect('/editor')
             else:
-                form.add_error('password', 'Your credentials have not been found in our records.')
+                form.add_error(
+                    'password', 'Your credentials have not been found in our records.')
 
         if form.is_valid():
-            return HttpResponseRedirect('/upload')
+            return HttpResponseRedirect('/editor')
         else:
             return render(request, 'log-in.html', {'form': form})
 
+
 class SignUp(APIView):
 
+    @method_decorator(ensure_csrf_cookie)
     def get(self, request, *args, **kwargs):
         form = SignUpForm()
         return render(request, 'sign-up.html', {'form': form})
 
+    @method_decorator(ensure_csrf_cookie)
     def post(self, request, *args, **kwargs):
         form = SignUpForm(request.POST)
 
@@ -141,8 +199,9 @@ class SignUp(APIView):
             email = form.cleaned_data['email']
 
             if password != password_conf:
-                form.add_error('password_conf', 'Password confirmation does not match.')
-                return render(request, 'sign-up.html', {'form': form })
+                form.add_error('password_conf',
+                               'Password confirmation does not match.')
+                return render(request, 'sign-up.html', {'form': form})
 
             # Check if user already exists
             username = str(username)
@@ -159,14 +218,19 @@ class SignUp(APIView):
             newUser.last_name = last_name
             newUser.save()
 
-            #Authenticate the user
+            # Authenticate the user
             login(request, newUser)
 
-            return HttpResponseRedirect('/upload')
+            return HttpResponseRedirect('/editor')
         else:
             return render(request, 'sign-up.html', {'form': form})
 
-class Logout(APIView):
+
+class Logout(LoginRequiredMixin, APIView):
+    login_url = '/log-in'
+    redirect_field_name = 'redirect_to'
+
+    @method_decorator(ensure_csrf_cookie)
     def get(self, request, *args, **kwargs):
         logout(request)
         return HttpResponseRedirect('/')

@@ -6,12 +6,12 @@
     <div class="center">
         <h1 class="main-title">Technocrarc</h1>
 
-        <form id="form-upload-sound" action="upload" method="POST" enctype="multipart/form-data">
+        <form class="form-upload-sound" action="upload" method="POST" enctype="multipart/form-data">
 
             {% csrf_token %}
 
             <div class="file-field input-field">
-                <input id="sound-file-input" name="file" type="file" accept="audio/x-waw" required>
+                <input class="sound-file-input" name="file" type="file" accept="audio/x-waw" required>
                 <div class="file-path-wrapper">
                     <div class="dragdrop-figure">
                         <i class="material-icons">cloud_upload</i>
@@ -20,14 +20,29 @@
                         <input class="file-path validate" type="text" hidden>
                     </div>
                     <div class="dragdrop-uploaded" hidden>
-                        <i class="material-icons">check_circle</i>
+                        <i class="material-icons close">close</i>
+                        <i class="material-icons">audiotrack</i>
                         <p class="uploaded-file-name italic"></p>
                         <p class="uploaded-file-size italic"></p>
                     </div>
                 </div>
             </div>
 
-            <button class="btn btn-large waves-effect waves-light" type="submit">UPLOAD</button>
+            <button class="btn btn-large waves-effect waves-light" type="submit">UPLOAD
+                <!--div class="preloader-container">
+                    <div class="preloader-wrapper active">
+                      <div class="spinner-layer spinner-blue-only">
+                        <div class="circle-clipper left">
+                          <div class="circle"></div>
+                        </div><div class="gap-patch">
+                          <div class="circle"></div>
+                        </div><div class="circle-clipper right">
+                          <div class="circle"></div>
+                        </div>
+                      </div>
+                    </div>
+                </div-->
+            </button>
 
         </form>
 
