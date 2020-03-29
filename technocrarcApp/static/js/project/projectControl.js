@@ -15,13 +15,18 @@ export class ProjectController {
     }
 
     addRegion(waveSurfer, startT, endT, inRegionCb) {
-        waveSurfer.on("region-in", inRegionCb)
-        waveSurfer.on("region-out", () => SoundEffect.removeFilter(waveSurfer))
-
-        return waveSurfer.addRegion({
+        let region = waveSurfer.addRegion({
             "start": startT,
             "end": endT
         })
+
+        waveSurfer.on("region-in", inRegionCb)
+        waveSurfer.on("region-out", () => SoundEffect.removeFilter(waveSurfer))
+
+        waveSurfer.on("region-dblclick", () => {
+            region.remove()
+        })
+        return region
     }
 
     applyFilter() {
