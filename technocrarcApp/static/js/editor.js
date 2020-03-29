@@ -25,7 +25,10 @@ import { AISpleeter } from "/static/js/sound/splitter.js"
     pubSub.subscribe("trackLoaded", (track) => projectController.syncTracks(track))
 
 
-    let songUploader = new SongUploader()
+    let songUploader = new SongUploader(pubSub)
+    pubSub.subscribe("prepareEditor", () => {
+        projectManager.prepareEditor(false, true)
+    })
 
     let aiSpleeter = new AISpleeter(pubSub)
     pubSub.subscribe("projectLoaded", (songs) => aiSpleeter.updateSongs(songs))

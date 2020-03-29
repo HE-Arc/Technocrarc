@@ -2,9 +2,10 @@ import {$$, closeModal} from "/static/js/utils/utils.js"
 
 export class SongUploader {
 
-    constructor() {
+    constructor(pubsub) {
         this._bindEvents()
         this.init()
+        this.pubSub = pubsub
     }
 
     init() {
@@ -98,7 +99,7 @@ export class SongUploader {
                     this.enableUploadButton(true)
                     closeModal("uploadFileDialog")
                     document.getElementById('uploadSongClose').click()
-                    prepareEditor(false, true);
+                    this.pubSub.publish("prepareEditor", null)
                 }
                 else {
                     M.toast({ html: "An error occured while uploading your song" })
