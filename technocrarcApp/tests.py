@@ -4,6 +4,7 @@ from django.test import tag
 
 from django.contrib.auth.models import User
 from .models import AudioFile
+from technocrarcApp.models import Project
 
 # Create your tests here.
 
@@ -52,7 +53,8 @@ class AudioFileDBTest(TestCase):
     '''
     def setUp(self):
         self.user = User.objects.create(username="test")
-        AudioFile.objects.create(file='2020_27_02/test.wav', user=self.user)
+        self.project = Project.objects.create(user=self.user, name="test")
+        AudioFile.objects.create(file='2020_27_02/test.wav', user=self.user, project=self.project)
 
     @tag('audiofiledb')
     def test_audio(self):
@@ -66,13 +68,14 @@ class AudioFileUpload(TestCase):
     '''
     def setUp(self):
         self.user = User.objects.create(username="test")
+        self.project = Project.objects.create(user=self.user, name="test")
         self.client = Client()
 
     @tag('audiofileupload')
     def test_audiofile_upload(self):
         with open('./test/test.wav', 'rb') as f:
             self.client.post('/upload', { 'file': f })
-            AudioFile.objects.create(file=f.name, user=self.user)
+            AudioFile.objects.create(file=f.name, user=self.user, project=self.project)
 
             audioFile = AudioFile.objects.get(file=f.name)
             self.assertEqual(audioFile.file, f.name)

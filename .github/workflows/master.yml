@@ -18,7 +18,7 @@ jobs:
     - name: Create DB
       run: |
         sudo systemctl restart mysql
-        sleep 20s
+        sleep 5s
         mysql -h127.0.0.1 -uroot -proot -e "CREATE DATABASE technocrarc;"
     - uses: actions/checkout@v2
     - name: Set up Python ${{ matrix.python-version }}
@@ -68,7 +68,7 @@ jobs:
           source venv/bin/activate
           pip install wheel
           pip install -r requirements.txt
-          python3 manage.py sqlflush
+          python3 manage.py migrate
           python3 manage.py flush --noinput
           python3 manage.py migrate
           sudo sv reload uwsgi

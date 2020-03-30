@@ -14,7 +14,7 @@ import json
 
 channel_layer = get_channel_layer()
 
-@task(name='split_sound')
+@task(name='split_sound', time_limit=99999)
 def split_sound(channel_name, song_id, stems, user_id):
     mp.current_process()._config['daemon'] = False
 
