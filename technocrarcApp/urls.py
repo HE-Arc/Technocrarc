@@ -17,6 +17,5 @@ urlpatterns = [
     path('effect', AudioEffectView.as_view()),
     path('effect/<int:audio_id>', AudioEffectView.as_view()),
     path('projects', UserProject.as_view()),
-    path('project/<int:project_id>', Projects.as_view()),
-    url(r'^ws/background-tasks/$', BackgroundTaskConsumer)
+    path('project/<int:project_id>', Projects.as_view())
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
