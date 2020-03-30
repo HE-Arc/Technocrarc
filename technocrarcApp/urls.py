@@ -1,6 +1,8 @@
 from django.urls import path
 from technocrarcApp.views import *
 from django.conf.urls.static import static
+from django.conf.urls import url
+from technocrarcApp.consumers import BackgroundTaskConsumer
 
 app_name = 'technocrarcApp'
 
@@ -15,5 +17,6 @@ urlpatterns = [
     path('effect', AudioEffectView.as_view()),
     path('effect/<int:audio_id>', AudioEffectView.as_view()),
     path('projects', UserProject.as_view()),
-    path('project/<int:project_id>', Projects.as_view())
+    path('project/<int:project_id>', Projects.as_view()),
+    url(r'^ws/background-tasks/$', BackgroundTaskConsumer)
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
