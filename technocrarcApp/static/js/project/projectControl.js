@@ -104,8 +104,14 @@ export class ProjectController {
             const waveSurfer = this.waveArray[index];
             waveSurfer.pause();
             waveSurfer.destroy();
+            this.waveArray[index] = null;
         }
-        this.waveArray = {}
+
+        
+
+        this.waveArray = null;
+        delete(this.waveArray);
+        this.waveArray = {};
     }
 
     skipTo(sec) {
