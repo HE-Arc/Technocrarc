@@ -323,7 +323,7 @@ export class ProjectController {
 
     _bindEvents() {
         document.onkeydown = this.checkKey.bind(this)
-        documente.getElementById("playPauseMenu").addEventListener("click", () => {
+        document.getElementById("playPauseMenu").addEventListener("click", () => {
             this.playPauseAll()
         })
     }
