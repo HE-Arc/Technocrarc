@@ -273,14 +273,13 @@ export class ProjectController {
 
         if (trackID !== 0) {
             waveSurfer.skip(skipLenght)
-            waveSurfer.setMute(true)
-            waveSurfer.play()
         }
 
         waveSurfer["songID"] = songID
 
         this._bindTrackControl(trackID)
         this._loadEffect(trackID, songID)
+        console.log(this.waveArray)
     }
 
     _loadEffect(i, songID) {

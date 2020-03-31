@@ -1,8 +1,10 @@
 export class AISpleeter {
 
     constructor(pubSub) {
+        let webSocketProtocol;
+        if (location.protocol == 'https:') { webSocketProtocol = "wss" } else { webSocketProtocol = "ws" }
         this.pubSub = pubSub
-        this.socket = new WebSocket('ws://' + window.location.host + '/ws/background-tasks/')
+        this.socket = new WebSocket(webSocketProtocol + '://' + window.location.host + '/ws/background-tasks/')
         this.splitCounter = 0
         this.songs = []
         this._bindEvent()
