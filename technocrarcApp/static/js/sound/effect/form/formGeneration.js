@@ -25,11 +25,8 @@ export class OptionFormGenerator {
     }
 
     _parseOptions(options) {
-        //for (let prop in this.options) {
         for (let prop in options) {
-            //if (Object.prototype.hasOwnProperty.call(this.options, prop)) {
             if (Object.prototype.hasOwnProperty.call(options, prop)) {
-                //let field = this.options[prop]
                 let field = options[prop]
                 let elem;
 
@@ -44,23 +41,12 @@ export class OptionFormGenerator {
                         var elems = document.querySelectorAll('select')
                         var instances = M.FormSelect.init(elems, {})
                         break
+                    // Sub options
                     default:
-                        //this._subOption(prop, field)
                         this._parseOptions(field)
                         break
                 }
             }
-        }
-    }
-
-    //FIXME
-    _subOption(prop, field) {
-        for (let p in field) {
-            let f = field[p];
-            let elem;
-
-            elem = this._makeSlider(p, p, f.range[0], f.range[1])
-            this.form.appendChild(elem)
         }
     }
 
