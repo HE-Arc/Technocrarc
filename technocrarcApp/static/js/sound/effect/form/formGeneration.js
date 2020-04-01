@@ -75,7 +75,7 @@ export class OptionFormGenerator {
         }
 
         let l = document.createElement("label")
-        l.innerHTML = fieldName
+        l.innerHTML = this._parseLabel(fieldName)
 
         d.appendChild(s)
         d.appendChild(l)
@@ -94,11 +94,18 @@ export class OptionFormGenerator {
         i.setAttribute("max", max)
 
         let l = document.createElement("label")
-        l.innerHTML = fieldName
+        l.innerHTML = this._parseLabel(fieldName)
 
         p.appendChild(l)
         p.appendChild(i)
 
         return p
+    }
+
+    // camelCase -> Camel Case
+    _parseLabel(label) {
+        return label.replace(/([A-Z])/g, ' $1').replace(/^./, (str) => {
+            return str.toUpperCase()
+        })
     }
 }
