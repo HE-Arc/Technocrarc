@@ -48,6 +48,26 @@ a.underline:focus::after {
     background: #fff;
 }
 
+/* FOOTER */
+/* FOR STICKY FOOTER */
+body {
+    display: flex;
+    min-height: 100vh;
+    flex-direction: column;
+}
+/* FOR STICKY FOOTER */
+main {
+    flex: 1 0 auto;
+}
+footer .footer-actions > li {
+    margin: 0 0.5em;
+    display: inline-block;
+}
+
+.controls > .btn-floating.btn-small {
+    margin: 0px 5px 0 0px;
+}
+
 /* FORM */
 form .btn {
     color: #fff;
@@ -154,10 +174,6 @@ form .btn-large {
     position: fixed;
     right: 40px;
     top: 100px;
-}
-
-.controls > .btn-floating.btn-small {
-    margin: 0px 5px 0 0px;
 }
 
 #effectModal{
