@@ -54,26 +54,19 @@
   </main>
 
 {% if user.is_authenticated %}
-<footer class="page-footer">
+<footer class="page-footer grey darken-4">
     <div class="container">
         <div class="center">
 
-          <!--div id="FABMenu" class="fixed-action-btn">
-            <a id="mainEditorMenu" class="btn btn-large btn-floating deep-orange darken-1">
-              <i class="large material-icons">dehaze</i>
-            </a>
-
-        </div-->
-
             <ul class="footer-actions">
                 <li>
-                    <a id="createProjectMenu" data-target="uploadFileDialog" class="btn-floating btn-large green modal-trigger tooltipped waves-effect waves-light" data-tooltip="Create a new project"><i class="material-icons">add</i></a>
+                    <a id="createProjectMenu" class="btn-floating btn-large green modal-trigger tooltipped waves-effect waves-light" data-tooltip="Create a new project" data-position="top" data-target="uploadFileDialog"><i class="material-icons">add</i></a>
                 </li>
                 <li>
-                    <a id="playPauseMenu" class="btn-floating btn-large purple tooltipped hide waves-effect waves-light" data-tooltip="Play / Pause"><i id="playPauseButtonImage" class="material-icons">play_arrow</i></a>
+                    <a id="playPauseMenu" class="btn-floating btn-large purple tooltipped hide waves-effect waves-light" data-tooltip="Play / Pause" data-position="top"><i id="playPauseButtonImage" class="material-icons">play_arrow</i></a>
                 </li>
                 <li>
-                    <a id="aiSplitMenu" class="btn-floating btn-large blue tooltipped hide waves-effect waves-light" data-tooltip="AI Split"><i class="material-icons">shuffle</i></a>
+                    <a id="aiSplitMenu" class="btn-floating btn-large blue tooltipped hide waves-effect waves-light" data-tooltip="AI Split" data-position="top"><i class="material-icons">shuffle</i></a>
                 </li>
             </ul>
 

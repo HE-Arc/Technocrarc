@@ -59,13 +59,15 @@ body {
 main {
     flex: 1 0 auto;
 }
+.page-footer {
+    padding: 2em 0;
+}
+footer .footer-actions {
+    margin: 0;
+}
 footer .footer-actions > li {
     margin: 0 0.5em;
     display: inline-block;
-}
-
-.controls > .btn-floating.btn-small {
-    margin: 0px 5px 0 0px;
 }
 
 /* FORM */
