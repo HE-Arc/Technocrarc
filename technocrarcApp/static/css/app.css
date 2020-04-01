@@ -63,6 +63,10 @@ header {
 /* FOOTER */
 .page-footer {
     padding: 2em 0;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
     z-index: 999;
 }
 footer .footer-actions {
