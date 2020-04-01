@@ -57,10 +57,16 @@ export class ProjectController {
         let coneOuterGain = document.getElementById("coneOuterGain").value
         let coneOuterAngle = document.getElementById("coneOuterAngle").value
         let coneInnerAngle = document.getElementById("coneInnerAngle").value
+        let positionX = document.getElementById("positionX").value
+        let positionY = document.getElementById("positionY").value
+        let positionZ = document.getElementById("positionZ").value
+        let orientationX = document.getElementById("orientationX").value
+        let orientationY = document.getElementById("orientationY").value
+        let orientationZ = document.getElementById("orientationZ").value
 
         let pannerOption = new PannerOption(coneOuterGain, coneOuterAngle, coneInnerAngle,
-            new Position(5, 0, 0),
-            new Orientation(90, 90, 0)
+            new Position(positionX, positionY, positionZ),
+            new Orientation(orientationX, orientationY, orientationZ)
         )
 
         let region = this.addRegion(
