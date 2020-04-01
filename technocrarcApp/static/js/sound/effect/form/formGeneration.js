@@ -21,13 +21,16 @@ export class OptionFormGenerator {
     buidlFormField() {
         this._clear()
 
-        this._parseOptions()
+        this._parseOptions(this.options)
     }
 
-    _parseOptions() {
-        for (let prop in this.options) {
-            if (Object.prototype.hasOwnProperty.call(this.options, prop)) {
-                let field = this.options[prop]
+    _parseOptions(options) {
+        //for (let prop in this.options) {
+        for (let prop in options) {
+            //if (Object.prototype.hasOwnProperty.call(this.options, prop)) {
+            if (Object.prototype.hasOwnProperty.call(options, prop)) {
+                //let field = this.options[prop]
+                let field = options[prop]
                 let elem;
 
                 switch (field.type) {
@@ -42,7 +45,8 @@ export class OptionFormGenerator {
                         var instances = M.FormSelect.init(elems, {})
                         break
                     default:
-                        this._subOption(prop, field)
+                        //this._subOption(prop, field)
+                        this._parseOptions(field)
                         break
                 }
             }

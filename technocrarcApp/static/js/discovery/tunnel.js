@@ -19,6 +19,9 @@ export class DiscoveryTunnel {
                     break;
                 case '1':
                     M.FloatingActionButton.getInstance(document.getElementById("FABMenu")).open()
+
+                    // FIXME: plus besoin du wait si footer
+
                     sleep(500).then(() => {
                         this._getTapDiscovery('createProjectDiscovery').open()
                         Cookies.set('discoveryTunnel', '2')
@@ -90,4 +93,3 @@ export class DiscoveryTunnel {
     }
 
 }
-
