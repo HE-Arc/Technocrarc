@@ -23,9 +23,8 @@ export class ProjectManager {
                 if (!isAlreadyLoaded) {
                     await this.prepareProjectSelector(selectLast)
                 }
-                else {
-                    this.pubSub.publish("changeProject", null)
-                }
+                
+                this.pubSub.publish("changeProject", null)
 
                 let selectedProject = document.getElementById('projectSelector')
 
