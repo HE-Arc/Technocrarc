@@ -24,6 +24,34 @@ export class PannerOption {
             coneInnerAngle: {
                 type: 'number',
                 range: [0, 360]
+            },
+            position: {
+                x: {
+                    type: 'number',
+                    range: [-100, 100]
+                },
+                y: {
+                    type: 'number',
+                    range: [-100, 100]
+                },
+                z: {
+                    type: 'number',
+                    range: [-100, 100]
+                }
+            },
+            orientation: {
+                x: {
+                    type: 'number',
+                    range: [-100, 100]
+                },
+                y: {
+                    type: 'number',
+                    range: [-100, 100]
+                },
+                z: {
+                    type: 'number',
+                    range: [-100, 100]
+                }
             }
         }
     }

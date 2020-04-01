@@ -344,4 +344,3 @@ export class ProjectController {
         saveBtn.addEventListener("click", () => this.saveEffect(i))
     }
 }
-

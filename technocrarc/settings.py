@@ -81,11 +81,11 @@ ASGI_APPLICATION = 'technocrarc.routing.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'technocrarc',
+        'NAME': 'django_technocrarc',
 		'USER': 'root', # TODO change for your mysql user
 		'PASSWORD': 'root',
         'HOST': '127.0.0.1',
-        'PORT': '3306',
+        'PORT': '8889',
     }
 }
 

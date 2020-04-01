@@ -42,9 +42,21 @@ export class OptionFormGenerator {
                         var instances = M.FormSelect.init(elems, {})
                         break
                     default:
+                        this._subOption(prop, field)
                         break
                 }
             }
+        }
+    }
+
+    //FIXME
+    _subOption(prop, field) {
+        for (let p in field) {
+            let f = field[p];
+            let elem;
+
+            elem = this._makeSlider(p, p, f.range[0], f.range[1])
+            this.form.appendChild(elem)
         }
     }
 
