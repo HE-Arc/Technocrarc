@@ -14,51 +14,39 @@ export class DiscoveryTunnel {
         sleep(1000).then(() => {
             switch (currentStep) {
                 case '0':
-                    this._getTapDiscovery('mainEditorMenuDiscovery').open();
-                    Cookies.set('discoveryTunnel', '1')
+                    if (this.globalEnableDiscoveryTrack) {
+                        this._getTapDiscovery('createProjectDiscovery').open()
+                        Cookies.set('discoveryTunnel', '1')
+                    }
                     break;
                 case '1':
-                    M.FloatingActionButton.getInstance(document.getElementById("FABMenu")).open()
-
-                    // FIXME: plus besoin du wait si footer
-
-                    sleep(500).then(() => {
-                        this._getTapDiscovery('createProjectDiscovery').open()
+                    if (this.globalEnableDiscoveryTrack) {
+                        this._getTapDiscovery('muteDiscovery').open();
                         Cookies.set('discoveryTunnel', '2')
-                    })
-
+                    }
                     break;
                 case '2':
                     if (this.globalEnableDiscoveryTrack) {
-                        this._getTapDiscovery('muteDiscovery').open();
+                        this._getTapDiscovery('volumeDiscovery').open()
                         Cookies.set('discoveryTunnel', '3')
                     }
                     break;
                 case '3':
                     if (this.globalEnableDiscoveryTrack) {
-                        this._getTapDiscovery('volumeDiscovery').open()
+                        this._getTapDiscovery('isolateDiscovery').open()
                         Cookies.set('discoveryTunnel', '4')
                     }
                     break;
                 case '4':
                     if (this.globalEnableDiscoveryTrack) {
-                        this._getTapDiscovery('isolateDiscovery').open()
+                        this._getTapDiscovery('AISplitDiscovery').open()
                         Cookies.set('discoveryTunnel', '5')
                     }
                     break;
                 case '5':
                     if (this.globalEnableDiscoveryTrack) {
-                        M.FloatingActionButton.getInstance(document.getElementById("FABMenu")).open()
-                        sleep(500).then(() => {
-                            this._getTapDiscovery('AISplitDiscovery').open()
-                            Cookies.set('discoveryTunnel', '6')
-                        })
-                    }
-                    break;
-                case '6':
-                    if (this.globalEnableDiscoveryTrack) {
                         this._getTapDiscovery('trackDiscovery').open()
-                        Cookies.set('discoveryTunnel', '7')
+                        Cookies.set('discoveryTunnel', '6')
                     }
                 default:
                     break;
@@ -76,6 +64,7 @@ export class DiscoveryTunnel {
         }
 
         let discovery = M.TapTarget.init(elem, options)
+
         return discovery
     }
 
