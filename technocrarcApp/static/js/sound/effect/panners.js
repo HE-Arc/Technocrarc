@@ -26,29 +26,29 @@ export class PannerOption {
                 range: [0, 360]
             },
             position: {
-                x: {
+                positionX: {
                     type: 'number',
                     range: [-100, 100]
                 },
-                y: {
+                positionY: {
                     type: 'number',
                     range: [-100, 100]
                 },
-                z: {
+                positionZ: {
                     type: 'number',
                     range: [-100, 100]
                 }
             },
             orientation: {
-                x: {
+                orientationX: {
                     type: 'number',
                     range: [-100, 100]
                 },
-                y: {
+                orientationY: {
                     type: 'number',
                     range: [-100, 100]
                 },
-                z: {
+                orientationZ: {
                     type: 'number',
                     range: [-100, 100]
                 }
