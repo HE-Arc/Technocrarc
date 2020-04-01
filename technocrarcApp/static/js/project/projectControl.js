@@ -103,11 +103,12 @@ export class ProjectController {
         for (let index in this.waveArray) {
             const waveSurfer = this.waveArray[index];
             waveSurfer.pause();
+            waveSurfer.cancelAjax();
+            waveSurfer.empty();
             waveSurfer.destroy();
             this.waveArray[index] = null;
+            delete(this.waveArray[index]);
         }
-
-        
 
         this.waveArray = null;
         delete(this.waveArray);
