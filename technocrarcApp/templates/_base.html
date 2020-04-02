@@ -75,19 +75,19 @@
 </footer>
 {% endif %}
 
-  {% block scripts %}
-  <script type="text/javascript">
+{% block scripts %}
+<script type="text/javascript">
     // GLOBAL VARIABLES
     const STATIC_URL = {% get_static_prefix %}
-  </script>
-  <script src="//code.jquery.com/jquery-3.1.1.min.js" defer></script>
-  <script src="{% static 'js/materialize.js' %}" defer></script>
-  <script defer>
+</script>
+<script src="//code.jquery.com/jquery-3.1.1.min.js" defer></script>
+<script src="{% static 'js/materialize.js' %}" defer></script>
+<script defer>
     document.addEventListener('DOMContentLoaded', (evt) => {
-        M.AutoInit()
-    })
-  </script>
-  {% endblock scripts %}
+    M.AutoInit()
+})
+</script>
+{% endblock scripts %}
 
 </body>
 

@@ -30,6 +30,19 @@ a.underline:focus::after {
     opacity: 1;
 }
 
+.btn {
+    color: #fff;
+    background: #c2185b;
+}
+.btn:hover,
+.btn:focus {
+    color: #c2185b;
+    background: #fff;
+}
+.btn-large {
+    width: 100%;
+}
+
 .card-panel{
     background-color: #222;
 }
@@ -78,19 +91,6 @@ footer .footer-actions > li {
 }
 
 /* FORM */
-form .btn {
-    color: #fff;
-    background: #c2185b;
-}
-form .btn:hover,
-form .btn:focus {
-    color: #c2185b;
-    background: #fff;
-}
-form .btn-large {
-    width: 100%;
-}
-
 .input-field input {
     color: #f5f5f5;
 }
@@ -100,6 +100,7 @@ form .btn-large {
 
 /* DRAG & DROP FILE INPUT */
 .file-field {
+    color: #333;
     height: 12em;
     border: 0.2rem dashed #ccc;
     border-radius: 1.2rem;
@@ -109,7 +110,7 @@ form .btn-large {
 }
 .file-field:hover,
 .file-field.dragenter {
-    color: #c5c5c5;
+    color: #999;
     box-shadow: 0.2rem 0.2rem 0.5rem 0.5rem rgba(0, 0, 0, 0.5);
 }
 .file-field i {
@@ -121,7 +122,7 @@ form .btn-large {
     margin: 0 0 0.5rem 0;
 }
 .file-field p.italic {
-    color: #c5c5c5;
+    color: #999;
     font-size: 0.9rem;
     font-style: italic;
 }
@@ -141,6 +142,7 @@ form .btn-large {
 }
 .dragdrop-uploaded .close:hover {
     color: #dd0000;
+    cursor: pointer;
     transform: scale(1.4);
 }
 
