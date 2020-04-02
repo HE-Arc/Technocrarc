@@ -62,16 +62,6 @@ export class SongUploader {
                 this.showDragDropFigure(input)
             })
         })
-
-        // Elements with class « form-upload-sound »
-        $$.soundUploadForms.forEach((item, i) => {
-            // Upload sound file form on submit
-            item.addEventListener('submit', evt => {
-                evt.preventDefault()
-
-                //TODO
-            })
-        })
     }
 
     upload() {
@@ -135,10 +125,15 @@ export class SongUploader {
             let fileType = file.type;
             let fileSize = file.size;
 
-            if (!fileType.includes('audio')) {
+            // Must be audio file
+            if (! fileType.includes('audio')) {
                 alert('The file format must be audio.');
             }
-            // TODO: Can limit size here
+            // Size cannot exceed 50 MB
+            else if (fileSize > 5e7) {
+                alert('The file size cannot exceed 50 MB.')
+            }
+            // All right
             else {
                 input.files = files;
                 this.showUploadedFile(input);
@@ -150,7 +145,7 @@ export class SongUploader {
         // Displays the uploaded sound file information
         let file = input.files[0];
         $$.dragDropUploaded.querySelector('.uploaded-file-name').innerHTML = file.name;
-        $$.dragDropUploaded.querySelector('.uploaded-file-size').innerHTML = file.size;
+        $$.dragDropUploaded.querySelector('.uploaded-file-size').innerHTML = this._parseSize(file.size);
 
         $$.dragDropFigure.setAttribute('hidden', true);
         $$.dragDropUploaded.removeAttribute('hidden');
@@ -168,5 +163,14 @@ export class SongUploader {
         let uploadBtn = document.getElementById("uploadSongButton")
         uploadBtn.addEventListener("click", () => this.upload())
     }
-}
 
+    _parseSize(bytes) {
+        let sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+
+        if (bytes == 0) { return '0 Byte' }
+
+        let i = Math.floor(Math.log(bytes) / Math.log(1000))
+
+        return (bytes / Math.pow(1000, i)).toFixed(2) + ' ' + sizes[i]
+    }
+}
