@@ -40,7 +40,6 @@ class Upload(LoginRequiredMixin, APIView):
 
         if audio_file_serializer.is_valid():
             # Audio file size limit
-            # FIXME: SEND ERROR MESSAGE TO USER
             if request.FILES['file'].size > 5e7:
                 return Response(audio_file_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
