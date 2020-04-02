@@ -39,6 +39,11 @@ class Upload(LoginRequiredMixin, APIView):
         request.data['project'] = project.id
 
         if audio_file_serializer.is_valid():
+            # Audio file size limit
+            # FIXME: SEND ERROR MESSAGE TO USER
+            if request.FILES['file'].size > 5e7:
+                return Response(audio_file_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
             audio_file_serializer.save(project=project)
             return Response(audio_file_serializer.data, status=status.HTTP_201_CREATED)
         else:
