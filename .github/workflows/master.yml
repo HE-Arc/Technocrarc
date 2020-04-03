@@ -57,8 +57,6 @@ jobs:
         script: |
           source /home/poweruser/.bash_profile
           sudo sv stop uwsgi
-          kill -9 $(ps ax | grep 'celery' | awk '{ print $1 }' | head -n -1)
-          kill -9 $(ps ax | grep 'daphne' | awk '{ print $1 }' | head -n -1)
           cd /var/www/app
           rm -rf Technocrarc
           git clone https://github.com/HE-Arc/Technocrarc
