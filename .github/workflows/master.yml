@@ -55,6 +55,7 @@ jobs:
         envs: BRANCH
         script_stop: true
         script: |
+          set -x
           source /home/poweruser/.bash_profile
           sudo sv stop uwsgi
           cd /var/www/app
