@@ -163,10 +163,12 @@ export class ProjectController {
                     ofg.addActions({
                         "Apply": {
                             "name": "applyEffectBtn",
+                            "classes": ["btn", "btn-large"],
                             "action": () => this.applyFilter()
                         },
                         "Back": {
                             "name": "backBtn",
+                            "classes": ["btn"],
                             "action": () => this.displayEffectPannel()
                         }
                     })

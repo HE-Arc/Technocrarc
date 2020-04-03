@@ -195,6 +195,14 @@ footer .footer-actions > li {
     background-color: #f4511e;
 }
 
-#editorActionBar > a {
-    margin: 20px;
+#editorActionBar > .btn {
+    margin: 1em 0 0 0;
+}
+#editorActionBar > .btn#applyEffectBtn {
+    width: 100%;
+}
+#editorActionBar > .btn#backBtn {
+    position: absolute;
+    top: 0;
+    right: 2em;
 }

@@ -10,7 +10,9 @@ export class OptionFormGenerator {
         for (let action in actions) {
             let act = actions[action]
             let a = document.createElement("a")
-            a.classList.add(...["waves-effect", "waves-light", "btn"])
+            act["classes"].forEach((item, i) => {
+                a.classList.add(item)
+            })
             a.setAttribute("id", act["name"])
             a.addEventListener("click", act["action"])
             a.innerHTML = action
