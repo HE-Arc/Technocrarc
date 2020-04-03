@@ -164,7 +164,12 @@ export class ProjectController {
                         "Apply": {
                             "name": "applyEffectBtn",
                             "classes": ["btn", "btn-large"],
-                            "action": () => this.applyFilter()
+                            "action": () => {
+                                this.applyFilter()
+
+                                let modal = M.Modal.getInstance(document.querySelector("#effectModal"))
+                                modal.close()
+                            }
                         },
                         "Back": {
                             "name": "backBtn",
@@ -180,7 +185,12 @@ export class ProjectController {
                         "Apply": {
                             "name": "applyEffectBtn",
                             "classes": ["btn", "btn-large"],
-                            "action": () => this.applyPanner()
+                            "action": () => {
+                                this.applyPanner()
+
+                                let modal = M.Modal.getInstance(document.querySelector("#effectModal"))
+                                modal.close()
+                            }
                         },
                         "Back": {
                             "name": "backBtn",
