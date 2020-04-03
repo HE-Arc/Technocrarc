@@ -57,9 +57,8 @@ jobs:
         script: |
           source /home/poweruser/.bash_profile
           sudo sv stop uwsgi
-          ps aux
-          pkill -9 -f celery | true
-          pkill -9 -f daphne | true
+          ps ax | grep "celery" | egrep -v "DRONE_SSH_PREV_COMMAND_EXIT_CODE" | cut -b1-06 | xargs -t kill
+          ps ax | grep "daphne" | egrep -v "DRONE_SSH_PREV_COMMAND_EXIT_CODE" | cut -b1-06 | xargs -t kill
           cd /var/www/app
           rm -rf Technocrarc
           git clone https://github.com/HE-Arc/Technocrarc
