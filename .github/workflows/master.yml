@@ -56,7 +56,7 @@ jobs:
         script_stop: true
         script: |
           source /home/poweruser/.bash_profile
-          sudo sv stop uwsgi
+          sudo sv force-stop uwsgi | true
           cd /var/www/app
           rm -rf Technocrarc
           git clone https://github.com/HE-Arc/Technocrarc
@@ -73,5 +73,6 @@ jobs:
           python3 manage.py migrate
           python3 manage.py flush --noinput
           python3 manage.py migrate
+          sh ~/kill-all.sh
           sudo sv restart uwsgi
     
