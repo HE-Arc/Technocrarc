@@ -1,4 +1,5 @@
 # Technocrarc
+![CI](https://github.com/HE-Arc/Technocrarc/workflows/Django%20CI/badge.svg)
 
 Web app, to edit music, namely use spleeter to get multiple channels from a single track
 
