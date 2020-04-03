@@ -58,6 +58,8 @@ jobs:
           set -x
           source /home/poweruser/.bash_profile
           sudo sv stop uwsgi
+          sudo pkill -f celery | true
+          sudo pkill -f daphne | true
           cd /var/www/app
           rm -rf Technocrarc
           git clone https://github.com/HE-Arc/Technocrarc
@@ -69,8 +71,6 @@ jobs:
           mv technocrarc/settings.py.production technocrarc/settings.py
           python3 -m venv venv
           source venv/bin/activate
-          sudo pkill -f celery | true
-          sudo pkill -f daphne | true
           pip install wheel
           pip install -r requirements.txt
           python3 manage.py migrate
