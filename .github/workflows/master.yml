@@ -55,11 +55,10 @@ jobs:
         envs: BRANCH
         script_stop: true
         script: |
-          set -x
           source /home/poweruser/.bash_profile
           sudo sv stop uwsgi
-          pkill -f celery | true
-          pkill -f daphne | true
+          pkill -9 -f celery | true
+          pkill -9 -f daphne | true
           cd /var/www/app
           rm -rf Technocrarc
           git clone https://github.com/HE-Arc/Technocrarc
