@@ -57,6 +57,7 @@ jobs:
         script: |
           source /home/poweruser/.bash_profile
           sudo sv stop uwsgi
+          ps aux
           pkill -9 -f celery | true
           pkill -9 -f daphne | true
           cd /var/www/app
