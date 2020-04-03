@@ -74,5 +74,5 @@ jobs:
           python3 manage.py flush --noinput
           python3 manage.py migrate
           sh ~/kill-all.sh
-          sudo sv restart uwsgi
+          sudo sv restart uwsgi | true
     
