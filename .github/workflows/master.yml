@@ -58,8 +58,8 @@ jobs:
           set -x
           source /home/poweruser/.bash_profile
           sudo sv stop uwsgi
-          sudo pkill -f celery | true
-          sudo pkill -f daphne | true
+          pkill -f celery | true
+          pkill -f daphne | true
           cd /var/www/app
           rm -rf Technocrarc
           git clone https://github.com/HE-Arc/Technocrarc
