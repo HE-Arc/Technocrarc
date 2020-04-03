@@ -73,5 +73,5 @@ jobs:
           python3 manage.py migrate
           python3 manage.py flush --noinput
           python3 manage.py migrate
-          sudo sv reload uwsgi
+          sudo sv restart uwsgi
     
