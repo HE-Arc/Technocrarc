@@ -191,8 +191,14 @@ footer .footer-actions > li {
     top: 100px;
 }
 
-#effectModal{
-    background-color: #f4511e;
+#effectForm {
+    padding: 1em 0;
+}
+#effectForm .range-field {
+    margin: 0 0 0.2em 0;
+}
+#effectForm label {
+    color: #f5f5f5;
 }
 
 #editorActionBar > .btn {
