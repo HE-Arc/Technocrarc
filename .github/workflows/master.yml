@@ -55,21 +55,21 @@ jobs:
         envs: BRANCH
         script_stop: true
         script: |
-          set -x
           source /home/poweruser/.bash_profile
           sudo sv stop uwsgi
           cd /var/www/app
           rm -rf Technocrarc
           git clone https://github.com/HE-Arc/Technocrarc
           cd Technocrarc
-          git checkout ${BRANCH##*/} | true
+          git checkout ${BRANCH##*/}
           git fetch --all
           git pull --all
           rm technocrarc/settings.py
           mv technocrarc/settings.py.production technocrarc/settings.py
           python3 -m venv venv
           source venv/bin/activate
-          sudo pkill -f python
+          sudo pkill -f celery
+          sudo pkill -f daphne
           pip install wheel
           pip install -r requirements.txt
           python3 manage.py migrate
