@@ -104,11 +104,11 @@ export class ProjectManager {
                                 this.pubSub.publish("playAllFinish", null)
                             }.bind(this))
 
-                            fetch("download/" + lockedID + "/0").then(response => {
+                            fetch("download/" + lockedID).then(response => {
                                 let filename = response.headers.get('content-disposition').split("filename=")[1].replace(/['"]+/g, '')
                                 let downloadBtn = document.getElementById("downloadButton_" + trackID)
-                                downloadBtn.setAttribute("href", "download/" + lockedID + "/1")
-                                document.getElementById("trackName_" + trackID).innerHTML = filename
+                                downloadBtn.setAttribute("href", "download/" + lockedID)
+                                document.getElementById("trackName_" + trackID).innerHTML = filename.split(".").slice(0, -1).join(".")
 
                                 return response.blob();
                             })

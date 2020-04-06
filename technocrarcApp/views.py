@@ -116,7 +116,7 @@ class SplitAudioFileViewDownload(LoginRequiredMixin, APIView):
     redirect_field_name = 'redirect_to'
 
     @method_decorator(ensure_csrf_cookie)
-    def get(self, request, song_id, with_ext):
+    def get(self, request, song_id):
         user_id = request.user.id
         file = AudioFile.objects.filter(
             id=song_id, user_id=user_id).values('file')
@@ -126,11 +126,8 @@ class SplitAudioFileViewDownload(LoginRequiredMixin, APIView):
             with open(path_to_file, 'rb') as wav_file:
                 response = HttpResponse(wav_file, content_type='audio/wav')
                 file_name = file[0]['file'].split("/")[-1]
-
-                if with_ext == 1:
-                    response['Content-Disposition'] = f'attachment; filename="{file_name}"'
-                else:
-                    response['Content-Disposition'] = f'attachment; filename="{file_name[:-4]}"'
+                response['Content-Disposition'] = f'attachment; filename="{file_name}"'
+                
             return response
         else:
             return HttpResponseNotFound('No matching file found')
