@@ -23,7 +23,7 @@ export class ProjectManager {
                 if (!isAlreadyLoaded) {
                     await this.prepareProjectSelector(selectLast)
                 }
-                
+
                 this.pubSub.publish("changeProject", null)
 
                 let selectedProject = document.getElementById('projectSelector')
@@ -98,6 +98,10 @@ export class ProjectManager {
                             wavesurfer.on('ready', function () {
                                 this.changeProgressPercentage(100, trackID)
                                 this.pubSub.publish("trackLoaded", {"songID": lockedID, "trackID": trackID, "wave": wavesurfer})
+                            }.bind(this))
+
+                            wavesurfer.on('finish', function() {
+                                this.pubSub.publish("playAllFinish", null)
                             }.bind(this))
 
                             fetch("download/" + lockedID).then(response => {
