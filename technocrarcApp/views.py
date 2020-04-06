@@ -127,6 +127,7 @@ class SplitAudioFileViewDownload(LoginRequiredMixin, APIView):
                 response = HttpResponse(wav_file, content_type='audio/wav')
                 file_name = file[0]['file'].split("/")[-1]
                 response['Content-Disposition'] = f'attachment; filename="{file_name}"'
+                
             return response
         else:
             return HttpResponseNotFound('No matching file found')
