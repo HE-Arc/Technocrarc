@@ -13,7 +13,7 @@ urlpatterns = [
     path('log-in', LogIn.as_view()),
     path('sign-up', SignUp.as_view()),
     path('logout', Logout.as_view()),
-    path('download/<int:song_id>', SplitAudioFileViewDownload.as_view(), name='download'),
+    path('download/<int:song_id>/<int:with_ext>', SplitAudioFileViewDownload.as_view(), name='download'),
     path('effect', AudioEffectView.as_view()),
     path('effect/<int:audio_id>', AudioEffectView.as_view()),
     path('projects', UserProject.as_view()),
