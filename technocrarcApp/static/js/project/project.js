@@ -110,7 +110,20 @@ export class ProjectManager {
                                 let filename = response.headers.get('content-disposition').split("filename=")[1].replace(/['"]+/g, '')
                                 let downloadBtn = document.getElementById("downloadButton_" + trackID)
                                 downloadBtn.setAttribute("href", "download/" + lockedID)
-                                document.getElementById("trackName_" + trackID).innerHTML = filename.split(".").slice(0, -1).join(".")
+
+                                // Removes file extension
+                                filename = filename.split(".").slice(0, -1).join(".")
+
+                                if (trackID > 0) {
+                                    // AI splitted track : first letter to upper case
+                                    filename = filename.charAt(0).toUpperCase() + filename.slice(1)
+                                } else if (filename.length > 30) {
+                                    // Audio file name : trims length
+                                    filename = filename.substring(0, 29) + "&hellip;"
+                                }
+
+                                // Track title
+                                document.getElementById("trackName_" + trackID).innerHTML = filename
 
                                 return response.blob();
                             })
@@ -157,9 +170,17 @@ export class ProjectManager {
             projectSelector.innerHTML = ""
 
             for (let i = 0; i < projects.length; i++) {
-                const element = projects[i];
+                const element = projects[i]
+                let elementName = element['name']
+
+                // Trims element name length
+                if (elementName.length > 18)
+                {
+                    elementName = elementName.substr(0, 17) + "..."
+                }
+
                 let option = document.createElement('option')
-                option.appendChild(document.createTextNode(element['name']))
+                option.appendChild(document.createTextNode(elementName))
                 option.value = element['id']
                 projectSelector.appendChild(option)
                 if (i == projects.length - 1 && selectLast) { projectSelector.value = option.value }
