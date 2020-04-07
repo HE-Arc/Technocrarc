@@ -1,4 +1,5 @@
 (function () {
-  M.AutoInit()
+    document.addEventListener('DOMContentLoaded', (evt) => {
+        M.AutoInit()
+    })
 })()
-
