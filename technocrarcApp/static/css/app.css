@@ -72,6 +72,9 @@ header {
     color: #f4511e;
     background: #fff;
 }
+.header #nav-mobile .input-field {
+    margin: 0 2em 0 0;
+}
 
 /* FOOTER */
 .page-footer {
@@ -178,7 +181,18 @@ footer .footer-actions > li {
 }
 
 .controls{
-    padding: 20px !important;
+    /*padding: 20px !important;*/
+}
+.controls p {
+    /* TODO */
+    margin: 0 0 0.7em 0;
+}
+.controls .btn-floating {
+    display: block;
+    margin: 0 auto 1em auto;
+}
+.controls .range-field {
+    margin: 0 auto 1em auto;
 }
 
 .flex-row{
@@ -186,8 +200,29 @@ footer .footer-actions > li {
     flex-wrap: wrap;
 }
 
-.activated-button{
-    box-shadow: 0 0 3px 3px white;
+#wave-container .track-title {
+    font-size: 2em;
+    margin: 0 0 0.5em 0;
+}
+#wave-container .btn-floating {
+    transition: all 0.3s;
+}
+#wave-container .btn-floating i {
+    transition: all 0.3s;
+}
+#wave-container .btn-floating:hover,
+#wave-container .btn-floating:focus {
+    background: #fff !important;
+}
+#wave-container .btn-floating:hover i,
+#wave-container .btn-floating:focus i {
+    color: #f4511e !important;
+}
+
+.activated-button,
+.activated-button:hover,
+.activated-button:focus {
+    box-shadow: 0 0 5px 5px #e5e5e5;
 }
 
 .ai-splitter-preloader{
@@ -216,4 +251,9 @@ footer .footer-actions > li {
     position: absolute;
     top: 0;
     right: 2em;
+}
+
+/* TOAST */
+.toast {
+    background: #e64a19;
 }
