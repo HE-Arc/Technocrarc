@@ -140,7 +140,7 @@ export class ProjectManager {
                     document.getElementById("playPauseMenu").classList.remove("hide")
                     document.getElementById("aiSplitMenu").classList.remove("hide")
 
-                    if (selectedProject.options.length == 1 && Cookies.get('discoveryTunnel') == '2') {
+                    if (selectedProject.options.length == 1 && Cookies.get('discoveryTunnel') == '1') {
                         this.pubSub.publish('startDiscoveryTunnel', true)
                     }
                     else {
