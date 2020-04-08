@@ -310,6 +310,16 @@ export class ProjectController {
         console.log(this.waveArray)
     }
 
+    playAllFinish()
+    {
+        if (this.isPlayOn) {
+            this.isPlayOn = !this.isPlayOn;
+
+            let playPauseButtonImage = document.getElementById("playPauseButtonImage")
+            playPauseButtonImage.innerHTML = "play_arrow"
+        }
+    }
+
     _loadEffect(i, songID) {
         let waveSurfer = this.waveArray[i]
 
