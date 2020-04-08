@@ -24,7 +24,8 @@ export class ProjectController {
         waveSurfer.on("region-out", () => SoundEffect.removeFilter(waveSurfer))
 
         waveSurfer.on("region-dblclick", () => {
-            region.remove()
+			region.remove()
+			SoundEffect.removeFilter(waveSurfer);
         })
         return region
     }
