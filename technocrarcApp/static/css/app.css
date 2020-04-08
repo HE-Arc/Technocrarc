@@ -156,7 +156,7 @@ footer .footer-actions > li {
 
 /* LOADING */
 .preloader-container {
-    background: rgba(255, 255, 255, 0.5);
+    background: rgba(255, 255, 255, 0.85);
     position: absolute;
     top: 0;
     left: 0;
@@ -166,8 +166,9 @@ footer .footer-actions > li {
     overflow: hidden;
     display: none;
 }
-.preloader-container .proloader-wrapper {
+.preloader-container .preloader-wrapper {
     position: relative;
+    top: 40%;
 }
 
 #wave-container {
