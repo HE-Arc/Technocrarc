@@ -12,7 +12,7 @@ channels==2.4.0
 channels_redis
 chardet==3.0.4
 constantly==15.1.0
-cryptography==2.8
+cryptography==3.2
 daphne==2.4.1
 Django==3.0.3
 djangorestframework==3.11.0
