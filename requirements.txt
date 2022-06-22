@@ -34,7 +34,7 @@ Markdown==3.1.1
 msgpack==0.6.0
 mysqlclient==1.4.6
 norbert==0.2.1
-numpy==1.18.1
+numpy==1.22.0
 pandas==0.25.1
 protobuf==3.11.2
 pyasn1==0.4.8
