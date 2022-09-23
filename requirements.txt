@@ -36,7 +36,7 @@ mysqlclient==1.4.6
 norbert==0.2.1
 numpy==1.18.1
 pandas==0.25.1
-protobuf==3.11.2
+protobuf==3.18.3
 pyasn1==0.4.8
 pyasn1-modules==0.2.8
 pycparser==2.19
